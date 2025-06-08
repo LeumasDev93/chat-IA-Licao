@@ -9,16 +9,28 @@ const themes = [
     id: "system" as const,
     name: "Sistema",
     icon: "🖥️",
+    bgColor: "bg-gray-500",
+    hoverBgColor: "bg-gray-600",
+    textColor: "text-white",
+    borderColor: "border-gray-600",
   },
   {
     id: "light" as const,
     name: "Claro",
     icon: "☀️",
+    bgColor: "bg-white",
+    hoverBgColor: "bg-gray-100",
+    textColor: "text-gray-800",
+    borderColor: "border-gray-300",
   },
   {
     id: "dark" as const,
     name: "Escuro",
     icon: "🌙",
+    bgColor: "bg-gray-800",
+    hoverBgColor: "bg-gray-700",
+    textColor: "text-white",
+    borderColor: "border-gray-700",
   },
 ];
 
@@ -35,6 +47,29 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const currentTheme = themes.find((t) => t.id === theme) || themes[0];
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
+
+    const handleThemeChange = () => {
+      if (theme === "system") {
+        setResolvedTheme(getSystemTheme());
+      }
+    };
+
+    if (theme === "system") {
+      setResolvedTheme(getSystemTheme());
+      mediaQuery.addEventListener("change", handleThemeChange);
+    } else {
+      setResolvedTheme(theme === "dark" ? "dark" : "light");
+    }
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleThemeChange);
+    };
+  }, [theme]);
 
   // Fechar dropdown ao clicar fora ou pressionar Escape
   useEffect(() => {
@@ -63,7 +98,6 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
     };
   }, []);
 
-  // Posicionamento inteligente do dropdown
   const getDropdownStyle = (): React.CSSProperties => {
     if (!buttonRef.current) return {};
 
@@ -81,19 +115,26 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
     };
   };
 
+  // Classes dinâmicas baseadas no tema atual
+  const buttonClass = `flex items-center gap-2 px-4 py-2 rounded-lg ${currentTheme.bgColor} ${currentTheme.textColor} hover:${currentTheme.hoverBgColor} border ${currentTheme.borderColor} transition-colors`;
+
+  const dropdownClass = `absolute z-50 mt-2 w-full ${currentTheme.bgColor} ${currentTheme.textColor} border ${currentTheme.borderColor} rounded-lg shadow-lg`;
+
+  const dropdownItemClass = `w-full text-left px-4 py-2 flex items-center gap-3 hover:${currentTheme.hoverBgColor} ${currentTheme.textColor}`;
+
   if (compact) {
     return (
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-full hover:bg-surface-hover"
+        className={`p-2 rounded-full ${currentTheme.bgColor} ${currentTheme.textColor} hover:${currentTheme.hoverBgColor} border ${currentTheme.borderColor}`}
         aria-label="Alterar tema"
       >
         <span className="text-lg">{currentTheme.icon}</span>
         {isOpen && (
           <div
             ref={dropdownRef}
-            className="fixed z-50 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg"
+            className={dropdownClass}
             style={getDropdownStyle()}
           >
             {themes.map((themeOption) => (
@@ -103,7 +144,7 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
                   setTheme(themeOption.id);
                   setIsOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={dropdownItemClass}
               >
                 <span className="text-lg">{themeOption.icon}</span>
                 <span>{themeOption.name}</span>
@@ -120,7 +161,7 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className={buttonClass}
         aria-label="Alterar tema"
         aria-expanded={isOpen}
       >
@@ -144,10 +185,7 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
       </button>
 
       {isOpen && (
-        <div
-          className="absolute z-50 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg"
-          style={getDropdownStyle()}
-        >
+        <div className={dropdownClass} style={getDropdownStyle()}>
           {themes.map((themeOption) => (
             <button
               key={themeOption.id}
@@ -155,7 +193,7 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({
                 setTheme(themeOption.id);
                 setIsOpen(false);
               }}
-              className="w-full text-left px-4 py-2 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className={dropdownItemClass}
             >
               <span className="text-lg">{themeOption.icon}</span>
               <span>{themeOption.name}</span>

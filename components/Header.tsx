@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Menu, Plus, Trash, X } from "lucide-react";
 import { MessageType } from "@/types";
 import { ThemeSwitch } from "./ThemeSwitch";
@@ -23,7 +23,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
@@ -50,13 +49,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     };
   }, [theme]);
 
-  // Detecta tamanho da tela e ajusta comportamento do sidebar
+  // Detecta tamanho da tela
   useEffect(() => {
     const checkMobile = () => {
-      const isNowMobile = window.innerWidth < 768;
-      setIsMobile(isNowMobile);
-      // Em desktop, sidebar começa aberta; em mobile, começa fechada
-      setSidebarOpen(!isNowMobile);
+      setIsMobile(window.innerWidth < 801);
     };
 
     checkMobile();
@@ -75,9 +71,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     if (currentChatId === chatId) onNewChat();
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const sidebarBg = resolvedTheme === "dark" ? "bg-slate-800" : "bg-white";
   const textColor = resolvedTheme === "dark" ? "text-white" : "text-black";
@@ -87,89 +81,127 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     resolvedTheme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100";
   const activeBg = resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-300";
 
-  return (
-    <>
-      {/* Botão de toggle para mobile */}
-      {isMobile && (
+  // Componente DesktopSidebar
+  const DesktopSidebar = () => (
+    <aside
+      className={`
+          fixed top-0 left-0 h-screen z-50 flex flex-col transition-all duration-300
+          ${sidebarOpen || !isMobile ? "md:w-48 xl:w-64 " : "w-0"}
+          ${sidebarBg} ${textColor} shadow-lg
+          overflow-hidden
+        `}
+    >
+      <div className="flex flex-col h-full p-2 space-y-4">
+        {/* Cabeçalho */}
+        <div className="p-4">
+          <h1 className="text-lg font-bold">Chat Lição</h1>
+        </div>
+
+        {/* Botão Nova Conversa */}
         <button
-          onClick={toggleSidebar}
-          className={`fixed top-4 left-4 z-50 p-2 rounded-lg border ${borderColor} transition-all
-            ${sidebarBg} ${textColor} shadow-md`}
-          aria-label={sidebarOpen ? "Fechar menu" : "Abrir menu"}
+          onClick={() => {
+            onNewChat();
+            if (isMobile) setSidebarOpen(false);
+          }}
+          className={`p-2 rounded flex items-center gap-2 shadow-sm
+              ${resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"}`}
         >
-          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          <Plus size={18} />
+          <span className="text-sm">Nova Conversa</span>
         </button>
-      )}
 
-      {/* Sidebar */}
-      <aside
-        className={`${
-          isMobile && sidebarOpen
-            ? "absolute top-0 left-0"
-            : "fixed top-0 left-0"
-        } h-screen z-40 shadow-lg flex flex-col transition-all duration-300
-    ${sidebarOpen ? "w-64" : "w-0 md:w-20"} 
-    ${sidebarBg} ${textColor}
-    ${isMobile && !sidebarOpen ? "hidden" : ""}
-  `}
-      >
-        <div className="flex flex-col h-full p-2 space-y-4 overflow-hidden">
-          {/* Cabeçalho */}
-          <div className="p-4">
-            <div
-              className={`flex items-center gap-2 ${
-                !sidebarOpen ? "justify-center" : ""
-              }`}
-            >
-              {!sidebarOpen && !isMobile ? (
-                <div
-                  className={`w-8 h-8 rounded-full ${
-                    resolvedTheme === "dark" ? "bg-blue-600" : "bg-blue-500"
-                  } flex items-end sm:items-center justify-center`}
-                />
-              ) : (
-                <h1 className="text-lg ml-20 sm:ml-0 font-bold">Chat Lição</h1>
-              )}
-            </div>
-          </div>
-
-          {/* Botão Nova Conversa */}
-          <button
-            onClick={() => {
-              onNewChat();
-              if (isMobile) setSidebarOpen(false);
-            }}
-            className={`p-2 rounded cursor-pointer flex items-center gap-2 shadow-sm
-              ${resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"}
-              ${
-                !sidebarOpen
-                  ? "justify-center w-12 h-12 rounded-full mx-auto"
-                  : "ml-2"
-              }
-            `}
-          >
-            <Plus size={18} />
-            {sidebarOpen && <span className="text-sm">Nova Conversa</span>}
-          </button>
-
-          {/* Histórico de conversas */}
-          <div ref={contentRef} className="flex-1 overflow-y-auto px-2">
-            {sidebarOpen && (
-              <h2 className="font-bold mb-2 text-sm">Histórico</h2>
-            )}
-            <ul className="space-y-2">
-              {Object.entries(chatHistory).map(([chatId, messages]) => (
-                <li
-                  key={chatId}
-                  onClick={() => handleChatSelect(chatId)}
-                  className={`p-2 rounded cursor-pointer flex items-center transition-colors
-                    ${currentChatId === chatId ? activeBg : hoverBg}
-                    ${!sidebarOpen ? "justify-center" : "justify-between"}
-                  `}
+        {/* Histórico */}
+        <div className="flex-1 overflow-y-auto px-2">
+          <h2 className="font-bold mb-2 text-sm">Histórico</h2>
+          <ul className="space-y-2">
+            {Object.entries(chatHistory).map(([chatId, messages]) => (
+              <li
+                key={chatId}
+                onClick={() => handleChatSelect(chatId)}
+                className={`p-2 rounded cursor-pointer flex items-center justify-between
+                    transition-colors ${
+                      currentChatId === chatId ? activeBg : hoverBg
+                    }`}
+              >
+                <span className="truncate text-sm flex-1">
+                  {messages.find((m) => m.sender === "user")?.text ||
+                    "Nova conversa"}
+                </span>
+                <button
+                  onClick={(e) => handleDeleteChat(e, chatId)}
+                  className="text-red-400 hover:text-red-300 ml-2"
                 >
-                  {sidebarOpen ? (
-                    <>
-                      <span className="truncate text-sm flex-1">
+                  <Trash size={16} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Theme Switch */}
+        <div className={`p-4 border-t ${borderColor}`}>
+          <ThemeSwitch />
+        </div>
+      </div>
+    </aside>
+  );
+
+  // Componente MobileSidebar
+  const MobileSidebar = () => (
+    <>
+      <button
+        onClick={toggleSidebar}
+        className={`fixed top-4 left-4 z-50 p-2 rounded-lg border ${borderColor} ${sidebarBg} ${textColor} shadow-md`}
+      >
+        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {sidebarOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <aside
+            className={`fixed top-0 left-0 h-screen w-64 z-50 shadow-lg flex flex-col ${sidebarBg} ${textColor} transform transition-transform duration-300 ${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
+            <div className="flex flex-col h-full p-2 space-y-4 overflow-hidden">
+              {/* Cabeçalho */}
+              <div className="p-4">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg font-bold">Chat Lição</h1>
+                </div>
+              </div>
+
+              {/* Botão Nova Conversa */}
+              <button
+                onClick={() => {
+                  onNewChat();
+                  setSidebarOpen(false);
+                }}
+                className={`p-2 rounded cursor-pointer flex items-center gap-2 shadow-sm ${
+                  resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"
+                } ml-2`}
+              >
+                <Plus size={18} />
+                <span className="text-sm">Nova Conversa</span>
+              </button>
+
+              {/* Histórico de conversas */}
+              <div className="flex-1 overflow-y-auto px-2">
+                <h2 className="font-bold mb-2 text-sm">Histórico</h2>
+                <ul className="space-y-2">
+                  {Object.entries(chatHistory).map(([chatId, messages]) => (
+                    <li
+                      key={chatId}
+                      onClick={() => handleChatSelect(chatId)}
+                      className={`p-2 rounded cursor-pointer flex items-center transition-colors ${
+                        currentChatId === chatId ? activeBg : hoverBg
+                      } justify-between`}
+                    >
+                      <span className="truncate text-sm">
                         {messages.find((m) => m.sender === "user")?.text ||
                           "Nova conversa"}
                       </span>
@@ -179,40 +211,28 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       >
                         <Trash size={16} />
                       </button>
-                    </>
-                  ) : (
-                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* ThemeSwitch */}
-          <div className={`p-4 border-t ${borderColor}`}>
-            <div className={sidebarOpen ? "" : "flex justify-center"}>
-              <ThemeSwitch compact={!sidebarOpen} />
+              {/* ThemeSwitch */}
+              <div className={`p-4 border-t ${borderColor}`}>
+                <ThemeSwitch />
+              </div>
             </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Overlay para mobile */}
-      {sidebarOpen && isMobile && (
-        <div
-          className="fixed top-0 inset-0 z-30 bg-black/50"
-          onClick={() => setSidebarOpen(false)}
-        />
+          </aside>
+        </>
       )}
+    </>
+  );
 
-      {/* Espaço reservado para conteúdo principal */}
+  return (
+    <>
+      {isMobile ? <MobileSidebar /> : <DesktopSidebar />}
       <div
-        className={`transition-all duration-300 min-h-screen
-          ${sidebarOpen ? "ml-64" : "ml-0 md:ml-20"}
-        `}
-      >
-        {/* Conteúdo principal */}
-      </div>
+        className={isMobile ? "" : "ml-64 transition-all duration-300"}
+      ></div>
     </>
   );
 };
