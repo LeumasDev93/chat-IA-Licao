@@ -15,6 +15,8 @@ import logo from "@/assets/logo.png";
 import MobileTopMenu from "@/components/MobileTopMenu";
 import ChatSidebar from "@/components/Header";
 import { useChatHistory } from "@/hooks/useChatHistory";
+import { useTheme } from "@/contexts/ThemeContext";
+import MobileConversationMenu from "@/components/MobileTopMenu";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
@@ -65,21 +67,79 @@ interface SpeechRecognitionAlternative {
 
 export default function Home() {
   const currentYear = new Date().getFullYear();
-  const { chatHistory, addMessage } = useChatHistory();
+  const { theme } = useTheme();
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
-  const [messages, setMessages] = useState<MessageType[]>([
-    {
-      id: "1",
-      text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
-      sender: "bot",
-      timestamp: new Date(),
-      parts: [
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
+
+    const handleThemeChange = () => {
+      if (theme === "system") {
+        setResolvedTheme(getSystemTheme());
+      }
+    };
+
+    if (theme === "system") {
+      setResolvedTheme(getSystemTheme());
+      mediaQuery.addEventListener("change", handleThemeChange);
+    } else {
+      setResolvedTheme(theme === "dark" ? "dark" : "light");
+    }
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleThemeChange);
+    };
+  }, [theme]);
+
+  const {
+    chatHistory,
+    currentChatId,
+    addMessage,
+    createNewChat,
+    deleteChat,
+    setCurrentChatId,
+  } = useChatHistory();
+
+  const [messages, setMessages] = useState<MessageType[]>(() => {
+    // Carrega mensagens da conversa atual se existir
+    return (
+      chatHistory[currentChatId] || [
         {
+          id: "1",
           text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
+          sender: "bot",
+          timestamp: new Date(),
+          parts: [
+            {
+              text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
+            },
+          ],
         },
-      ],
-    },
-  ]);
+      ]
+    );
+  });
+
+  useEffect(() => {
+    if (chatHistory[currentChatId]) {
+      setMessages(chatHistory[currentChatId]);
+    } else {
+      setMessages([
+        {
+          id: "1",
+          text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
+          sender: "bot",
+          timestamp: new Date(),
+          parts: [
+            {
+              text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
+            },
+          ],
+        },
+      ]);
+    }
+  }, [currentChatId, chatHistory]);
+
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -180,9 +240,7 @@ export default function Home() {
   ) => {
     e?.preventDefault();
 
-    // Verifica se já está respondendo
     if (isTyping) return;
-
     const content = messageContent || inputValue.trim();
     if (!content) return;
 
@@ -194,7 +252,9 @@ export default function Home() {
       parts: [{ text: content }],
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    addMessage(currentChatId, userMessage);
 
     if (!messageContent) {
       setInputValue("");
@@ -204,33 +264,32 @@ export default function Home() {
 
     try {
       const botResponse = await generateBotResponse(content);
+      const botMessage: MessageType = {
+        id: (Date.now() + 1).toString(),
+        text: botResponse.text,
+        sender: "bot",
+        timestamp: new Date(),
+        parts: [{ text: botResponse.text }],
+      };
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          text: botResponse.text,
-          sender: "bot",
-          timestamp: new Date(),
-          parts: [{ text: botResponse.text }],
-        },
-      ]);
+      setMessages([...updatedMessages, botMessage]);
+      addMessage(currentChatId, botMessage);
     } catch (error) {
       console.error("Erro ao obter resposta do bot:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          text: "Desculpe, estou tendo dificuldades técnicas. Poderia tentar novamente?",
-          sender: "bot",
-          timestamp: new Date(),
-          parts: [
-            {
-              text: "Desculpe, estou tendo dificuldades técnicas. Poderia tentar novamente?",
-            },
-          ],
-        },
-      ]);
+      const errorMessage: MessageType = {
+        id: (Date.now() + 1).toString(),
+        text: "Desculpe, estou tendo dificuldades técnicas. Poderia tentar novamente?",
+        sender: "bot",
+        timestamp: new Date(),
+        parts: [
+          {
+            text: "Desculpe, estou tendo dificuldades técnicas. Poderia tentar novamente?",
+          },
+        ],
+      };
+
+      setMessages([...updatedMessages, errorMessage]);
+      addMessage(currentChatId, errorMessage);
     } finally {
       setIsTyping(false);
     }
@@ -270,33 +329,50 @@ export default function Home() {
     }
   };
 
-  return (
-    <main className="flex flex-col h-screen">
-      <div className="flex-grow flex">
-        {/* Menu Lateral */}
+  const handleNewChat = () => {
+    const newChatId = createNewChat();
+    setCurrentChatId(newChatId);
+  };
 
+  return (
+    <main
+      className={`flex flex-col h-screen ${
+        resolvedTheme === "dark" ? "dark" : ""
+      }`}
+    >
+      <MobileConversationMenu />
+      <div className="flex-grow flex overflow-hidden">
+        {/* Menu Lateral */}
+        <div>
+          <ChatSidebar
+            onNewChat={handleNewChat}
+            chatHistory={chatHistory}
+            currentChatId={currentChatId}
+            setCurrentChatId={setCurrentChatId}
+            deleteChat={deleteChat}
+          />
+        </div>
         {/* Área de conteúdo principal */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Conteúdo centralizado com scroll condicional */}
+          {/* Área de mensagens com scroll */}
           <div className="flex-1 overflow-y-auto">
             <div className="flex flex-col items-center mx-auto w-full max-w-3xl px-4 py-4">
-              {/* Logo */}
+              {/* Logo e introdução */}
               <div className="flex items-center justify-center w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 p-3 sm:p-4 bg-gray-50 border-b border-gray-200 rounded-full">
                 <Image src={logo} alt="Logo" width={100} height={100} />
               </div>
 
-              {/* Mensagem de introdução */}
               <div className="p-4 sm:p-6 text-center">
-                <p className="text-[12px] md:text-xs xl:text-sm ">
+                <p className="text-[12px] md:text-xs xl:text-sm">
                   Esta é a Inteligência Artificial oficial da Igreja Adventista
                   do Sétimo Dia Em Cabo Verde, desenvolvida para apoiar nos
-                  estudos da licão da escola sabatina, inspirar e fortalecer sua
+                  estudos da lição da escola sabatina, inspirar e fortalecer sua
                   jornada espiritual.
                 </p>
               </div>
 
-              {/* Mensagens com scroll automático */}
-              <div className="w-full space-y-3 sm:space-y-4">
+              {/* Mensagens */}
+              <div className="w-full space-y-3 sm:space-y-4 pb-24">
                 {messages.map((msg) => (
                   <Message
                     key={msg.id}
@@ -314,27 +390,35 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Área fixa no rodapé */}
-          <div className="sticky bottom-0">
-            <div className="mx-auto max-w-3xl w-full px-4 py-3">
-              {/* Quick Replies - Agora envia diretamente */}
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 mb-2">
-                {quickReplies.map((reply, index) => (
-                  <QuickReply
-                    key={index}
-                    text={reply}
-                    onClick={
-                      !isTyping
-                        ? () => {
-                            void handleSendMessage(undefined, reply);
-                          }
-                        : () => {}
-                    }
-                  />
-                ))}
-              </div>
+          <div
+            className={`
+    sticky bottom-0 pt-2
+    ${
+      resolvedTheme === "dark"
+        ? "bg-gray-900 text-gray-400"
+        : "bg-white text-gray-700"
+    }
+  `}
+          >
+            <div className="mx-auto max-w-3xl w-full px-4 pb-3">
+              {messages.length <= 1 && (
+                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 mb-2">
+                  {quickReplies.map((reply, index) => (
+                    <QuickReply
+                      key={index}
+                      text={reply}
+                      onClick={
+                        !isTyping
+                          ? () => {
+                              void handleSendMessage(undefined, reply);
+                            }
+                          : () => {}
+                      }
+                    />
+                  ))}
+                </div>
+              )}
 
-              {/* Formulário com textarea */}
               <form onSubmit={(e) => handleSendMessage(e)} className="relative">
                 <div className="relative">
                   <textarea
@@ -349,9 +433,16 @@ export default function Home() {
                       }
                     }}
                     placeholder="Digite sua mensagem..."
-                    className="w-full px-4 py-3 pr-16 text-base bg-gray-700 rounded-lg sm:rounded-xl focus:outline-none focus:ring-1 focus:ring-gray-300 shadow-lg resize-none"
                     rows={4}
                     style={{ minHeight: "50px", maxHeight: "150px" }}
+                    className={`
+        w-full px-4 py-3 pr-16 text-base rounded-lg sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
+        ${
+          resolvedTheme === "dark"
+            ? "bg-gray-700 text-white focus:ring-gray-300"
+            : "bg-white text-black focus:ring-blue-500"
+        }
+      `}
                   />
 
                   {/* Botões dentro do textarea */}
@@ -369,13 +460,18 @@ export default function Home() {
                       }}
                       onTouchStart={startRecording}
                       onTouchEnd={stopRecording}
-                      className={`p-2 rounded-full transition-colors ${
-                        isTyping
-                          ? "cursor-not-allowed opacity-50"
-                          : isPressing || isRecording
-                          ? "bg-red-500 animate-pulse"
-                          : "hover:text-gray-800 hover:bg-white"
-                      }`}
+                      className={`
+          p-2 rounded-full transition-colors
+          ${isTyping ? "cursor-not-allowed opacity-50" : ""}
+          ${isPressing || isRecording ? "bg-red-500 animate-pulse" : ""}
+          ${
+            !isTyping && !(isPressing || isRecording)
+              ? resolvedTheme === "dark"
+                ? "hover:text-gray-300 hover:bg-gray-800"
+                : "hover:text-gray-800 hover:bg-white"
+              : ""
+          }
+        `}
                       aria-label="Pressione e segure para falar"
                     >
                       <Mic size={18} />
@@ -385,11 +481,17 @@ export default function Home() {
                     <button
                       type="submit"
                       disabled={inputValue.trim() === "" || isTyping}
-                      className={`p-2 rounded-full transition-colors ${
-                        inputValue.trim() === ""
-                          ? " cursor-not-allowed"
-                          : "bg-gray-500 hover:bg-gray-800"
-                      }`}
+                      className={`
+          p-2 rounded-full transition-colors
+          ${inputValue.trim() === "" ? "cursor-not-allowed opacity-50" : ""}
+          ${
+            inputValue.trim() !== ""
+              ? resolvedTheme === "dark"
+                ? "bg-gray-500 hover:bg-gray-800"
+                : "bg-blue-500 hover:bg-blue-700 text-white"
+              : ""
+          }
+        `}
                       aria-label="Enviar mensagem"
                     >
                       <Send size={18} />
@@ -406,10 +508,11 @@ export default function Home() {
                 )}
               </form>
             </div>
+
             <div className="flex flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
-              <span className="">
-                O Assistente IA Adventista pode cometer erros. Verifique
-                informações importantes.
+              <span>
+                O Assistente IA para estudos da lição pode cometer erros.
+                Verifique informações importantes.
               </span>
               <span>
                 Copyright © {currentYear} | desenvolvido por

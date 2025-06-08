@@ -1,90 +1,199 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+import { Menu, X, Plus, MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useMobileMenuTheme } from "@/hooks/useMobileMenuTheme";
+import { ThemeSwitch } from "./ThemeSwitch";
 
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+type Conversation = {
+  id: string;
+  title: string;
+  lastMessage: string;
+  timestamp: Date;
+};
+
+const STORAGE_KEY = "conversations";
 
 export default function MobileConversationMenu() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const { resolvedTheme, isMobile, isOpen, setIsOpen } = useMobileMenuTheme();
+  const isDark = resolvedTheme === "dark";
 
-  // Verificar se é mobile
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+
+  // Recupera histórico do localStorage
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) setIsOpen(false); // Fecha menu se redimensionar para desktop
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as (Omit<Conversation, "timestamp"> & {
+        timestamp: string;
+      })[]; // Timestamp como string
+      const withDates = parsed.map((c) => ({
+        ...c,
+        timestamp: new Date(c.timestamp),
+      }));
+      setConversations(withDates);
+    }
   }, []);
 
-  // Simulação de histórico de conversas
-  const conversationHistory: any = [];
+  // Atualiza localStorage quando as conversas mudam
+  useEffect(() => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        conversations.map((c) => ({
+          ...c,
+          timestamp: c.timestamp.toISOString(),
+        }))
+      )
+    );
+  }, [conversations]);
 
-  if (!isMobile) return null; // Não renderiza em desktop
+  const addConversation = () => {
+    const newConversation: Conversation = {
+      id: crypto.randomUUID(),
+      title: `Nova conversa ${conversations.length + 1}`,
+      lastMessage: "Iniciada agora...",
+      timestamp: new Date(),
+    };
+    setConversations([newConversation, ...conversations]);
+  };
+
+  if (!isMobile) return null;
 
   return (
     <>
       {/* Botão para abrir o menu */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-40 p-2 rounded-lg  shadow-md md:hidden"
-        aria-label="Abrir histórico de conversas"
-      >
-        <Menu size={24} />
-      </button>
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className={`fixed top-4 left-4 z-40 p-2 rounded-lg shadow-md ${
+            isDark ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+          }`}
+          aria-label="Abrir menu"
+        >
+          <Menu size={24} />
+        </button>
+      )}
 
       {/* Menu lateral */}
       <div
-        className={`fixed inset-0 z-50 transform ${
+        className={`absolute inset-0 z-50 transform transition-transform duration-300 md:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 md:hidden`}
+        }`}
       >
-        <div className="relative w-64 h-full shadow-lg">
-          {/* Cabeçalho com logo e botão fechar */}
-          <div className="flex items-center justify-between p-4 bg-slate-800">
+        <div
+          className={`relative flex flex-col w-64 h-full shadow-lg ${
+            isDark ? "bg-gray-900 text-white" : "bg-white text-black"
+          }`}
+        >
+          {/* Cabeçalho */}
+          <div
+            className={`flex items-center justify-between p-4 border-b ${
+              isDark
+                ? "border-gray-700 bg-gray-800"
+                : "border-gray-200 bg-gray-100"
+            }`}
+          >
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold"></div>
-              <span className="ml-3 font-semibold">Chat</span>
+              <MessageSquare className="w-6 h-6" />
+              <span className="ml-3 font-semibold">Conversas</span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-full hover:bg-gray-100"
+              className={`p-1 rounded-full ${
+                isDark ? "hover:bg-gray-700" : "hover:bg-gray-200"
+              }`}
               aria-label="Fechar menu"
             >
               <X size={20} />
             </button>
           </div>
 
-          {/* Histórico de conversas */}
-          <div className="p-2 overflow-y-auto h-[calc(100%-64px)] bg-slate-800">
-            <h3 className="px-2 py-3 text-sm font-medium text-gray-500">
+          {/* Nova conversa */}
+          <div
+            className={`p-4 border-b ${
+              isDark ? "border-gray-700" : "border-gray-200"
+            }`}
+          >
+            <button
+              onClick={addConversation}
+              className={`w-full py-2 px-4 rounded-lg flex items-center justify-center gap-2 ${
+                isDark
+                  ? "bg-blue-600 hover:bg-blue-700 text-white"
+                  : "bg-blue-500 hover:bg-blue-600 text-white"
+              }`}
+            >
+              <Plus size={18} />
+              <span>Nova conversa</span>
+            </button>
+          </div>
+
+          {/* Lista de conversas */}
+          <div className="flex-1 overflow-y-auto">
+            <h3
+              className={`sticky top-0 px-4 py-3 text-sm font-medium ${
+                isDark ? "bg-gray-900 text-gray-400" : "bg-white text-gray-500"
+              }`}
+            >
               Histórico de Conversas
             </h3>
-            <ul className="space-y-1">
-              {conversationHistory.map(
-                (conversation: string, index: number) => (
-                  <li key={index}>
+            {conversations.length === 0 ? (
+              <div
+                className={`px-4 py-6 text-center ${
+                  isDark ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                Nenhuma conversa recente
+              </div>
+            ) : (
+              <ul className="space-y-1 px-2 pb-4">
+                {conversations.map((c) => (
+                  <li key={c.id}>
                     <button
-                      onClick={() => {
-                        // Aqui você adicionaria a lógica para carregar a conversa
-                        setIsOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 flex items-center"
+                      onClick={() => setIsOpen(false)}
+                      className={`w-full text-left px-3 py-3 rounded-lg flex flex-col ${
+                        isDark
+                          ? "hover:bg-gray-700 text-white"
+                          : "hover:bg-gray-100 text-black"
+                      }`}
                     >
-                      <span className="truncate">{conversation}</span>
+                      <span className="font-medium truncate">{c.title}</span>
+                      <span
+                        className={`text-sm truncate ${
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {c.lastMessage}
+                      </span>
+                      <span
+                        className={`text-xs mt-1 ${
+                          isDark ? "text-gray-500" : "text-gray-400"
+                        }`}
+                      >
+                        {c.timestamp.toLocaleString("pt-BR", {
+                          day: "numeric",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
                     </button>
                   </li>
-                )
-              )}
-            </ul>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Rodapé com ThemeSwitch */}
+          <div
+            className={`p-4 border-t ${
+              isDark ? "border-gray-700" : "border-gray-200"
+            }`}
+          >
+            <ThemeSwitch />
           </div>
         </div>
       </div>
 
-      {/* Overlay para fechar o menu */}
+      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"

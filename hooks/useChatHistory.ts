@@ -1,37 +1,60 @@
 // hooks/useChatHistory.ts
-import { MessageType } from '@/types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import { MessageType } from "@/types";
 
 export const useChatHistory = () => {
-  const [chatHistory, setChatHistory] = useState<MessageType[]>([]);
+  const [chatHistory, setChatHistory] = useState<Record<string, MessageType[]>>({});
+  const [currentChatId, setCurrentChatId] = useState<string>("");
 
   // Carrega o histórico do localStorage quando o componente monta
   useEffect(() => {
-    const savedHistory = localStorage.getItem('chatHistory');
+    const savedHistory = localStorage.getItem("chatHistory");
     if (savedHistory) {
-      try {
-        setChatHistory(JSON.parse(savedHistory));
-      } catch (error) {
-        console.error('Erro ao carregar histórico:', error);
-      }
+      setChatHistory(JSON.parse(savedHistory));
     }
+
+    // Cria uma nova conversa por padrão
+    const newChatId = Date.now().toString();
+    setCurrentChatId(newChatId);
   }, []);
 
-  // Atualiza o localStorage sempre que o histórico muda
+  // Salva no localStorage sempre que o histórico muda
   useEffect(() => {
-    if (chatHistory.length > 0) {
-      localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+    if (Object.keys(chatHistory).length > 0) {
+      localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
     }
   }, [chatHistory]);
 
-  const addMessage = (message: MessageType) => {
-    setChatHistory(prev => [...prev, message]);
+  const addMessage = (chatId: string, message: MessageType) => {
+    setChatHistory(prev => {
+      const currentChat = prev[chatId] || [];
+      return {
+        ...prev,
+        [chatId]: [...currentChat, message]
+      };
+    });
   };
 
-  const clearHistory = () => {
-    setChatHistory([]);
-    localStorage.removeItem('chatHistory');
+  const createNewChat = () => {
+    const newChatId = Date.now().toString();
+    setCurrentChatId(newChatId);
+    return newChatId;
   };
 
-  return { chatHistory, addMessage, clearHistory };
+  const deleteChat = (chatId: string) => {
+    setChatHistory(prev => {
+      const newHistory = { ...prev };
+      delete newHistory[chatId];
+      return newHistory;
+    });
+  };
+
+  return {
+    chatHistory,
+    currentChatId,
+    addMessage,
+    createNewChat,
+    deleteChat,
+    setCurrentChatId
+  };
 };
