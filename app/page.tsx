@@ -10,7 +10,7 @@ import Message from "@/components/chatbot/Message";
 import TypingIndicator from "@/components/chatbot/TypingIndicator";
 import QuickReply from "@/components/chatbot/QuickReply";
 import Image from "next/image";
-import logo from "@/assets/logo.png";
+import logo1 from "@/assets/logo1.png";
 
 import MobileTopMenu from "@/components/MobileTopMenu";
 import ChatSidebar from "@/components/Header";
@@ -359,7 +359,13 @@ export default function Home() {
             <div className="flex flex-col items-center mx-auto w-full max-w-3xl px-4 py-4">
               {/* Logo e introdução */}
               <div className="flex items-center justify-center w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 p-3 sm:p-4 bg-gray-50 border-b border-gray-200 rounded-full">
-                <Image src={logo} alt="Logo" width={100} height={100} />
+                <Image
+                  src={logo1}
+                  alt="Logo"
+                  width={100}
+                  height={100}
+                  className="w-full h-full"
+                />
               </div>
 
               <div className="p-4 sm:p-6 text-center">
