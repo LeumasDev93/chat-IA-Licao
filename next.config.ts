@@ -1,16 +1,25 @@
-// next.config.ts
+// next.config.js
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
+  scope: '/',
+  runtimeCaching: [
+    {
+      urlPattern: /^https?.*/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'offline-cache',
+        expiration: {
+          maxEntries: 200,
+        },
+      },
+    },
+  ],
 })
 
-const nextConfig = {
+module.exports = withPWA({
   reactStrictMode: true,
-  devIndicators: {
-    buildActivity: false,
-  },
-}
-
-module.exports = withPWA(nextConfig)
+  // Outras configurações do Next.js
+})
