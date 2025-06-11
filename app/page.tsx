@@ -10,7 +10,7 @@ import Message from "@/components/chatbot/Message";
 import TypingIndicator from "@/components/chatbot/TypingIndicator";
 import QuickReply from "@/components/chatbot/QuickReply";
 import Image from "next/image";
-import logo1 from "@/assets/logo1.png";
+import logo1 from "@/assets/Logo1.png";
 
 import MobileTopMenu from "@/components/MobileTopMenu";
 import ChatSidebar from "@/components/Header";
