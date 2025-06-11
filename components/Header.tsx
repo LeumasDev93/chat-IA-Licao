@@ -6,6 +6,9 @@ import { MessageType } from "@/types";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { useTheme } from "@/contexts/ThemeContext";
 
+import Image from "next/image";
+import logo from "@/assets/icon-512x512.png";
+
 interface ChatSidebarProps {
   onNewChat: () => void;
   chatHistory: Record<string, MessageType[]>;
@@ -93,7 +96,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     >
       <div className="flex flex-col h-full p-2 space-y-4">
         {/* Cabeçalho */}
-        <div className="p-4">
+        <div className="p-4 flex items-center gap-2">
+          <div className="flex items-center justify-center bg-amber-50 rounded-full p-2">
+            <Image
+              src={logo}
+              alt="Logo"
+              width={32}
+              height={32}
+              className="w-6 h-6"
+            />
+          </div>
+
           <h1 className="text-lg font-bold">Chat Lição</h1>
         </div>
 
@@ -169,7 +182,16 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           >
             <div className="flex flex-col h-full p-2 space-y-4 overflow-hidden">
               {/* Cabeçalho */}
-              <div className="p-4">
+              <div className="p-4 flex items-center gap-2">
+                <div className="flex items-center justify-center bg-amber-50 rounded-full p-1">
+                  <Image
+                    src={logo}
+                    alt="Logo"
+                    width={32}
+                    height={32}
+                    className="w-6 h-6"
+                  />
+                </div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg font-bold">Chat Lição</h1>
                 </div>
