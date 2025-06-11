@@ -77,13 +77,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  const sidebarBg = resolvedTheme === "dark" ? "bg-slate-800" : "bg-white";
+  const sidebarBg = resolvedTheme === "dark" ? "bg-slate-800" : "bg-gray-200";
+  const hederMobileBg =
+    resolvedTheme === "dark" ? "bg-slate-800 shadow-md" : "bg-white shadow-md";
   const textColor = resolvedTheme === "dark" ? "text-white" : "text-black";
   const borderColor =
     resolvedTheme === "dark" ? "border-gray-700" : "border-gray-300";
   const hoverBg =
-    resolvedTheme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100";
-  const activeBg = resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-300";
+    resolvedTheme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-400";
+  const activeBg = resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-400";
+  const textFooter =
+    resolvedTheme === "dark" ? "text-blue-400" : "text-blue-700";
 
   // Componente DesktopSidebar
   const DesktopSidebar = () => (
@@ -162,7 +166,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
   // Componente MobileSidebar
   const MobileSidebar = () => (
-    <>
+    <div className={`fixed top-0 left-0 w-full h-16 z-50 ${hederMobileBg}  `}>
       <button
         onClick={toggleSidebar}
         className={`fixed top-4 left-4 z-50 p-2 rounded-lg border ${borderColor} ${sidebarBg} ${textColor} shadow-md`}
@@ -251,14 +255,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 </span>
                 <span>
                   Copyright © {currentYear} | desenvolvido por
-                  <span className="text-blue-400/70"> Leumas Andrade</span>
+                  <span className={`${textFooter} font-semibold`}>
+                    {" "}
+                    Leumas Andrade
+                  </span>
                 </span>
               </div>
             </div>
           </aside>
         </>
       )}
-    </>
+    </div>
   );
 
   return (

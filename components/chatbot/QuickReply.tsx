@@ -27,7 +27,7 @@ const themeStyles: Record<
     shadow: "shadow-md dark:shadow-2xl",
   },
   light: {
-    bg: "bg-gray-200",
+    bg: "bg-gray-100",
     text: "text-gray-800",
     hover: "hover:bg-gray-300",
     focus: "focus:ring-blue-500",

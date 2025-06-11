@@ -147,6 +147,8 @@ export default function Home() {
   const isMobile = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const textFooter =
+    resolvedTheme === "dark" ? "text-blue-400" : "text-blue-700";
 
   useEffect(() => {
     isMobile.current =
@@ -336,11 +338,10 @@ export default function Home() {
 
   return (
     <main
-      className={`flex flex-col h-screen ${
-        resolvedTheme === "dark" ? "dark" : ""
+      className={`flex flex-col h-screen   ${
+        resolvedTheme === "dark" ? "dark" : "bg-gray-200"
       }`}
     >
-      <MobileConversationMenu />
       <div className="flex-grow flex overflow-hidden">
         {/* Menu Lateral */}
         <div>
@@ -353,12 +354,12 @@ export default function Home() {
           />
         </div>
         {/* Área de conteúdo principal */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col mt-16 lg:mt-0 min-w-0">
           {/* Área de mensagens com scroll */}
           <div className="flex-1 overflow-y-auto">
             <div className="flex flex-col items-center mx-auto w-full max-w-3xl px-4 py-4">
               {/* Logo e introdução */}
-              <div className="flex items-center justify-center w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 p-3 sm:p-4 bg-gray-50 border-b border-gray-200 rounded-full">
+              <div className="hidden lg:flex items-center justify-center w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 p-3 sm:p-4 bg-gray-50 border-b border-gray-200 rounded-full">
                 <Image
                   src={logo1}
                   alt="Logo"
@@ -398,11 +399,11 @@ export default function Home() {
 
           <div
             className={`
-    sticky bottom-0 pt-2
+    sticky bottom-0
     ${
       resolvedTheme === "dark"
         ? "bg-gray-900 text-gray-400"
-        : "bg-white text-gray-700"
+        : "bg-gray-200 text-gray-700"
     }
   `}
           >
@@ -460,14 +461,19 @@ export default function Home() {
                       }
                     }}
                     placeholder="Digite sua mensagem..."
-                    rows={4}
-                    style={{ minHeight: "50px", maxHeight: "150px" }}
+                    rows={3}
+                    style={{
+                      minHeight: "40px",
+                      maxHeight: "150px",
+                      height: isMobile.current ? "20px" : "auto",
+                    }}
                     className={`
         w-full px-4 py-3 pr-16 text-base rounded-t-2xl sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
+        transition-all duration-200
         ${
           resolvedTheme === "dark"
             ? "bg-gray-700 text-white focus:ring-gray-300"
-            : "bg-white text-black focus:ring-blue-500"
+            : "bg-gray-100 text-black focus:ring-gray-300"
         }
       `}
                   />
@@ -495,7 +501,7 @@ export default function Home() {
             !isTyping && !(isPressing || isRecording)
               ? resolvedTheme === "dark"
                 ? "hover:text-gray-300 hover:bg-gray-800"
-                : "hover:text-gray-800 hover:bg-white"
+                : "hover:text-gray-800 hover:bg-gray-200"
               : ""
           }
         `}
@@ -515,7 +521,7 @@ export default function Home() {
             inputValue.trim() !== ""
               ? resolvedTheme === "dark"
                 ? "bg-gray-500 hover:bg-gray-800"
-                : "bg-blue-500 hover:bg-blue-700 text-white"
+                : "bg-gray-400 hover:bg-gray-600 text-white"
               : ""
           }
         `}
@@ -543,7 +549,10 @@ export default function Home() {
               </span>
               <span>
                 Copyright © {currentYear} | desenvolvido por
-                <span className="text-blue-400/70"> Leumas Andrade</span>
+                <span className={`${textFooter} font-semibold`}>
+                  {" "}
+                  Leumas Andrade
+                </span>
               </span>
             </div>
           </div>
