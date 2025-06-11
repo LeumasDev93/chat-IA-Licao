@@ -465,7 +465,7 @@ export default function Home() {
                     style={{
                       minHeight: "40px",
                       maxHeight: "150px",
-                      height: isMobile.current ? "20px" : "auto",
+                      height: isMobile.current ? "30px" : "auto",
                     }}
                     className={`
         w-full px-4 py-3 pr-16 text-base rounded-t-2xl sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
