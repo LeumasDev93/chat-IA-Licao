@@ -7,7 +7,7 @@ import { ThemeSwitch } from "./ThemeSwitch";
 import { useTheme } from "@/contexts/ThemeContext";
 
 import Image from "next/image";
-import logo from "@/assets/icon-512x512.png";
+import logo from "@/assets/logo.png";
 
 interface ChatSidebarProps {
   onNewChat: () => void;
