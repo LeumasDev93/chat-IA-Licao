@@ -28,6 +28,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const { theme } = useTheme();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+  const currentYear = new Date().getFullYear();
 
   // Detecta tema do sistema
   useEffect(() => {
@@ -241,6 +242,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               {/* ThemeSwitch */}
               <div className={`p-4 border-t ${borderColor}`}>
                 <ThemeSwitch />
+              </div>
+
+              <div className=" flex sm:hidden flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
+                <span>
+                  O Assistente IA para estudos da lição pode cometer erros.
+                  Verifique informações importantes.
+                </span>
+                <span>
+                  Copyright © {currentYear} | desenvolvido por
+                  <span className="text-blue-400/70"> Leumas Andrade</span>
+                </span>
               </div>
             </div>
           </aside>

@@ -406,22 +406,43 @@ export default function Home() {
     }
   `}
           >
-            <div className="mx-auto max-w-3xl w-full px-4 pb-3">
+            <div className="mx-auto max-w-3xl w-full sm:px-4 sm:pb-3">
               {messages.length <= 1 && (
-                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 mb-2">
-                  {quickReplies.map((reply, index) => (
-                    <QuickReply
-                      key={index}
-                      text={reply}
-                      onClick={
-                        !isTyping
-                          ? () => {
-                              void handleSendMessage(undefined, reply);
-                            }
-                          : () => {}
-                      }
-                    />
-                  ))}
+                <div className="mb-2">
+                  {/* Desktop (grid) */}
+                  <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    {quickReplies.map((reply, index) => (
+                      <QuickReply
+                        key={index}
+                        text={reply}
+                        onClick={
+                          !isTyping
+                            ? () => {
+                                void handleSendMessage(undefined, reply);
+                              }
+                            : () => {}
+                        }
+                      />
+                    ))}
+                  </div>
+
+                  {/* Mobile (scroll horizontal sem barra visível) */}
+                  <div className="sm:hidden mx-2 flex overflow-x-auto space-x-2 pb-2 no-scrollbar">
+                    {quickReplies.map((reply, index) => (
+                      <div key={index} className="flex-shrink-0">
+                        <QuickReply
+                          text={reply}
+                          onClick={
+                            !isTyping
+                              ? () => {
+                                  void handleSendMessage(undefined, reply);
+                                }
+                              : () => {}
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -442,7 +463,7 @@ export default function Home() {
                     rows={4}
                     style={{ minHeight: "50px", maxHeight: "150px" }}
                     className={`
-        w-full px-4 py-3 pr-16 text-base rounded-lg sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
+        w-full px-4 py-3 pr-16 text-base rounded-t-2xl sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
         ${
           resolvedTheme === "dark"
             ? "bg-gray-700 text-white focus:ring-gray-300"
@@ -515,7 +536,7 @@ export default function Home() {
               </form>
             </div>
 
-            <div className="flex flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
+            <div className="hidden sm:flex flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
               <span>
                 O Assistente IA para estudos da lição pode cometer erros.
                 Verifique informações importantes.
