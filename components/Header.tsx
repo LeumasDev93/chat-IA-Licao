@@ -112,15 +112,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               className="w-16 h-16"
             />
           </div>
-          <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${
-              resolvedTheme === "dark"
-                ? "bg-gray-600 text-white"
-                : "bg-white text-Black border-2 border-gray-300"
-            }`}
-          >
-            {session?.user?.name?.charAt(0).toUpperCase() || "U"}
-          </div>
+          {session && (
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${
+                resolvedTheme === "dark"
+                  ? "bg-gray-600 text-white"
+                  : "bg-white text-Black border-2 border-gray-300"
+              }`}
+            >
+              {session?.user?.name?.charAt(0).toUpperCase() || ""}
+            </div>
+          )}
         </div>
 
         {/* Botão Nova Conversa */}
@@ -231,15 +233,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     className="w-10 h-10"
                   />
                 </div>
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ${
-                    resolvedTheme === "dark"
-                      ? "bg-gray-600 text-white"
-                      : "bg-white text-Black border-2 border-gray-300"
-                  }`}
-                >
-                  {session?.user?.name?.charAt(0).toUpperCase() || "U"}
-                </div>
+                {session && (
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ${
+                      resolvedTheme === "dark"
+                        ? "bg-gray-600 text-white"
+                        : "bg-white text-Black border-2 border-gray-300"
+                    }`}
+                  >
+                    {session?.user?.name?.charAt(0).toUpperCase() || ""}
+                  </div>
+                )}
               </div>
 
               {/* Botão Nova Conversa */}
