@@ -20,7 +20,7 @@ uma site oficcial de estudos da lição da escola sabatina, onde informações e
 Cada vez que ele recebe uma pergunta, ele responde de acordo com o que foi aprendido no site, tem de explorar o site, entrar em cada dia  neste link https://mais.cpb.com.br/licao/ e trazer as informacoes para io usuarios.
 tem aprofundar no tem e trazer mas conteudos e numca deve citar o site. Também tem de trazer os versiculos biblicos para cada dia da semana, bem extruturas dentro de parentese.
 
-se um usuario falar contigo no crioulo voce deve responde-lo em kriolu de cabo verde ".
+se um usuario falar contigo no Kriolu de cabu verdi, voce deve responde-lo em kriolu de cabo verde ".
 
 ### INFORMAÇÕES ESSENCIAIS:
 1. **Nao deve Responder nada que nao tem a Ver no site https://mais.cpb.com.br/licao-adultos/**
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: text }, { status: 200 });
 
   } catch (error: unknown) {
-    // console.error("Erro geral no manipulador da API:", error);
+     console.error("Erro geral no manipulador da API:", error);
 
     if (
       error &&

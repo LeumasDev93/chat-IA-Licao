@@ -5,11 +5,13 @@ import { Menu, Plus, Trash, X } from "lucide-react";
 import { MessageType } from "@/types";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { useTheme } from "@/contexts/ThemeContext";
+import { IoIosLogIn, IoIosLogOut } from "react-icons/io";
 
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { handleAuth } from "@/app/actions/handle-auth";
 interface ChatSidebarProps {
   onNewChat: () => void;
   chatHistory: Record<string, MessageType[]>;
@@ -178,8 +180,19 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               className={`w-full p-2 rounded flex items-center justify-center gap-2 shadow-sm mb-4
                 ${resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"}`}
             >
-              <span className="text-sm">Login</span>
+              <IoIosLogIn /> <span className="text-sm">Entrar</span>
             </Link>
+          )}
+          {session?.user?.email && (
+            <form action={handleAuth}>
+              <button
+                type="submit"
+                className={`w-full p-2 rounded flex items-center justify-center gap-2 cursor-pointer shadow-sm mb-4
+                ${resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"}`}
+              >
+                <span className="text-sm">Sair</span> <IoIosLogOut />
+              </button>
+            </form>
           )}
           <ThemeSwitch />
         </div>
@@ -301,8 +314,19 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     className={`w-full p-2 rounded flex items-center justify-center gap-2 shadow-sm mb-4
                 ${resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"}`}
                   >
-                    <span className="text-sm">Login</span>
+                    <IoIosLogIn /> <span className="text-sm">Entrar</span>
                   </Link>
+                )}
+                {session?.user?.email && (
+                  <form action={handleAuth}>
+                    <button
+                      type="submit"
+                      className={`w-full p-2 rounded flex items-center justify-center gap-2 cursor-pointer shadow-sm mb-4
+                ${resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"}`}
+                    >
+                      <span className="text-sm">Sair</span> <IoIosLogOut />
+                    </button>
+                  </form>
                 )}
                 <ThemeSwitch />
               </div>
