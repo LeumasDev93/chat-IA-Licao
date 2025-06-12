@@ -4,6 +4,8 @@ import { User, Bot } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { MessageType } from "@/types";
 import { useTheme } from "@/contexts/ThemeContext";
+import Image from "next/image";
+import logo2 from "@/assets/Logo2.png";
 
 interface MessageProps {
   message: MessageType;
@@ -56,9 +58,9 @@ const Message: React.FC<MessageProps> = ({ message }) => {
     : "bg-gray-100 text-gray-900";
 
   const botAvatarClass = isDark
-    ? "bg-gray-700 text-white"
-    : "bg-gray-200 text-gray-800";
-
+    ? "bg-gray-800 text-white"
+    : "bg-white text-gray-800 ";
+  const imageClass = `w-10 h-10 ${isDark ? "filter invert brightness-50" : ""}`;
   return (
     <div
       className={`flex ${
@@ -76,7 +78,17 @@ const Message: React.FC<MessageProps> = ({ message }) => {
               isBot ? botAvatarClass : userAvatarClass
             }`}
           >
-            {isBot ? <Bot size={18} /> : <User size={18} />}
+            {isBot ? (
+              <Image
+                src={logo2}
+                alt="Logo"
+                width={100}
+                height={100}
+                className={imageClass}
+              />
+            ) : (
+              <User size={18} />
+            )}
           </div>
         </div>
 
