@@ -17,6 +17,7 @@ import ChatSidebar from "@/components/Header";
 import { useChatHistory } from "@/hooks/useChatHistory";
 import { useTheme } from "@/contexts/ThemeContext";
 import MobileConversationMenu from "@/components/MobileTopMenu";
+import { auth } from "./lib/auth";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
