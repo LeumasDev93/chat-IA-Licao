@@ -140,10 +140,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           <span className="text-sm">Nova Conversa</span>
         </button>
 
-        {/* Conteúdo principal (Histórico) */}
-        <div className="flex-1 overflow-y-auto px-2">
-          <h2 className="font-bold mb-2 text-sm">Histórico</h2>
-          {session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+        {session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+          <div className="flex-1 overflow-y-auto px-2">
+            <h2 className="font-bold mb-2 text-sm">Histórico</h2>
+
             <ul className="space-y-2">
               {Object.entries(chatHistory).map(([chatId, messages]) => (
                 <li
@@ -167,11 +167,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="text-sm text-gray-400">Sem histórico disponível</p>
-          )}
-        </div>
-
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto px-2"></div>
+        )}
         {/* Rodapé: Login (se não logado) + ThemeSwitch */}
         <div className={`p-4 border-t ${borderColor}`}>
           {!session?.user?.email && (
@@ -274,9 +273,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               </button>
 
               {/* Histórico */}
-              <div className="flex-1 overflow-y-auto px-2">
-                <h2 className="font-bold mb-2 text-sm">Histórico</h2>
-                {session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+              {session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+                <div className="flex-1 overflow-y-auto px-2">
+                  <h2 className="font-bold mb-2 text-sm">Histórico</h2>
+
                   <ul className="space-y-2">
                     {Object.entries(chatHistory).map(([chatId, messages]) => (
                       <li
@@ -299,13 +299,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       </li>
                     ))}
                   </ul>
-                ) : (
-                  <p className="text-sm text-gray-400">
-                    Sem histórico disponível
-                  </p>
-                )}
-              </div>
-
+                </div>
+              ) : (
+                <div className="flex-1 overflow-y-auto px-2"></div>
+              )}
               {/* Rodapé fixo */}
               <div className={`p-4 border-t ${borderColor}`}>
                 {!session?.user?.email && (
