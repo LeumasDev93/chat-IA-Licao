@@ -359,12 +359,12 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto">
             <div className="flex flex-col items-center mx-auto w-full max-w-3xl px-4 py-4">
               {/* Logo e introdução */}
-              <div className="hidden lg:flex items-center justify-center w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 p-3 sm:p-4 bg-gray-50 border-b border-gray-200 rounded-full">
+              <div className="hidden lg:flex items-center justify-center w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20  bg-gray-50 border-b border-gray-200 rounded-full">
                 <Image
                   src={logo1}
                   alt="Logo"
-                  width={100}
-                  height={100}
+                  width={200}
+                  height={200}
                   className="w-full h-full"
                 />
               </div>

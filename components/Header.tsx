@@ -102,17 +102,15 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
       <div className="flex flex-col h-full p-2 space-y-4">
         {/* Cabeçalho */}
         <div className="p-4 flex items-center gap-2">
-          <div className="flex items-center justify-center bg-amber-50 rounded-lg p-2">
+          <div className="flex items-center justify-center bg-white rounded-lg">
             <Image
               src={logo2}
               alt="Logo"
-              width={32}
-              height={32}
-              className="w-10 h-8"
+              width={100}
+              height={100}
+              className="w-16 h-16"
             />
           </div>
-
-          <h1 className="text-lg font-extrabold">AI Lição</h1>
         </div>
 
         {/* Botão Nova Conversa */}
@@ -188,18 +186,16 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             <div className="flex flex-col h-full p-2 space-y-4 overflow-hidden">
               {/* Cabeçalho */}
               <div className="p-4 flex items-center gap-2">
-                <div className="flex items-center justify-center bg-amber-50 rounded-lg p-1">
+                <div className="flex items-center justify-center bg-white rounded-lg">
                   <Image
                     src={logo2}
                     alt="Logo"
-                    width={32}
-                    height={32}
-                    className="w-6 h-6"
+                    width={100}
+                    height={100}
+                    className="w-10 h-10"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-bold">AI Lição</h1>
-                </div>
+                <div className="flex items-center gap-2"></div>
               </div>
 
               {/* Botão Nova Conversa */}
