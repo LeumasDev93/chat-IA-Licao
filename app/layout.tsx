@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -21,10 +20,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  session,
 }: {
   children: React.ReactNode;
-  session?: any;
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
@@ -73,7 +70,7 @@ export default function RootLayout({
       </head>
 
       <body className={inter.className}>
-        <SessionProvider session={session}>
+        <SessionProvider>
           <ThemeProvider>
             {children}
 
