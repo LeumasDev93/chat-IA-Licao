@@ -21,5 +21,6 @@ const withPWA = require('next-pwa')({
 
 module.exports = withPWA({
   reactStrictMode: true,
+   serverExternalPackages: ['puppeteer'],
   // Outras configurações do Next.js
 })

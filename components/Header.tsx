@@ -165,12 +165,25 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   // Componente MobileSidebar
   const MobileSidebar = () => (
     <div className={`fixed top-0 left-0 w-full h-16 z-50 ${hederMobileBg}  `}>
-      <button
-        onClick={toggleSidebar}
-        className={`fixed top-4 left-4 z-50 p-2 rounded-lg border ${borderColor} ${sidebarBg} ${textColor} shadow-md`}
-      >
-        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      <div className="flex items-center justify-between h-full px-4">
+        <button
+          onClick={toggleSidebar}
+          className={` p-2 rounded-lg border ${borderColor} ${sidebarBg} ${textColor} shadow-md`}
+        >
+          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+        <div className="flex items-center justify-end h-full">
+          <div className="flex items-center justify-center bg-white rounded-lg">
+            <Image
+              src={logo2}
+              alt="Logo"
+              width={100}
+              height={100}
+              className="w-10 h-10"
+            />
+          </div>
+        </div>
+      </div>
 
       {sidebarOpen && (
         <>
