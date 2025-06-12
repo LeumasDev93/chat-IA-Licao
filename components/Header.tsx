@@ -173,7 +173,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <div className="flex items-center justify-end h-full">
-          <div className="flex items-center justify-center bg-white rounded-lg">
+          <div className="flex items-center justify-center bg-gray-200 shadow-md rounded-lg">
             <Image
               src={logo2}
               alt="Logo"
