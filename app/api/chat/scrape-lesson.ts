@@ -1,76 +1,87 @@
 import puppeteer from 'puppeteer';
 
-// --- Cache da lição para evitar scraping excessivo
 export interface LessonData {
   title: string;
   days: string[];
   verses: string[];
+  lessonLink: string;
   lastUpdated: string;
 }
 
-let cachedLesson: LessonData | null = null;
-const CACHE_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000; // 1 semana
+const CACHE_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
+const CPB_LESSON_URL = "https://mais.cpb.com.br/licao-adultos/";
+const PUPPETEER_OPTIONS = {
+  headless: true,
+  args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+};
 
-export async function getCachedLesson(): Promise<LessonData> {
-  if (
-    cachedLesson &&
-    (Date.now() - new Date(cachedLesson.lastUpdated).getTime()) < CACHE_VALIDITY_MS
-  ) {
-   // console.log("Usando lição do cache.");
-    return cachedLesson;
-  }
-  //console.log("Raspando e cacheando nova lição...");
-  cachedLesson = await scrapeAndCacheLesson();
-  return cachedLesson;
+let cachedLesson: LessonData | null = null;
+
+function getCurrentDate(): string {
+  return new Date().toISOString();
 }
 
-async function scrapeAndCacheLesson(): Promise<LessonData> {
-  let browser;
+function isCacheValid(cache: LessonData | null): boolean {
+  if (!cache) return false;
+  return (Date.now() - new Date(cache.lastUpdated).getTime()) < CACHE_VALIDITY_MS;
+}
+
+export async function getCachedLesson(): Promise<LessonData> {
+  if (isCacheValid(cachedLesson)) {
+    console.log("Usando lição do cache");
+    return cachedLesson!;
+  }
+
   try {
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
+    console.log("Atualizando cache da lição...");
+    cachedLesson = await scrapeLessonData();
+    return cachedLesson;
+  } catch (error) {
+    console.error("Erro ao atualizar lição:", error);
+    if (cachedLesson) {
+      console.log("Usando lição cacheada anteriormente devido ao erro");
+      return cachedLesson;
+    }
+    throw error;
+  }
+}
+
+async function scrapeLessonData(): Promise<LessonData> {
+  const browser = await puppeteer.launch(PUPPETEER_OPTIONS);
+  try {
     const page = await browser.newPage();
-    await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    );
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
 
-    await page.goto('https://mais.cpb.com.br/licao-adultos/', { waitUntil: 'networkidle2', timeout: 60000 });
-
-    const latestLessonLink = await page.evaluate(() => {
+    await page.goto(CPB_LESSON_URL, { waitUntil: 'networkidle2', timeout: 60000 });
+    const lessonLink = await page.evaluate(() => {
       const links = Array.from(document.querySelectorAll('a'));
       const lessonLink = links.find(a => a.href.includes('/licao/') && !a.href.includes('#'));
-      return lessonLink ? lessonLink.href : null;
+      return lessonLink?.href || null;
     });
 
-    if (!latestLessonLink) {
-     // console.error('ERRO: Link da lição mais recente não encontrado. A estrutura do site pode ter mudado.');
-      throw new Error('Link da lição mais recente não encontrado no site da CPB.');
+    if (!lessonLink) throw new Error('Link da lição não encontrado');
+
+    if (cachedLesson?.lessonLink === lessonLink) {
+      console.log('Link da lição não mudou. Mantendo cache existente.');
+      return cachedLesson;
     }
 
-    console.log(`Link da lição encontrado: ${latestLessonLink}`);
-    await page.goto(latestLessonLink, { waitUntil: 'networkidle2', timeout: 60000 });
-
-    const lessonContent = await page.evaluate(() => {
-      function getText(id: string) {
+    await page.goto(lessonLink, { waitUntil: 'networkidle2', timeout: 60000 });
+    
+    const lessonData = await page.evaluate(() => {
+      const getText = (id: string) => {
         const el = document.getElementById(id);
-        return el ? el.textContent?.trim().replace(/\s+/g, ' ') : '';
-      }
+        return el?.textContent?.trim().replace(/\s+/g, ' ') || '';
+      };
 
       const days = [
-        'licaoSabado',
-        'licaoDomingo',
-        'licaoSegunda',
-        'licaoTerca',
-        'licaoQuarta',
-        'licaoQuinta',
-        'licaoSexta'
-      ].map(getText).filter((d): d is string => !!d);
+        'licaoSabado', 'licaoDomingo', 'licaoSegunda',
+        'licaoTerca', 'licaoQuarta', 'licaoQuinta', 'licaoSexta'
+      ].map(getText).filter(Boolean);
 
       const verses = Array.from(document.querySelectorAll('.versiculo'))
         .map(el => el.textContent?.trim())
-        .filter((v): v is string => !!v);
+        .filter(Boolean) as string[];
 
       return {
         title: document.querySelector('h1')?.textContent?.trim() || 'Lição da Escola Sabatina',
@@ -80,12 +91,11 @@ async function scrapeAndCacheLesson(): Promise<LessonData> {
     });
 
     return {
-      ...lessonContent,
-      lastUpdated: new Date().toISOString()
+      ...lessonData,
+      lessonLink,
+      lastUpdated: getCurrentDate()
     };
   } finally {
-    if (browser) {
-      await browser.close();
-    }
+    await browser.close();
   }
 }

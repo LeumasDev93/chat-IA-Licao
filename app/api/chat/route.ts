@@ -1,139 +1,109 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GoogleGenAI } from '@google/genai';
 import { getCachedLesson, LessonData } from './scrape-lesson';
 
-const API_KEY = new GoogleGenAI({ apiKey: "AIzaSyAO8-1xWfio54YVvaOV3pEabu7GyE40oPo" });
+const GEMINI_API_KEY = "AIzaSyAO8-1xWfio54YVvaOV3pEabu7GyE40oPo";
 
-if (API_KEY) {
-  console.log("GoogleGenerativeAI instance created.");
-} else {
-  console.error("Erro: A variável de ambiente GEMINI_API_KEY não foi encontrada ao iniciar.");
+interface ChatMessage {
+  role: "user" | "model";
+  parts: { text: string }[];
 }
 
-function buildSystemPrompt(lesson: LessonData | null) {
-  let prompt = `
-Você é um assistente especializado no **nos estudos da lição da escola sabatina baseando neste site "https://mais.cpb.com.br/licao-adultos/"**, 
-uma site oficcial de estudos da lição da escola sabatina, onde informações essenciais sobre cada lica para cada dia da semna de sabado a sexta feira e tendo en conta o auxiliar e o comentario. 
-Cada vez que ele recebe uma pergunta, ele responde de acordo com o que foi aprendido no site, tem de explorar o site, entrar em cada dia  neste link https://mais.cpb.com.br/licao/ e trazer as informacoes para io usuarios.
-tem aprofundar no tem e trazer mas conteudos e numca deve citar o site. Também tem de trazer os versiculos biblicos para cada dia da semana, bem extruturas dentro de parentese.
+function buildSystemPrompt(lesson: LessonData | null): string {
+  const basePrompt = `
+Você é um especialista na Lição da Escola Sabatina, com profundo conhecimento teológico e capacidade de análise bíblica. 
+Sua missão é fornecer respostas completas e aprofundadas baseadas no conteúdo oficial de ${lesson?.title || 'a lição atual'}.
 
-se um usuario falar contigo no Kriolu de cabu verdi, voce deve responde-lo em kriolu de cabo verde ".
+DIRETRIZES ESSENCIAIS:
+1. **Contextualização Histórica**: Sempre que relevante, forneça o contexto histórico-cultural dos textos
+2. **Análise Teológica**: Explore os temas teológicos principais e suas implicações
+3. **Aplicação Prática**: Sugira aplicações concretas para a vida diária
+4. **Ligações Bíblicas**: Relacione com outros textos bíblicos que complementem o estudo
+5. **Versículos Expandidos**: Não apenas cite, mas explique os versículos-chave
+6. **Perguntas Reflexivas**: Inclua perguntas que estimulem a reflexão pessoal
+7. **Estrutura Organizada**: Use parágrafos temáticos e marcadores quando apropriado
 
-### INFORMAÇÕES ESSENCIAIS:
-1. **Nao deve Responder nada que nao tem a Ver no site https://mais.cpb.com.br/licao-adultos/rute-e-ester**
-2. **Qundo um usuario te diz para falar de licao de hoje, voce deve responde-lo comparando a data atual e o dia da semana atual para responder exatmente ao dia de hoje, mais voce nao pode perguntar a data de hoje tem de pegar a data do sistema e comparar apenas respondeno a pergunta dele **
-3. **Nunca deve perguntar para usuario sempre tem de ter a capacidade de responder a pergunta dele,
-4. **Evite repetir sempre esta introdução**,
-5. **Tem de ser rapido e eficiente*,
+${!lesson ? 
+"(ATENÇÃO: Usando conhecimento geral, mas mantendo profundidade analítica)" : 
+`INFORMAÇÕES DETALHADAS DA LIÇÃO:
+
+**TEMA CENTRAL**: ${lesson.title}
+${lesson.days.map((content, index) => {
+  const dayNames = ['Sábado', 'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Auxiliar', 'Comentário'];
+  return `
+**${dayNames[index]} - ANÁLISE APROFUNDADA**:
+${content}
+
+**TÓPICOS PARA REFLEXÃO**:
+- Principais ensinamentos deste estudo
+- Como isto se relaciona com o tema central
+- Aplicações práticas para minha vida
+- Perguntas para discussão em grupo
 `;
+}).join('\n')}
 
+**VERSÍCULOS COMENTADOS**:
+${lesson.verses.map(verse => `
+- (${verse}): Exegese detalhada e significado contextual`).join('\n')}
+`}
+`.trim();
 
-  if (lesson) {
-    prompt += `
-
-Informações mais recentes da lição:
-Título: ${lesson.title || 'Não disponível'}
-
-Conteúdos diários da lição:
-${lesson.days.map((d, i) => `- Dia ${i + 1}: ${d || 'Conteúdo não disponível'}`).join('\n') || 'Nenhum conteúdo diário disponível.'}
-
-Versículos bíblicos para a semana:
-${lesson.verses.map(v => `- (${v || 'Versículo não disponível'})`).join('\n') || 'Nenhum versículo disponível.'}
-`;
-  } else {
-    prompt += `
-(Atenção: Não foi possível carregar o conteúdo da lição no momento. Posso tentar responder a perguntas gerais sobre a Escola Sabatina.)
-`;
-  }
-
-  return prompt.trim();
+  return basePrompt;
 }
 
 export async function POST(req: NextRequest) {
-  if (!API_KEY) {
+  if (!GEMINI_API_KEY) {
     return NextResponse.json(
-      { message: "Erro de configuração do servidor: Chave da API do Gemini não disponível ou inválida." },
+      { message: "Erro de configuração do servidor" },
       { status: 500 }
     );
   }
 
   const { userMessage } = await req.json();
-
-  if (!userMessage || typeof userMessage !== 'string' || userMessage.trim() === '') {
+  if (!userMessage?.trim()) {
     return NextResponse.json(
-      { message: "Por favor, envie uma mensagem válida." },
+      { message: "Por favor, envie uma mensagem válida" },
       { status: 400 }
     );
   }
 
+  if (/^(ola|oi|olá|hello|bom dia|boa tarde|boa noite)/i.test(userMessage.toLowerCase())) {
+    return NextResponse.json({
+      message: "Olá! Como posso ajudar com as Lições da Escola Sabatina desta semana?"
+    });
+  }
+
   try {
-    if (/^(ola|oi|olá|hello|bom dia|boa tarde|boa noite)/i.test(userMessage.toLowerCase())) {
-      return NextResponse.json({
-        message: "Olá! Como posso ajudar com as Lições da Escola Sabatina desta semana?"
-      }, { status: 200 });
-    }
-
-    let lesson: LessonData | null = null;
-    try {
-      lesson = await getCachedLesson();
-    } catch (scrapingError) {
-      //console.error("Erro ao obter lição (scraping):", scrapingError);
-    }
-
+    const lesson = await getCachedLesson();
     const systemPrompt = buildSystemPrompt(lesson);
 
-    if (systemPrompt.trim() === '' || userMessage.trim() === '') {
-      return NextResponse.json(
-        { message: "Conteúdo da mensagem ou do prompt de sistema vazio. Por favor, tente novamente com uma mensagem válida." },
-        { status: 400 }
-      );
-    }
-
-    const conversationHistory: any[] = [
+    const conversation: ChatMessage[] = [
       { role: "user", parts: [{ text: systemPrompt }] },
-      { role: "user", parts: [{ text: userMessage }] },
+      { role: "user", parts: [{ text: userMessage }] }
     ];
 
-    const genAI = new GoogleGenerativeAI("AIzaSyAO8-1xWfio54YVvaOV3pEabu7GyE40oPo");
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    if (!model) {
+    const result = await model.generateContent({ contents: conversation });
+    const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text 
+      || "Não entendi sua pergunta. Poderia reformular?";
+
+    return NextResponse.json({ message: responseText });
+
+  } catch (error: any) {
+    console.error("Erro na API:", error);
+
+    if (error.message?.includes("429")) {
       return NextResponse.json(
-        { message: "Não foi possível inicializar o modelo Gemini. Verifique a configuração da API." },
-        { status: 500 }
-      );
-    }
-
-    const response = await model.generateContent({
-      contents: conversationHistory,
-    });
-
-    const text = response.response.candidates?.[0]?.content?.parts?.[0]?.text || "Não entendi sua pergunta. Poderia reformular?";
-
-    return NextResponse.json({ message: text }, { status: 200 });
-
-  } catch (error: unknown) {
-     console.error("Erro geral no manipulador da API:", error);
-
-    if (
-      error &&
-      typeof error === 'object' &&
-      'message' in error &&
-      typeof (error as any).message === 'string' &&
-      (error as any).message.includes("429") &&
-      (error as any).message.toLowerCase().includes("too many requests")
-    ) {
-      return NextResponse.json(
-        { message: "Muitas requisições! Você excedeu sua cota na API do Gemini. Por favor, tente novamente em alguns minutos." },
+        { message: "Muitas requisições! Tente novamente mais tarde." },
         { status: 429 }
       );
     }
 
     return NextResponse.json(
-      { message: "Desculpe, estou com problemas técnicos. Por favor, tente novamente mais tarde." },
+      { message: "Erro ao processar sua solicitação" },
       { status: 500 }
     );
   }
