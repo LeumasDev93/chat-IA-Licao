@@ -25,6 +25,7 @@ const Message: React.FC<MessageProps> = ({
   const [showActions, setShowActions] = useState(false);
   const [copied, setCopied] = useState(false);
   const messageRef = useRef<HTMLDivElement>(null);
+  const [pdfSalve, setPdfSalve] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -151,8 +152,10 @@ const Message: React.FC<MessageProps> = ({
 
       pdf.addImage(canvas, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`mensagem-${message.id || Date.now()}.pdf`);
+      setPdfSalve(true);
+      setTimeout(() => setPdfSalve(false), 2000);
     } catch (error) {
-      console.error("Erro ao gerar PDF:", error);
+      // console.error("Erro ao gerar PDF:", error);
       // Fallback para método simples
       const pdf = new jsPDF();
       pdf.text(`Mensagem ${isBot ? "do Assistente" : "do Usuário"}`, 10, 10);
@@ -161,46 +164,6 @@ const Message: React.FC<MessageProps> = ({
       pdf.save(`mensagem-simples-${Date.now()}.pdf`);
     }
   };
-
-  // Botões de ação reutilizáveis
-  const ActionButtons = () => (
-    <div
-      className={`flex gap-2 justify-end mt-2 ${
-        isBot ? "justify-start" : "justify-end"
-      }`}
-    >
-      <button
-        onClick={handleCopy}
-        className={`p-2 rounded-full ${
-          isDark
-            ? "bg-gray-700 hover:bg-gray-600"
-            : "bg-gray-200 hover:bg-gray-300"
-        } transition-colors`}
-        title="Copiar mensagem"
-      >
-        <Copy size={16} className={isDark ? "text-white" : "text-gray-700"} />
-        {copied && (
-          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs whitespace-nowrap">
-            Copiado!
-          </span>
-        )}
-      </button>
-      <button
-        onClick={handleGeneratePDF}
-        className={`p-2 rounded-full ${
-          isDark
-            ? "bg-gray-700 hover:bg-gray-600"
-            : "bg-gray-200 hover:bg-gray-300"
-        } transition-colors`}
-        title="Gerar PDF"
-      >
-        <FileText
-          size={16}
-          className={isDark ? "text-white" : "text-gray-700"}
-        />
-      </button>
-    </div>
-  );
 
   return (
     <div
@@ -305,6 +268,11 @@ const Message: React.FC<MessageProps> = ({
                   size={14}
                   className={isDark ? "text-white" : "text-gray-700"}
                 />
+                {copied && (
+                  <span className="absolute bottom-6 right-4 -translate-x-1/2 text-xs whitespace-nowrap">
+                    Copiado!
+                  </span>
+                )}
               </button>
               <button
                 onClick={handleGeneratePDF}
@@ -319,6 +287,11 @@ const Message: React.FC<MessageProps> = ({
                   size={14}
                   className={isDark ? "text-white" : "text-gray-700"}
                 />
+                {pdfSalve && (
+                  <span className="absolute bottom-6 -right-4 -translate-x-1/2 text-xs whitespace-nowrap">
+                    Pdf gerado!
+                  </span>
+                )}
               </button>
             </div>
           </div>
