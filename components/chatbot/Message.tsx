@@ -77,91 +77,192 @@ const Message: React.FC<MessageProps> = ({
   const imageClass = `w-10 h-10 ${isDark ? "filter invert brightness-50" : ""}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(message.text);
+    try {
+      // Método moderno (funciona na maioria dos navegadores)
+      if (navigator.clipboard) {
+        navigator.clipboard
+          .writeText(message.text)
+          .then(() => showCopySuccess())
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          .catch(() => useFallbackCopyMethod());
+      } else {
+        // Fallback para dispositivos mobile e navegadores antigos
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useFallbackCopyMethod();
+      }
+    } catch (error) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useFallbackCopyMethod();
+    }
+  };
+
+  const useFallbackCopyMethod = () => {
+    // Criar um elemento textarea temporário
+    const textarea = document.createElement("textarea");
+    textarea.value = message.text;
+    textarea.style.position = "fixed"; // Evitar rolagem
+    textarea.style.opacity = "0";
+
+    document.body.appendChild(textarea);
+
+    // Selecionar e copiar o texto
+    textarea.select();
+    try {
+      document.execCommand("copy");
+      showCopySuccess();
+    } catch (err) {
+      console.error("Falha ao copiar texto", err);
+      alert("Não foi possível copiar o texto. Tente manualmente.");
+    }
+
+    // Remover o textarea
+    document.body.removeChild(textarea);
+  };
+
+  const showCopySuccess = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     onActionClick?.("copy");
   };
 
-  const handleGeneratePDF = async () => {
+  const handleGeneratePDF = async (lessonTitle: string) => {
     onActionClick?.("pdf");
     try {
-      if (!messageRef.current) return;
-
-      // 1. Criar um container temporário
-      const container = document.createElement("div");
-      container.style.position = "fixed";
-      container.style.left = "-9999px";
-      container.style.width = "100%";
-      container.style.maxWidth = "600px";
-      container.style.padding = "20px";
-      container.style.backgroundColor = isDark ? "#1f2937" : "#ffffff";
-      container.style.color = isDark ? "#ffffff" : "#000000";
-
-      // 2. Criar o conteúdo manualmente
-      container.innerHTML = `
-        <div style="font-family: Arial, sans-serif; max-width: 100%;">
-          <div style="display: flex; align-items: center; margin-bottom: 15px;">
-            <div style="width: 32px; height: 32px; border-radius: 50%; 
-                background: ${
-                  isBot
-                    ? isDark
-                      ? "#374151"
-                      : "#e5e7eb"
-                    : isDark
-                    ? "#1d4ed8"
-                    : "#bfdbfe"
-                };
-                display: flex; align-items: center; justify-content: center; margin-right: 10px;">
-              ${isBot ? "🤖" : "👤"}
-            </div>
-            <strong>${isBot ? "Assistente" : "Você"}</strong>
-          </div>
-          <div style="margin-bottom: 10px; white-space: pre-wrap;">${
-            message.text
-          }</div>
-          <div style="font-size: 0.8em; color: ${
-            isDark ? "#9ca3af" : "#6b7280"
-          };">
-            ${formattedTime}
-          </div>
-        </div>
-      `;
-
-      document.body.appendChild(container);
-
-      // 3. Converter para imagem
-      const canvas = await html2canvas(container, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        backgroundColor: isDark ? "#1f2937" : "#ffffff",
-      });
-
-      document.body.removeChild(container);
-
-      // 4. Criar PDF
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
       });
 
-      const imgProps = pdf.getImageProperties(canvas.toDataURL("image/png"));
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      // Configurações de estilo
+      const mainFont = "times";
+      const titleSize = 14;
+      const textSize = 12;
+      const margin = 20;
+      const lineHeight = 6;
+      let yPosition = margin;
 
-      pdf.addImage(canvas, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`mensagem-${message.id || Date.now()}.pdf`);
+      // Função para adicionar texto formatado
+      const addText = (
+        text: string,
+        size = textSize,
+        style: string = "normal",
+        x = margin
+      ) => {
+        pdf.setFont(mainFont, style);
+        pdf.setFontSize(size);
+
+        const lines = pdf.splitTextToSize(
+          text,
+          pdf.internal.pageSize.getWidth() - 2 * margin
+        );
+
+        for (const line of lines) {
+          if (yPosition > pdf.internal.pageSize.getHeight() - margin) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+
+          pdf.text(line, x, yPosition);
+          yPosition += lineHeight;
+        }
+      };
+
+      // Título principal (Lições da Semana)
+      addText(lessonTitle, titleSize, "bold");
+      yPosition += lineHeight;
+
+      // Data/hora
+      addText(
+        `Data: ${new Date(
+          message.timestamp
+        ).toLocaleDateString()} - Hora: ${formattedTime}`
+      );
+      yPosition += lineHeight * 1.5;
+
+      // Processar Markdown completo
+      const processMarkdown = (content: string) => {
+        const blocks = content.split(/\n\s*\n/);
+
+        for (const block of blocks) {
+          if (block.startsWith("# ")) {
+            addText(block.substring(2), titleSize, "bold");
+          } else if (block.startsWith("## ")) {
+            addText(block.substring(3), textSize, "bold");
+          } else if (block.startsWith("### ")) {
+            addText(block.substring(4), textSize, "bolditalic");
+          } else if (block.startsWith("* ")) {
+            const items = block.split("\n* ");
+            for (const item of items.filter((i) => i)) {
+              addText(
+                `• ${item.replace("* ", "").trim()}`,
+                textSize,
+                "normal",
+                margin + 5
+              );
+            }
+          } else if (block.startsWith("> ")) {
+            addText(block.substring(2), textSize, "italic", margin + 5);
+          } else if (block.startsWith("```")) {
+            // Bloco de código
+            const code = block.split("\n").slice(1, -1).join("\n");
+            addText(code, textSize - 1, "normal", margin + 10);
+            yPosition += lineHeight;
+          } else if (block.match(/\[.*\]\(.*\)/)) {
+            // Links
+            const linkText = block.replace(/\[(.*?)\]\(.*?\)/g, "$1");
+            addText(linkText, textSize, "normal");
+          } else if (block.match(/\*\*.*\*\*/)) {
+            // Negrito
+            const boldText = block.replace(/\*\*(.*?)\*\*/g, "$1");
+            addText(boldText, textSize, "bold");
+          } else if (block.match(/_.*_/)) {
+            // Itálico
+            const italicText = block.replace(/_(.*?)_/g, "$1");
+            addText(italicText, textSize, "italic");
+          } else if (block.match(/`.*`/)) {
+            // Código inline
+            const codeText = block.replace(/`(.*?)`/g, "$1");
+            addText(codeText, textSize - 1, "normal");
+          } else {
+            // Texto normal
+            addText(block);
+          }
+
+          yPosition += lineHeight / 2;
+        }
+      };
+
+      // Processar o conteúdo da mensagem
+      processMarkdown(message.text);
+
+      // Rodapé
+      pdf.setFontSize(10);
+      pdf.text(
+        `Gerado em: ${new Date().toLocaleString()}`,
+        pdf.internal.pageSize.getWidth() - margin,
+        pdf.internal.pageSize.getHeight() - 10,
+        { align: "right" }
+      );
+
+      pdf.save(`${lessonTitle.replace(/[^a-z0-9]/gi, "_")}.pdf`);
       setPdfSalve(true);
       setTimeout(() => setPdfSalve(false), 2000);
     } catch (error) {
-      // console.error("Erro ao gerar PDF:", error);
-      // Fallback para método simples
+      console.error("Erro ao gerar PDF:", error);
+      alert("Erro ao gerar PDF. Uma versão simplificada será criada.");
+
+      // Fallback simples
+      const mainFont = "times";
+      const titleSize = 14;
+      const textSize = 12;
+      const margin = 20;
       const pdf = new jsPDF();
-      pdf.text(`Mensagem ${isBot ? "do Assistente" : "do Usuário"}`, 10, 10);
-      pdf.text(`Enviada em: ${formattedTime}`, 10, 15);
-      pdf.text(message.text, 10, 25);
-      pdf.save(`mensagem-simples-${Date.now()}.pdf`);
+      pdf.setFont(mainFont);
+      pdf.setFontSize(titleSize);
+      pdf.text(lessonTitle, margin, margin);
+      pdf.setFontSize(textSize);
+      pdf.text(message.text, margin, margin + 10);
+      pdf.save(`${lessonTitle}_simplificado.pdf`);
     }
   };
 
@@ -275,7 +376,7 @@ const Message: React.FC<MessageProps> = ({
                 )}
               </button>
               <button
-                onClick={handleGeneratePDF}
+                onClick={() => handleGeneratePDF("Resumo")}
                 className={`p-1 rounded-full ${
                   isDark
                     ? "bg-gray-700 hover:bg-gray-600"
