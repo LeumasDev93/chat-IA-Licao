@@ -6,14 +6,20 @@ import { MessageType } from "@/types";
 import { useTheme } from "@/contexts/ThemeContext";
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
-import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 interface MessageProps {
   message: MessageType & { id?: string };
+  isLastMessage?: boolean;
+  onActionClick?: (action: "copy" | "pdf") => void;
 }
 
-const Message: React.FC<MessageProps> = ({ message }) => {
+const Message: React.FC<MessageProps> = ({
+  message,
+  isLastMessage = false,
+  onActionClick,
+}) => {
   const { theme } = useTheme();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [showActions, setShowActions] = useState(false);
@@ -73,103 +79,138 @@ const Message: React.FC<MessageProps> = ({ message }) => {
     navigator.clipboard.writeText(message.text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+    onActionClick?.("copy");
   };
 
   const handleGeneratePDF = async () => {
+    onActionClick?.("pdf");
     try {
       if (!messageRef.current) return;
 
-      // Criar PDF diretamente com texto (abordagem mais confiável)
+      // 1. Criar um container temporário
+      const container = document.createElement("div");
+      container.style.position = "fixed";
+      container.style.left = "-9999px";
+      container.style.width = "100%";
+      container.style.maxWidth = "600px";
+      container.style.padding = "20px";
+      container.style.backgroundColor = isDark ? "#1f2937" : "#ffffff";
+      container.style.color = isDark ? "#ffffff" : "#000000";
+
+      // 2. Criar o conteúdo manualmente
+      container.innerHTML = `
+        <div style="font-family: Arial, sans-serif; max-width: 100%;">
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; 
+                background: ${
+                  isBot
+                    ? isDark
+                      ? "#374151"
+                      : "#e5e7eb"
+                    : isDark
+                    ? "#1d4ed8"
+                    : "#bfdbfe"
+                };
+                display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+              ${isBot ? "🤖" : "👤"}
+            </div>
+            <strong>${isBot ? "Assistente" : "Você"}</strong>
+          </div>
+          <div style="margin-bottom: 10px; white-space: pre-wrap;">${
+            message.text
+          }</div>
+          <div style="font-size: 0.8em; color: ${
+            isDark ? "#9ca3af" : "#6b7280"
+          };">
+            ${formattedTime}
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(container);
+
+      // 3. Converter para imagem
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        logging: false,
+        useCORS: true,
+        backgroundColor: isDark ? "#1f2937" : "#ffffff",
+      });
+
+      document.body.removeChild(container);
+
+      // 4. Criar PDF
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
       });
 
-      // Configurações iniciais
-      pdf.setFont("helvetica");
-      pdf.setFontSize(12);
-      pdf.setTextColor(isDark ? 255 : 0);
+      const imgProps = pdf.getImageProperties(canvas.toDataURL("image/png"));
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      // Cabeçalho
-      pdf.text(`Mensagem ${isBot ? "do Assistente" : "do Usuário"}`, 10, 10);
-      pdf.text(`Enviada em: ${formattedTime}`, 10, 15);
-
-      // Conteúdo formatado
-      const formattedText = message.text
-        .replace(/\\n/g, "\n") // Preserva quebras de linha
-        .replace(/\*\*(.*?)\*\*/g, "$1") // Remove negrito
-        .replace(/\*(.*?)\*/g, "$1"); // Remove itálico
-
-      // Dividir texto em linhas
-      const lines = pdf.splitTextToSize(formattedText, 180);
-
-      // Adicionar texto ao PDF
-      pdf.text(lines, 10, 25);
-
-      // Adicionar borda e estilo
-      pdf.setDrawColor(isDark ? 255 : 0);
-      pdf.rect(5, 5, 200, 280);
-
-      // Salvar PDF
+      pdf.addImage(canvas, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`mensagem-${message.id || Date.now()}.pdf`);
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.");
+      // Fallback para método simples
+      const pdf = new jsPDF();
+      pdf.text(`Mensagem ${isBot ? "do Assistente" : "do Usuário"}`, 10, 10);
+      pdf.text(`Enviada em: ${formattedTime}`, 10, 15);
+      pdf.text(message.text, 10, 25);
+      pdf.save(`mensagem-simples-${Date.now()}.pdf`);
     }
   };
+
+  // Botões de ação reutilizáveis
+  const ActionButtons = () => (
+    <div
+      className={`flex gap-2 justify-end mt-2 ${
+        isBot ? "justify-start" : "justify-end"
+      }`}
+    >
+      <button
+        onClick={handleCopy}
+        className={`p-2 rounded-full ${
+          isDark
+            ? "bg-gray-700 hover:bg-gray-600"
+            : "bg-gray-200 hover:bg-gray-300"
+        } transition-colors`}
+        title="Copiar mensagem"
+      >
+        <Copy size={16} className={isDark ? "text-white" : "text-gray-700"} />
+        {copied && (
+          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs whitespace-nowrap">
+            Copiado!
+          </span>
+        )}
+      </button>
+      <button
+        onClick={handleGeneratePDF}
+        className={`p-2 rounded-full ${
+          isDark
+            ? "bg-gray-700 hover:bg-gray-600"
+            : "bg-gray-200 hover:bg-gray-300"
+        } transition-colors`}
+        title="Gerar PDF"
+      >
+        <FileText
+          size={16}
+          className={isDark ? "text-white" : "text-gray-700"}
+        />
+      </button>
+    </div>
+  );
 
   return (
     <div
       ref={messageRef}
       className={`flex ${
         isBot ? "justify-start" : "justify-end"
-      } animate-fadeIn relative`}
+      } animate-fadeIn relative mb-6`}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
-      {/* Botões de ação */}
-      {showActions && (
-        <div
-          className={`absolute flex gap-2 ${
-            isBot ? "left-0 -translate-x-full" : "right-0 translate-x-full"
-          } top-0 p-2`}
-        >
-          <button
-            onClick={handleCopy}
-            className={`p-2 rounded-full ${
-              isDark
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
-            } transition-colors`}
-            title="Copiar mensagem"
-          >
-            <Copy
-              size={16}
-              className={isDark ? "text-white" : "text-gray-700"}
-            />
-            {copied && (
-              <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs whitespace-nowrap">
-                Copiado!
-              </span>
-            )}
-          </button>
-          <button
-            onClick={handleGeneratePDF}
-            className={`p-2 rounded-full ${
-              isDark
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
-            } transition-colors`}
-            title="Gerar PDF"
-          >
-            <FileText
-              size={16}
-              className={isDark ? "text-white" : "text-gray-700"}
-            />
-          </button>
-        </div>
-      )}
-
       <div
         className={`flex max-w-[90%] sm:max-w-[100%] ${
           isBot ? "flex-row" : "flex-row-reverse"
@@ -195,7 +236,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
           </div>
         </div>
 
-        <div>
+        <div className="flex flex-col">
           <div
             className={`px-4 py-3 rounded-2xl prose prose-sm shadow-sm ${
               isBot
@@ -233,18 +274,53 @@ const Message: React.FC<MessageProps> = ({ message }) => {
               {message.text}
             </ReactMarkdown>
           </div>
-          <div
-            className={`text-xs mt-1 ${
-              isBot
-                ? isDark
-                  ? "text-gray-400 text-left"
-                  : "text-gray-500 text-left"
-                : isDark
-                ? "text-blue-300 text-right"
-                : "text-blue-600 text-right"
-            }`}
-          >
-            {formattedTime}
+
+          <div className="flex justify-between items-center mt-1">
+            <div
+              className={`text-xs ${
+                isBot
+                  ? isDark
+                    ? "text-gray-400 text-left"
+                    : "text-gray-500 text-left"
+                  : isDark
+                  ? "text-blue-300 text-right"
+                  : "text-blue-600 text-right"
+              }`}
+            >
+              {formattedTime}
+            </div>
+
+            {/* Novos botões de ação no rodapé */}
+            <div className={`flex gap-2 ${isBot ? "ml-2" : "mr-2"}`}>
+              <button
+                onClick={handleCopy}
+                className={`p-1 rounded-full ${
+                  isDark
+                    ? "bg-gray-700 hover:bg-gray-600"
+                    : "bg-gray-200 hover:bg-gray-300"
+                } transition-colors`}
+                title="Copiar mensagem"
+              >
+                <Copy
+                  size={14}
+                  className={isDark ? "text-white" : "text-gray-700"}
+                />
+              </button>
+              <button
+                onClick={handleGeneratePDF}
+                className={`p-1 rounded-full ${
+                  isDark
+                    ? "bg-gray-700 hover:bg-gray-600"
+                    : "bg-gray-200 hover:bg-gray-300"
+                } transition-colors`}
+                title="Gerar PDF"
+              >
+                <FileText
+                  size={14}
+                  className={isDark ? "text-white" : "text-gray-700"}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>
