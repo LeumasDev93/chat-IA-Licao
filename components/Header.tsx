@@ -122,7 +122,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   : "bg-white text-Black border-2 border-gray-300"
               }`}
             >
-              {session?.user?.name?.charAt(0).toUpperCase() || ""}
+              {!session?.user?.name?.charAt(0).toUpperCase() || ""}
             </div>
           )}
         </div>
@@ -140,7 +140,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           <span className="text-sm">Nova Conversa</span>
         </button>
 
-        {session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+        {!session?.user?.email && Object.keys(chatHistory).length > 0 ? (
           <div className="flex-1 overflow-y-auto px-2">
             <h2 className="font-bold mb-2 text-sm">Histórico</h2>
 
@@ -173,7 +173,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         )}
         {/* Rodapé: Login (se não logado) + ThemeSwitch */}
         <div className={`p-4 border-t ${borderColor}`}>
-          {!session?.user?.email && (
+          {session?.user?.email && (
             <Link
               href="/login"
               className={`w-full p-2 rounded flex items-center justify-center gap-2 shadow-sm mb-4
@@ -273,7 +273,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               </button>
 
               {/* Histórico */}
-              {session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+              {!session?.user?.email && Object.keys(chatHistory).length > 0 ? (
                 <div className="flex-1 overflow-y-auto px-2">
                   <h2 className="font-bold mb-2 text-sm">Histórico</h2>
 
@@ -305,7 +305,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               )}
               {/* Rodapé fixo */}
               <div className={`p-4 border-t ${borderColor}`}>
-                {!session?.user?.email && (
+                {session?.user?.email && (
                   <Link
                     href="/login"
                     className={`w-full p-2 rounded flex items-center justify-center gap-2 shadow-sm mb-4

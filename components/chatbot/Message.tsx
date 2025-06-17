@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import { User, Bot, Copy, FileText } from "lucide-react";
+import { User, Bot, Copy, FileText, Volume2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { MessageType } from "@/types";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -12,7 +12,7 @@ import html2canvas from "html2canvas";
 interface MessageProps {
   message: MessageType & { id?: string };
   isLastMessage?: boolean;
-  onActionClick?: (action: "copy" | "pdf") => void;
+  onActionClick?: (action: "copy" | "pdf" | "speak") => void;
 }
 
 const Message: React.FC<MessageProps> = ({
@@ -27,6 +27,52 @@ const Message: React.FC<MessageProps> = ({
   const messageRef = useRef<HTMLDivElement>(null);
   const [pdfSalve, setPdfSalve] = useState(false);
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const handleSpeak = () => {
+    onActionClick?.("speak");
+
+    // Cancela a fala atual se estiver falando
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    // Configuração da fala
+    const utterance = new SpeechSynthesisUtterance();
+    utterance.text = message.text;
+    utterance.rate = 0.9; // Velocidade (0.1 a 10)
+    utterance.pitch = 1; // Tom (0 a 2)
+    utterance.volume = 1; // Volume (0 a 1)
+
+    // Seleciona uma voz em português se disponível
+    const voices = window.speechSynthesis.getVoices();
+    const portugueseVoice = voices.find(
+      (voice) => voice.lang.includes("pt") || voice.lang.includes("PT")
+    );
+
+    if (portugueseVoice) {
+      utterance.voice = portugueseVoice;
+    }
+
+    // Eventos
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    speechRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (speechRef.current) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
@@ -393,6 +439,26 @@ const Message: React.FC<MessageProps> = ({
                     Pdf gerado!
                   </span>
                 )}
+              </button>
+              <button
+                onClick={handleSpeak}
+                className={`p-1 rounded-full ${
+                  isDark
+                    ? "bg-gray-700 hover:bg-gray-600"
+                    : "bg-gray-200 hover:bg-gray-300"
+                } transition-colors`}
+                title={isSpeaking ? "Parar leitura" : "Ler em voz alta"}
+              >
+                <Volume2
+                  size={14}
+                  className={
+                    isSpeaking
+                      ? "text-green-500 animate-pulse"
+                      : isDark
+                      ? "text-white"
+                      : "text-gray-700"
+                  }
+                />
               </button>
             </div>
           </div>
