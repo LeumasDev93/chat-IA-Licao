@@ -30,24 +30,45 @@ const Message: React.FC<MessageProps> = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  const handleSpeak = () => {
-    onActionClick?.("speak");
+  const cleanMarkdownForSpeech = (text: string) => {
+    return text
+      .replace(/#+\s*/g, "") // Remove headings
+      .replace(/\*\*/g, "") // Remove **
+      .replace(/\*/g, "") // Remove *
+      .replace(/_/g, "") // Remove _
+      .replace(/`/g, "") // Remove `
+      .replace(/~~/g, "") // Remove ~~
+      .replace(/\[(.*?)\]\(.*?\)/g, "$1") // Remove links, mantém o texto
+      .replace(/!\[.*?\]\(.*?\)/g, "") // Remove imagens completamente
+      .replace(/>\s*/g, "") // Remove blockquotes
+      .replace(/\n\s*\n/g, "\n") // Remove múltiplas quebras de linha
+      .replace(/^\s+|\s+$/g, "") // Remove espaços no início/fim
+      .replace(/\s+/g, " "); // Remove múltiplos espaços
+  };
 
-    // Cancela a fala atual se estiver falando
+  // Função handleSpeak atualizada
+  const handleSpeak = () => {
     if (isSpeaking) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
       return;
     }
 
-    // Configuração da fala
-    const utterance = new SpeechSynthesisUtterance();
-    utterance.text = message.text;
-    utterance.rate = 0.9; // Velocidade (0.1 a 10)
-    utterance.pitch = 1; // Tom (0 a 2)
-    utterance.volume = 1; // Volume (0 a 1)
+    const cleanText = cleanMarkdownForSpeech(message.text);
 
-    // Seleciona uma voz em português se disponível
+    if (!cleanText.trim()) {
+      console.warn("Nenhum texto válido para ler");
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+
+    // Configurações de voz
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    // Tenta encontrar uma voz em português
     const voices = window.speechSynthesis.getVoices();
     const portugueseVoice = voices.find(
       (voice) => voice.lang.includes("pt") || voice.lang.includes("PT")
@@ -58,9 +79,20 @@ const Message: React.FC<MessageProps> = ({
     }
 
     // Eventos
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      console.log("Leitura iniciada");
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      console.log("Leitura concluída");
+    };
+
+    utterance.onerror = (event) => {
+      setIsSpeaking(false);
+      console.error("Erro na leitura:", event);
+    };
 
     speechRef.current = utterance;
     window.speechSynthesis.speak(utterance);
