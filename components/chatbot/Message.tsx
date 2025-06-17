@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import { User, Bot, Copy, FileText, Volume2 } from "lucide-react";
+import { User, Bot, Copy, FileText, Volume2, Play, Pause } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { MessageType } from "@/types";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -29,82 +29,96 @@ const Message: React.FC<MessageProps> = ({
 
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const cleanMarkdownForSpeech = (text: string) => {
-    return text
-      .replace(/#+\s*/g, "") // Remove headings
-      .replace(/\*\*/g, "") // Remove **
-      .replace(/\*/g, "") // Remove *
-      .replace(/_/g, "") // Remove _
-      .replace(/`/g, "") // Remove `
-      .replace(/~~/g, "") // Remove ~~
-      .replace(/\[(.*?)\]\(.*?\)/g, "$1") // Remove links, mantém o texto
-      .replace(/!\[.*?\]\(.*?\)/g, "") // Remove imagens completamente
-      .replace(/>\s*/g, "") // Remove blockquotes
-      .replace(/\n\s*\n/g, "\n") // Remove múltiplas quebras de linha
-      .replace(/^\s+|\s+$/g, "") // Remove espaços no início/fim
-      .replace(/\s+/g, " "); // Remove múltiplos espaços
+  // Função ultra-refinada para limpeza de markdown
+  const prepareForSpeech = (text: string) => {
+    // Limpeza de formatação com preservação de pontuação
+    let cleanText = text
+      .replace(/#+\s*/g, "") // Remove títulos
+      .replace(/\*\*(.*?)\*\*/g, "$1") // Mantém conteúdo do negrito
+      .replace(/\*(.*?)\*/g, "$1") // Mantém conteúdo do itálico
+      .replace(/_(.*?)_/g, "$1") // Mantém conteúdo sublinhado
+      .replace(/`(.*?)`/g, "$1") // Mantém conteúdo de código
+      .replace(/~~(.*?)~~/g, "$1") // Mantém conteúdo riscado
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Remove links
+      .replace(/!\[.*?\]\(.*?\)/g, "") // Remove imagens
+      .replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML
+
+    // Adiciona pausas naturais para leitura fluida
+    cleanText = cleanText
+      .replace(/([.!?:;])\s*/g, "$1\n") // Pausa após pontuação
+      .replace(/(\n)+/g, "\n\n") // Pausa maior entre parágrafos
+      .replace(/\s+/g, " ") // Normaliza espaços
+      .replace(/\*/g, "") // Remove asteriscos residuais
+      .trim();
+
+    return cleanText;
   };
-
-  // Função handleSpeak atualizada
+  // Função de leitura corrigida
   const handleSpeak = () => {
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+    if (isSpeaking && !isPaused) {
+      // Pausar leitura
+      window.speechSynthesis.pause();
+      setIsPaused(true);
       return;
     }
 
-    const cleanText = cleanMarkdownForSpeech(message.text);
-
-    if (!cleanText.trim()) {
-      console.warn("Nenhum texto válido para ler");
+    if (isSpeaking && isPaused) {
+      // Retomar leitura
+      window.speechSynthesis.resume();
+      setIsPaused(false);
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
+    // Iniciar nova leitura
+    const preparedText = prepareForSpeech(message.text);
+    if (!preparedText.trim()) {
+      console.warn("Texto vazio após preparação");
+      return;
+    }
 
-    // Configurações de voz
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
+    const utterance = new SpeechSynthesisUtterance(preparedText);
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
     utterance.volume = 1;
+    utterance.lang = "pt-PT";
 
-    // Tenta encontrar uma voz em português
     const voices = window.speechSynthesis.getVoices();
-    const portugueseVoice = voices.find(
-      (voice) => voice.lang.includes("pt") || voice.lang.includes("PT")
-    );
-
-    if (portugueseVoice) {
-      utterance.voice = portugueseVoice;
-    }
-
-    // Eventos
-    utterance.onstart = () => {
-      setIsSpeaking(true);
-      console.log("Leitura iniciada");
-    };
-
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      console.log("Leitura concluída");
-    };
+    const ptPtVoices = voices.filter((v) => v.lang === "pt-PT");
+    const ptVoice = ptPtVoices.length
+      ? ptPtVoices[0]
+      : voices.find((v) => v.lang.startsWith("pt"));
+    if (ptVoice) utterance.voice = ptVoice;
 
     utterance.onerror = (event) => {
       setIsSpeaking(false);
-      console.error("Erro na leitura:", event);
+      setIsPaused(false);
+      console.error("Erro na síntese:", event.name, "Texto:", preparedText);
     };
 
-    speechRef.current = utterance;
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setIsPaused(false);
+    };
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+    };
+
+    window.speechSynthesis.cancel(); // Cancela qualquer leitura anterior
     window.speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
+    const currentSpeechRef = speechRef.current;
     return () => {
-      if (speechRef.current) {
+      if (currentSpeechRef) {
         window.speechSynthesis.cancel();
       }
     };
   }, []);
+
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
@@ -404,7 +418,9 @@ const Message: React.FC<MessageProps> = ({
                     rel="noopener noreferrer"
                   />
                 ),
-                p: ({ node, ...props }) => <p {...props} className="my-1" />,
+                p: ({ node, ...props }) => (
+                  <p {...props} className="mb-8" /> // Espaçamento de 2rem (32px) abaixo de cada parágrafo
+                ),
                 strong: ({ node, ...props }) => (
                   <strong {...props} className="font-semibold" />
                 ),
@@ -479,18 +495,26 @@ const Message: React.FC<MessageProps> = ({
                     ? "bg-gray-700 hover:bg-gray-600"
                     : "bg-gray-200 hover:bg-gray-300"
                 } transition-colors`}
-                title={isSpeaking ? "Parar leitura" : "Ler em voz alta"}
+                title={
+                  isSpeaking
+                    ? isPaused
+                      ? "Retomar leitura"
+                      : "Pausar leitura"
+                    : "Ler em voz alta"
+                }
               >
-                <Volume2
-                  size={14}
-                  className={
-                    isSpeaking
-                      ? "text-green-500 animate-pulse"
-                      : isDark
-                      ? "text-white"
-                      : "text-gray-700"
-                  }
-                />
+                {isSpeaking ? (
+                  isPaused ? (
+                    <Play size={14} className="text-yellow-500" />
+                  ) : (
+                    <Pause size={14} className="text-green-500 animate-pulse" />
+                  )
+                ) : (
+                  <Volume2
+                    size={14}
+                    className={isDark ? "text-white" : "text-gray-700"}
+                  />
+                )}
               </button>
             </div>
           </div>
