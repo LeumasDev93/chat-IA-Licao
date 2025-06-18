@@ -1,31 +1,46 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
+import { useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { initAnalytics } from "@/lib/firebase-client";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "IA - Lição da Escola Sabatina",
-  description: "Assistente virtual para estudos da Lição da Escola Sabatina",
-  manifest: "/manifest.json",
-  themeColor: "#000000",
-  appleWebApp: {
-    capable: true,
-    title: "IA Escola Sabatina",
-    statusBarStyle: "black-translucent",
-  },
-};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const handleAnalytics = async () => {
+      const analytics = await initAnalytics();
+      if (!analytics) return;
+
+      const url = `${pathname}${searchParams ? `?${searchParams}` : ""}`;
+
+      import("firebase/analytics").then(({ logEvent }) => {
+        logEvent(analytics, "page_view", {
+          page_path: url,
+          page_title: document.title,
+          page_location: window.location.href,
+        });
+      });
+    };
+
+    handleAnalytics();
+  }, [pathname, searchParams]);
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <meta charSet="utf-8" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"
@@ -37,44 +52,34 @@ export default function RootLayout({
           content="black-translucent"
         />
 
-        {/* Ícones para diversos dispositivos */}
-        <link rel="icon" href="/icons/icon-192x192.png" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <link
-          rel="apple-touch-icon"
-          sizes="152x152"
-          href="/icons/icon-152x152.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/icons/icon-180x180.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="167x167"
-          href="/icons/icon-167x167.png"
+        <title>IA - Lição da Escola Sabatina</title>
+        <meta
+          name="description"
+          content="Assistente virtual para estudos da Lição da Escola Sabatina"
         />
 
-        {/* Splash screens para iOS */}
-        <link
-          rel="apple-touch-startup-image"
-          href="/splash/iphone5_splash.png"
-          media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
-        />
-        <link
-          rel="apple-touch-startup-image"
-          href="/splash/iphone6_splash.png"
-          media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
-        />
+        {/* Favicon e ícones */}
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/icons/favicon.ico" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+
+        {/* Splash screens */}
+        {[...Array(8)].map((_, i) => (
+          <link
+            key={i}
+            rel="apple-touch-startup-image"
+            href={`/splash/splash-${i + 1}.png`}
+            media={`(device-width: ${320 + i * 50}px) and (device-height: ${
+              568 + i * 50
+            }px)`}
+          />
+        ))}
       </head>
 
       <body className={inter.className}>
         <SessionProvider>
           <ThemeProvider>
             {children}
-
-            {/* Componente para gerenciar o PWA */}
             <PWAComponents />
           </ThemeProvider>
         </SessionProvider>
@@ -82,7 +87,6 @@ export default function RootLayout({
     </html>
   );
 }
-
 // Componente separado para funcionalidades PWA
 function PWAComponents() {
   return (
