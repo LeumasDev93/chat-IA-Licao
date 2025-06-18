@@ -4,9 +4,8 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
-import { Suspense, useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { initAnalytics } from "@/lib/firebase-client";
+import { Suspense } from "react";
+import AnalyticsHandler from "@/components/AnalyticsHandler";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,28 +14,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const handleAnalytics = async () => {
-      const analytics = await initAnalytics();
-      if (!analytics) return;
-
-      const url = `${pathname}${searchParams ? `?${searchParams}` : ""}`;
-
-      import("firebase/analytics").then(({ logEvent }) => {
-        logEvent(analytics, "page_view", {
-          page_path: url,
-          page_title: document.title,
-          page_location: window.location.href,
-        });
-      });
-    };
-
-    handleAnalytics();
-  }, [pathname, searchParams]);
-
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
@@ -57,29 +34,18 @@ export default function RootLayout({
           name="description"
           content="Assistente virtual para estudos da Lição da Escola Sabatina"
         />
-
-        {/* Favicon e ícones */}
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/icons/favicon.ico" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-
-        {/* Splash screens */}
-        {[...Array(8)].map((_, i) => (
-          <link
-            key={i}
-            rel="apple-touch-startup-image"
-            href={`/splash/splash-${i + 1}.png`}
-            media={`(device-width: ${320 + i * 50}px) and (device-height: ${
-              568 + i * 50
-            }px)`}
-          />
-        ))}
       </head>
 
       <body className={inter.className}>
         <SessionProvider>
           <ThemeProvider>
-            <Suspense> {children}</Suspense>
+            <Suspense>
+              <AnalyticsHandler />
+            </Suspense>
+            {children}
             <PWAComponents />
           </ThemeProvider>
         </SessionProvider>
@@ -87,7 +53,7 @@ export default function RootLayout({
     </html>
   );
 }
-// Componente separado para funcionalidades PWA
+
 function PWAComponents() {
   return (
     <script
@@ -96,21 +62,16 @@ function PWAComponents() {
           if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
             window.addEventListener('load', () => {
               navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                  console.log('ServiceWorker registration successful');
-                })
-                .catch(err => {
-                  console.log('ServiceWorker registration failed: ', err);
-                });
+                .then(() => console.log('SW registrado com sucesso'))
+                .catch(err => console.log('Erro ao registrar SW:', err));
             });
           }
-          
+
           let deferredPrompt;
           window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             console.log('PWA pode ser instalado');
-            // Aqui você pode mostrar um botão de instalação
           });
         `,
       }}
