@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { initAnalytics } from "@/lib/firebase-client";
 
@@ -79,7 +79,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionProvider>
           <ThemeProvider>
-            {children}
+            <Suspense> {children}</Suspense>
             <PWAComponents />
           </ThemeProvider>
         </SessionProvider>
