@@ -15,6 +15,8 @@ export default function Login() {
   const router = useRouter();
   const [typeAuth, setTypeAuth] = useState<"login" | "register">("login");
 
+  const [error, setError] = useState<string | null>(null);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -63,8 +65,11 @@ export default function Login() {
     });
 
     if (error) {
-      alert("Erro ao criar conta");
-      console.error(error);
+      setError(error.message);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+      //  console.error(error);
     } else {
       router.push("/");
     }
@@ -77,8 +82,10 @@ export default function Login() {
     });
 
     if (error) {
-      alert("Erro ao fazer login");
-      console.error(error);
+      setError(error.message);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     } else {
       router.push("/");
     }
@@ -94,18 +101,23 @@ export default function Login() {
   };
 
   const handleLoginWithGoogle = async () => {
+    const redirectUrl =
+      process.env.NODE_ENV === "development"
+        ? process.env.NEXT_PUBLIC_REDIRECT_URL
+        : "https://www.iasdlicao.cv/";
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo:
-          process.env.NODE_ENV === "development"
-            ? "http://localhost:3000"
-            : "https://www.iasdlicao.cv/",
+        redirectTo: redirectUrl,
       },
     });
 
     if (error) {
-      console.error("Erro ao logar com Google:", error.message);
+      setError(error.message);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     }
   };
 
@@ -167,6 +179,11 @@ export default function Login() {
           onSubmit={handleSubmit}
           className="flex flex-col space-y-4 w-full mt-5"
         >
+          {error && (
+            <div className="bg-red-100 text-red-800 p-2 rounded mb-4">
+              {error}
+            </div>
+          )}
           {typeAuth === "register" && (
             <input
               type="text"
