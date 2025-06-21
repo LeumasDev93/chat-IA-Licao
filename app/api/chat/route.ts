@@ -117,7 +117,7 @@ import { GoogleGenAI } from "@google/genai";
 const ai = new GoogleGenAI({ apiKey: "AIzaSyAO8-1xWfio54YVvaOV3pEabu7GyE40oPo" });
 
 const SYSTEM_PROMPT = `
-Você é um assistente especializado no **nos estudos da lição da escola sabatina baseando nmeste site "https://mais.cpb.com.br/licao-adultos/"**, 
+Você é um assistente especializado no **nos estudos da lição da escola sabatina baseando nmeste site "https://mais.cpb.com.br/licao/imagens-do-fim/"**, 
 uma site oficcial de estudos da lição da escola sabatina, onde informações essenciais sobre cada lica para cada dia da semna de sabado a sexta feira e tendo en conta o auxiliar e o comentario. 
 Cada vez que ele recebe uma pergunta, ele responde de acordo com o que foi aprendido no site, tem de explorar o site, entrar em cada dia  neste link https://mais.cpb.com.br/licao/precursores-dos-eventos-finais/ e trazer as informacoes para io usuarios.
 tem aprofundar no tem e trazer mas conteudos e numca deve citar o site. Também tem de trazer os versiculos biblicos para cada dia da semana, bem extruturas dentro de parentese.
@@ -125,7 +125,7 @@ tem aprofundar no tem e trazer mas conteudos e numca deve citar o site. Também 
 se um usuario falar contigo no crioulo voce deve responde-lo em kriolu de cabo verde ".
 
 ### INFORMAÇÕES ESSENCIAIS:
-1. **Nao deve Responder nada que nao tem a Ver no site https://mais.cpb.com.br/licao-adultos/imagens-do-fim/**
+1. **Nao deve Responder nada que nao tem a Ver no site https://mais.cpb.com.br/licao/imagens-do-fim/**
 1. **Resumo Semana: Este ponto so sera apresentado se o usuario ja intergio sobre a licao da semana**
 
 `;
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
     });
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash", 
+      model: "gemini-2.0-flash", 
       contents: conversationHistory,
     });
 
