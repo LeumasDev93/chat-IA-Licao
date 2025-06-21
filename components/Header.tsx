@@ -9,9 +9,12 @@ import { IoIosLogIn, IoIosLogOut } from "react-icons/io";
 
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { handleAuth } from "@/app/actions/handle-auth";
+import { createComponentClient } from "@/models/supabase";
+import { useRouter } from "next/navigation";
+import { useSupabaseUser } from "@/hooks/useComponentClient";
+
 interface ChatSidebarProps {
   onNewChat: () => void;
   chatHistory: Record<string, MessageType[]>;
@@ -27,8 +30,11 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   setCurrentChatId,
   deleteChat,
 }) => {
-  const { data: session } = useSession();
-  console.log(session?.user?.name, "section");
+  const supabase = createComponentClient();
+  const router = useRouter();
+  const user = useSupabaseUser();
+
+  console.log(user, "user");
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -36,6 +42,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const currentYear = new Date().getFullYear();
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
   // Detecta tema do sistema
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -114,7 +124,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               className="w-16 h-16"
             />
           </div>
-          {session && (
+          {user && (
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${
                 resolvedTheme === "dark"
@@ -122,7 +132,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   : "bg-white text-Black border-2 border-gray-300"
               }`}
             >
-              {!session?.user?.name?.charAt(0).toUpperCase() || ""}
+              {user?.user?.user_metadata.full_name?.charAt(0).toUpperCase() ||
+                ""}
             </div>
           )}
         </div>
@@ -140,7 +151,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           <span className="text-sm">Nova Conversa</span>
         </button>
 
-        {!session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+        {user?.user?.id && Object.keys(chatHistory).length > 0 ? (
           <div className="flex-1 overflow-y-auto px-2">
             <h2 className="font-bold mb-2 text-sm">Histórico</h2>
 
@@ -173,7 +184,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         )}
         {/* Rodapé: Login (se não logado) + ThemeSwitch */}
         <div className={`p-4 border-t ${borderColor}`}>
-          {session?.user?.email && (
+          {!user?.user?.id && (
             <Link
               href="/login"
               className={`w-full p-2 rounded flex items-center justify-center gap-2 shadow-sm mb-4
@@ -182,8 +193,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <IoIosLogIn /> <span className="text-sm">Entrar</span>
             </Link>
           )}
-          {session?.user?.email && (
-            <form action={handleAuth}>
+          {user?.user?.id && (
+            <form action={handleLogout}>
               <button
                 type="submit"
                 className={`w-full p-2 rounded flex items-center justify-center gap-2 cursor-pointer shadow-sm mb-4
@@ -245,7 +256,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     className="w-10 h-10"
                   />
                 </div>
-                {session && (
+                {user?.user?.id && (
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ${
                       resolvedTheme === "dark"
@@ -253,7 +264,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                         : "bg-white text-Black border-2 border-gray-300"
                     }`}
                   >
-                    {session?.user?.name?.charAt(0).toUpperCase() || ""}
+                    {user?.user?.user_metadata.full_name
+                      ?.charAt(0)
+                      .toUpperCase() || ""}
                   </div>
                 )}
               </div>
@@ -273,7 +286,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               </button>
 
               {/* Histórico */}
-              {!session?.user?.email && Object.keys(chatHistory).length > 0 ? (
+              {user?.user?.id && Object.keys(chatHistory).length > 0 ? (
                 <div className="flex-1 overflow-y-auto px-2">
                   <h2 className="font-bold mb-2 text-sm">Histórico</h2>
 
@@ -305,7 +318,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               )}
               {/* Rodapé fixo */}
               <div className={`p-4 border-t ${borderColor}`}>
-                {session?.user?.email && (
+                {!user?.user?.id && (
                   <Link
                     href="/login"
                     className={`w-full p-2 rounded flex items-center justify-center gap-2 shadow-sm mb-4
@@ -314,7 +327,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     <IoIosLogIn /> <span className="text-sm">Entrar</span>
                   </Link>
                 )}
-                {session?.user?.email && (
+                {user?.user?.id && (
                   <form action={handleAuth}>
                     <button
                       type="submit"

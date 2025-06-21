@@ -168,6 +168,7 @@ export default function Home() {
     "Sexta-feira",
     "Auxiliar",
     "Comentário",
+    "Resumo Semanal",
   ];
 
   useEffect(() => {
