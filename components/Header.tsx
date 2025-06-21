@@ -10,7 +10,6 @@ import { IoIosLogIn, IoIosLogOut } from "react-icons/io";
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
 import Link from "next/link";
-import { handleAuth } from "@/app/actions/handle-auth";
 import { createComponentClient } from "@/models/supabase";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
@@ -328,7 +327,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   </Link>
                 )}
                 {user?.user?.id && (
-                  <form action={handleAuth}>
+                  <form action={handleLogout}>
                     <button
                       type="submit"
                       className={`w-full p-2 rounded flex items-center justify-center gap-2 cursor-pointer shadow-sm mb-4
