@@ -6,8 +6,7 @@ import puppeteer from 'puppeteer';
 import schedule from 'node-schedule';
 import fs from 'fs';
 import path from 'path';
-
-export interface LessonData {
+interface LessonData {
   title: string;
   days: string[];
   verses: string[];
@@ -75,7 +74,7 @@ function isCacheValid(): boolean {
 loadCacheFromFile();
 scheduleWeeklyScraping();
 
-export async function getCachedLesson(): Promise<LessonData> {
+ async function getCachedLesson(): Promise<LessonData> {
   if (isCacheValid() && cachedLesson) {
     console.log("Retornando lição do cache");
     return cachedLesson;
@@ -124,7 +123,7 @@ async function scrapeLessonData(): Promise<Omit<LessonData, 'expiresAt'>> {
         title: getText('h1') || 'Lição da Escola Sabatina',
         days: [
           '#licaoSabado', '#licaoDomingo', '#licaoSegunda',
-          '#licaoTerca', '#licaoQuarta', '#licaoQuinta', '#licaoSexta'
+          '#licaoTerca', '#licaoQuarta', '#licaoQuinta', '#licaoSexta', '#licaoAuxiliar', '#licaoComentario', '#resumoSemanal'
         ].map(getText).filter(Boolean),
         verses: Array.from(document.querySelectorAll('.versiculo'))
           .map(el => el.textContent?.trim())
