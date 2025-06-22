@@ -101,17 +101,15 @@ export default function Login() {
   };
 
   const handleLoginWithGoogle = async () => {
-    // Para produção, use o URL do seu site
-    // Para desenvolvimento, use o URL definido nas variáveis de ambiente ou fallback para localhost
-    const redirectUrl =
-      process.env.NODE_ENV === "production"
-        ? "https://www.iasdlicao.cv/"
-        : process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000/";
+    // const redirectUrl =
+    //   process.env.NODE_ENV === "production"
+    //     ? "https://www.iasdlicao.cv/"
+    //     : process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000/";
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: redirectUrl,
+        redirectTo: "https://www.iasdlicao.cv/auth/callback",
       },
     });
 
