@@ -1,6 +1,6 @@
 "use client";
 
-import { FaGoogle } from "react-icons/fa6";
+// import { FaGoogle } from "react-icons/fa6";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useEffect, useState } from "react";
 import { createComponentClient } from "@/models/supabase";
@@ -100,24 +100,24 @@ export default function Login() {
     }
   };
 
-  const handleLoginWithGoogle = async () => {
-    const SITE_URL = "https://www.iasdlicao.cv"; // SEM barra no final
+  // const handleLoginWithGoogle = async () => {
+  //   const SITE_URL = "https://www.iasdlicao.cv"; // SEM barra no final
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${SITE_URL}/auth/callback`,
-        queryParams: {
-          prompt: "select_account", // Força a seleção de conta
-        },
-      },
-    });
+  //   const { error } = await supabase.auth.signInWithOAuth({
+  //     provider: "google",
+  //     options: {
+  //       redirectTo: `${SITE_URL}/auth/callback`,
+  //       queryParams: {
+  //         prompt: "select_account", // Força a seleção de conta
+  //       },
+  //     },
+  //   });
 
-    if (error) {
-      console.error("Erro no login:", error.message);
-      setError(error.message);
-    }
-  };
+  //   if (error) {
+  //     console.error("Erro no login:", error.message);
+  //     setError(error.message);
+  //   }
+  // };
 
   return (
     <div
@@ -225,7 +225,7 @@ export default function Login() {
             {typeAuth === "login" ? "Entrar" : "Criar Conta"}
           </button>
 
-          <button
+          {/* <button
             type="button"
             onClick={handleLoginWithGoogle}
             className={`flex items-center justify-center gap-4 border ${
@@ -235,7 +235,7 @@ export default function Login() {
             } rounded-lg px-4 py-2`}
           >
             <FaGoogle className="text-xl" /> Continuar com o Google
-          </button>
+          </button> */}
         </form>
       </div>
     </div>
