@@ -7,7 +7,6 @@ import { createComponentClient } from "@/models/supabase";
 import Image from "next/image";
 import logo1 from "@/assets/Logo1.png";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
 
 export default function Login() {
   const supabase = createComponentClient();
@@ -102,42 +101,20 @@ export default function Login() {
   };
 
   const handleLoginWithGoogle = async () => {
-    // URL absoluta do seu frontend
-    const SITE_URL = "https://www.iasdlicao.cv";
+    const SITE_URL = "https://www.iasdlicao.cv"; // SEM barra no final
 
-    // Crie uma instância customizada do cliente Supabase
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        auth: {
-          flowType: "pkce",
-          autoRefreshToken: false, // Desative se não for necessário
-          detectSessionInUrl: false, // Controle manual
-          persistSession: false, // Controle manual
-        },
-      }
-    );
-
-    // Force o redirecionamento direto para seu domínio
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${SITE_URL}/auth/callback`,
-        skipBrowserRedirect: true, // Controle manual do redirecionamento
+        queryParams: {
+          prompt: "select_account", // Força a seleção de conta
+        },
       },
     });
 
-    if (data?.url) {
-      // Redirecionamento manual garantindo o domínio correto
-      window.location.href = data.url.replace(
-        "https://ltzbopxmezdanyjejfpy.supabase.co/auth/v1/callback",
-        `${SITE_URL}/auth/callback`
-      );
-    }
-
     if (error) {
-      console.error("Erro no login:", error);
+      console.error("Erro no login:", error.message);
       setError(error.message);
     }
   };
