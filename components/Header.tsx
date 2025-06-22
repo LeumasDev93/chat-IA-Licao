@@ -201,7 +201,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             {!user?.user?.id && (
               <Link
                 href="/login"
-                className={`w-full p-2 rounded flex items-center border justify-center gap-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-700 ${borderColor}`}
+                className={`w-full p-2 rounded flex items-center border justify-center gap-2 text-sm ${hoverBg} ${textColor} ${borderColor}`}
               >
                 <IoIosLogIn className="size-4 xl:size-6" />
                 <span className="text-sm xl:text-lg">Entrar</span>
@@ -209,11 +209,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             )}
             {user?.user?.id && (
               <div
-                className="relative cursor-pointer flex items-center p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                className={`relative cursor-pointer flex items-center p-2 rounded ${hoverBg} ${textColor}`}
                 onClick={() => setOpenProfile(true)}
               >
                 {user?.user?.user_metadata?.avatar_url ? (
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600">
+                  <div
+                    className={`w-10 h-10 rounded-full overflow-hidden border-2 ${borderColor} `}
+                  >
                     <Image
                       src={user.user.user_metadata.avatar_url}
                       alt={`Avatar de ${
@@ -255,7 +257,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       .toUpperCase() || "U"}
                   </div>
                 )}
-                <span className="ml-2 text-xs xl:text-sm">Minha Conta</span>
+                <span className="ml-2 text-xs xl:text-sm ">Minha Conta</span>
               </div>
             )}
           </div>
@@ -410,7 +412,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 {!user?.user?.id && (
                   <Link
                     href="/login"
-                    className={`w-full p-2 rounded flex items-center border justify-center gap-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-700 ${borderColor}`}
+                    className={`w-full p-2 rounded flex items-center border justify-center gap-2 text-sm ${sidebarBg} ${borderColor}`}
                   >
                     <IoIosLogIn className="size-4 xl:size-6" />
                     <span className="text-sm xl:text-lg">Entrar</span>
@@ -500,11 +502,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {openProfile && (
         <div
           ref={profileRef}
-          className="absolute bottom-24 left-6 mb-2 sm:w-[18%] lg:w-[15%] xl:w-[11%] p-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-gray-700"
+          className={`absolute bottom-24 left-6 mb-2 sm:w-[18%] lg:w-[15%] xl:w-[11%] p-2 ${sidebarBg}  ${textColor} rounded-lg shadow-xl z-50 border ${borderColor} flex flex-col space-y-2`}
         >
           <div className="flex flex-col space-y-2">
             {user?.user?.id && (
-              <div className="px-3 py-2 text-xs xl:text-sm font-semibold text-gray-800 dark:text-gray-200">
+              <div
+                className={`px-3 py-2 text-xs xl:text-sm font-semibold ${textColor}`}
+              >
                 {user.user.user_metadata.full_name || user.user.email}
               </div>
             )}
@@ -514,14 +518,14 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 setOpenProfile(false);
                 setOpenSettings(true);
               }}
-              className={`w-full p-2 rounded flex items-center justify-between gap-2 text-sm  hover:bg-gray-200 dark:hover:bg-gray-700`}
+              className={`w-full p-2 rounded flex items-center justify-between gap-2 text-sm ${hoverBg} `}
             >
               <MdOutlineSettings className="size-4 xl:size-6" />
               <span className="text-xs xl:text-sm">Configurações</span>
             </button>
             <button
               type="submit"
-              className={`w-full p-2 rounded flex items-center justify-between gap-2 text-sm  hover:bg-gray-200 dark:hover:bg-gray-700 text-left`}
+              className={`w-full p-2 rounded flex items-center justify-between ${hoverBg} gap-2 text-sm `}
             >
               <BsSend className="size-4 xl:size-6" />
               <span className="text-xs xl:text-sm">Contacte-nos</span>
@@ -530,7 +534,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <form action={handleLogout} className="w-full">
                 <button
                   type="submit"
-                  className={`w-full p-2 rounded flex items-center justify-between gap-2 text-sm  hover:bg-gray-200 dark:hover:bg-gray-700 text-left`}
+                  className={`w-full p-2 rounded flex items-center justify-between ${hoverBg} gap-2 text-sm `}
                 >
                   <IoIosLogOut className="size-4 xl:size-6" />
                   <span className="text-xs xl:text-sm">Sair</span>
