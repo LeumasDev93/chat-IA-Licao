@@ -7,6 +7,7 @@ import { createComponentClient } from "@/models/supabase";
 import Image from "next/image";
 import logo1 from "@/assets/Logo1.png";
 import { useRouter } from "next/navigation";
+import { createBrowserClient } from "@supabase/ssr";
 
 export default function Login() {
   const supabase = createComponentClient();
@@ -101,23 +102,42 @@ export default function Login() {
   };
 
   const handleLoginWithGoogle = async () => {
-    // FORCE o domínio de produção independente do ambiente
-    const redirectUrl = "https://www.iasdlicao.cv/auth/callback"; // ← URL absoluta
+    // URL absoluta do seu frontend
+    const SITE_URL = "https://www.iasdlicao.cv";
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    // Crie uma instância customizada do cliente Supabase
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        auth: {
+          flowType: "pkce",
+          autoRefreshToken: false, // Desative se não for necessário
+          detectSessionInUrl: false, // Controle manual
+          persistSession: false, // Controle manual
+        },
+      }
+    );
+
+    // Force o redirecionamento direto para seu domínio
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: redirectUrl, // ← Isso deve sobrescrever qualquer configuração padrão
-        queryParams: {
-          // ← Parâmetros extras para garantir
-          access_type: "offline",
-          prompt: "consent",
-        },
+        redirectTo: `${SITE_URL}/auth/callback`,
+        skipBrowserRedirect: true, // Controle manual do redirecionamento
       },
     });
 
+    if (data?.url) {
+      // Redirecionamento manual garantindo o domínio correto
+      window.location.href = data.url.replace(
+        "https://ltzbopxmezdanyjejfpy.supabase.co/auth/v1/callback",
+        `${SITE_URL}/auth/callback`
+      );
+    }
+
     if (error) {
-      console.error("Erro no login:", error.message);
+      console.error("Erro no login:", error);
       setError(error.message);
     }
   };
