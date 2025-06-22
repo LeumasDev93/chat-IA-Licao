@@ -24,14 +24,12 @@ const Message: React.FC<MessageProps> = ({
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [showActions, setShowActions] = useState(false);
   const [copied, setCopied] = useState(false);
-  const messageRef = useRef<HTMLDivElement>(null);
   const [pdfSalve, setPdfSalve] = useState(false);
 
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Função ultra-refinada para limpeza de markdown
   const prepareForSpeech = (text: string) => {
     // Limpeza de formatação com preservação de pontuação
     let cleanText = text
@@ -55,28 +53,23 @@ const Message: React.FC<MessageProps> = ({
 
     return cleanText;
   };
-  // Função de leitura corrigida
+
+  // Função para ler o texto
   const handleSpeak = () => {
     if (isSpeaking && !isPaused) {
-      // Pausar leitura
       window.speechSynthesis.pause();
       setIsPaused(true);
       return;
     }
 
     if (isSpeaking && isPaused) {
-      // Retomar leitura
       window.speechSynthesis.resume();
       setIsPaused(false);
       return;
     }
 
-    // Iniciar nova leitura
     const preparedText = prepareForSpeech(message.text);
-    if (!preparedText.trim()) {
-      console.warn("Texto vazio após preparação");
-      return;
-    }
+    if (!preparedText.trim()) return;
 
     const utterance = new SpeechSynthesisUtterance(preparedText);
     utterance.rate = 0.95;
@@ -91,12 +84,10 @@ const Message: React.FC<MessageProps> = ({
       : voices.find((v) => v.lang.startsWith("pt"));
     if (ptVoice) utterance.voice = ptVoice;
 
-    utterance.onerror = (event) => {
+    utterance.onerror = () => {
       setIsSpeaking(false);
       setIsPaused(false);
-      console.error("Erro na síntese:", event.name, "Texto:", preparedText);
     };
-
     utterance.onstart = () => {
       setIsSpeaking(true);
       setIsPaused(false);
@@ -106,16 +97,13 @@ const Message: React.FC<MessageProps> = ({
       setIsPaused(false);
     };
 
-    window.speechSynthesis.cancel(); // Cancela qualquer leitura anterior
+    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
-    const currentSpeechRef = speechRef.current;
     return () => {
-      if (currentSpeechRef) {
-        window.speechSynthesis.cancel();
-      }
+      window.speechSynthesis.cancel();
     };
   }, []);
 
@@ -124,9 +112,7 @@ const Message: React.FC<MessageProps> = ({
     const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
 
     const handleThemeChange = () => {
-      if (theme === "system") {
-        setResolvedTheme(getSystemTheme());
-      }
+      if (theme === "system") setResolvedTheme(getSystemTheme());
     };
 
     if (theme === "system") {
@@ -136,9 +122,7 @@ const Message: React.FC<MessageProps> = ({
       setResolvedTheme(theme === "dark" ? "dark" : "light");
     }
 
-    return () => {
-      mediaQuery.removeEventListener("change", handleThemeChange);
-    };
+    return () => mediaQuery.removeEventListener("change", handleThemeChange);
   }, [theme]);
 
   const isBot = message.sender === "bot";
@@ -149,7 +133,7 @@ const Message: React.FC<MessageProps> = ({
     minute: "2-digit",
   });
 
-  // Estilos dinâmicos
+  // Classes para estilos
   const userBubbleClass = isDark
     ? "bg-blue-600 text-white"
     : "bg-blue-100 text-gray-900";
@@ -165,8 +149,6 @@ const Message: React.FC<MessageProps> = ({
   const botAvatarClass = isDark
     ? "bg-gray-800 text-white"
     : "bg-white text-gray-800";
-
-  const imageClass = `w-10 h-10 ${isDark ? "filter invert brightness-50" : ""}`;
 
   const handleCopy = () => {
     try {
@@ -360,164 +342,106 @@ const Message: React.FC<MessageProps> = ({
 
   return (
     <div
-      ref={messageRef}
       className={`flex ${
         isBot ? "justify-start" : "justify-end"
       } animate-fadeIn relative mb-6`}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
+      {/* Avatar */}
       <div
-        className={`flex max-w-[90%] sm:max-w-[100%] ${
-          isBot ? "flex-row" : "flex-row-reverse"
+        className={`flex items-center justify-center rounded-full w-10 h-10 flex-shrink-0 mr-3 ${
+          isBot ? botAvatarClass : userAvatarClass
         }`}
+        aria-label={isBot ? "Bot" : "Usuário"}
       >
-        <div className={`flex-shrink-0 ${isBot ? "mr-2" : "ml-2"} self-end`}>
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              isBot ? botAvatarClass : userAvatarClass
-            }`}
-          >
-            {isBot ? (
-              <Image
-                src={logo2}
-                alt="Logo"
-                width={100}
-                height={100}
-                className={imageClass}
-              />
-            ) : (
-              <User size={18} />
-            )}
-          </div>
+        {isBot ? <Bot size={20} /> : <User size={20} />}
+      </div>
+
+      {/* Bubble da mensagem */}
+      <div
+        className={`max-w-[75%] rounded-lg p-4 whitespace-pre-wrap break-words ${
+          isBot ? botBubbleClass : userBubbleClass
+        } shadow-md`}
+      >
+        <ReactMarkdown>{message.text}</ReactMarkdown>
+
+        {/* Hora da mensagem */}
+        <div
+          className={`text-xs mt-2 ${
+            isDark ? "text-gray-400" : "text-gray-600"
+          } text-right`}
+        >
+          {formattedTime}
         </div>
 
-        <div className="flex flex-col">
-          <div
-            className={`px-4 py-3 rounded-2xl prose prose-sm shadow-sm ${
-              isBot
-                ? `${botBubbleClass} rounded-bl-none`
-                : `${userBubbleClass} rounded-br-none`
-            }`}
+        <div className="flex justify-end space-x-3 mt-2">
+          <button
+            onClick={handleCopy}
+            className={`p-1 rounded-full ${
+              isDark
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-200 hover:bg-gray-300"
+            } transition-colors`}
+            title="Copiar mensagem"
           >
-            <ReactMarkdown
-              components={{
-                a: ({ node, ...props }) => (
-                  <a
-                    {...props}
-                    className={`underline ${
-                      isBot
-                        ? isDark
-                          ? "text-gray-400 hover:text-gray-300"
-                          : "text-gray-600 hover:text-gray-800"
-                        : isDark
-                        ? "text-blue-200 hover:text-white"
-                        : "text-blue-700 hover:text-blue-900"
-                    }`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                ),
-                p: ({ node, ...props }) => (
-                  <p {...props} className="mb-8" /> // Espaçamento de 2rem (32px) abaixo de cada parágrafo
-                ),
-                strong: ({ node, ...props }) => (
-                  <strong {...props} className="font-semibold" />
-                ),
-                em: ({ node, ...props }) => (
-                  <em {...props} className="italic" />
-                ),
-              }}
-            >
-              {message.text}
-            </ReactMarkdown>
-          </div>
-
-          <div className="flex justify-between items-center mt-1">
-            <div
-              className={`text-xs ${
-                isBot
-                  ? isDark
-                    ? "text-gray-400 text-left"
-                    : "text-gray-500 text-left"
-                  : isDark
-                  ? "text-blue-300 text-right"
-                  : "text-blue-600 text-right"
-              }`}
-            >
-              {formattedTime}
-            </div>
-
-            {/* Novos botões de ação no rodapé */}
-            <div className={`flex gap-2 ${isBot ? "ml-2" : "mr-2"}`}>
-              <button
-                onClick={handleCopy}
-                className={`p-1 rounded-full ${
-                  isDark
-                    ? "bg-gray-700 hover:bg-gray-600"
-                    : "bg-gray-200 hover:bg-gray-300"
-                } transition-colors`}
-                title="Copiar mensagem"
-              >
-                <Copy
-                  size={14}
-                  className={isDark ? "text-white" : "text-gray-700"}
-                />
-                {copied && (
-                  <span className="absolute bottom-6 right-4 -translate-x-1/2 text-xs whitespace-nowrap">
-                    Copiado!
-                  </span>
-                )}
-              </button>
-              <button
-                onClick={() => handleGeneratePDF("Resumo")}
-                className={`p-1 rounded-full ${
-                  isDark
-                    ? "bg-gray-700 hover:bg-gray-600"
-                    : "bg-gray-200 hover:bg-gray-300"
-                } transition-colors`}
-                title="Gerar PDF"
-              >
-                <FileText
-                  size={14}
-                  className={isDark ? "text-white" : "text-gray-700"}
-                />
-                {pdfSalve && (
-                  <span className="absolute bottom-6 -right-4 -translate-x-1/2 text-xs whitespace-nowrap">
-                    Pdf gerado!
-                  </span>
-                )}
-              </button>
-              <button
-                onClick={handleSpeak}
-                className={`p-1 rounded-full ${
-                  isDark
-                    ? "bg-gray-700 hover:bg-gray-600"
-                    : "bg-gray-200 hover:bg-gray-300"
-                } transition-colors`}
-                title={
-                  isSpeaking
-                    ? isPaused
-                      ? "Retomar leitura"
-                      : "Pausar leitura"
-                    : "Ler em voz alta"
-                }
-              >
-                {isSpeaking ? (
-                  isPaused ? (
-                    <Play size={14} className="text-yellow-500" />
-                  ) : (
-                    <Pause size={14} className="text-green-500 animate-pulse" />
-                  )
-                ) : (
-                  <Volume2
-                    size={14}
-                    className={isDark ? "text-white" : "text-gray-700"}
-                  />
-                )}
-              </button>
-            </div>
-          </div>
+            <Copy
+              size={14}
+              className={isDark ? "text-white" : "text-gray-700"}
+            />
+            {copied && (
+              <span className="absolute bottom-6 right-4 -translate-x-1/2 text-xs whitespace-nowrap">
+                Copiado!
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => handleGeneratePDF("Resumo")}
+            className={`p-1 rounded-full ${
+              isDark
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-200 hover:bg-gray-300"
+            } transition-colors`}
+            title="Gerar PDF"
+          >
+            <FileText
+              size={14}
+              className={isDark ? "text-white" : "text-gray-700"}
+            />
+            {pdfSalve && (
+              <span className="absolute bottom-6 -right-4 -translate-x-1/2 text-xs whitespace-nowrap">
+                Pdf gerado!
+              </span>
+            )}
+          </button>
+          <button
+            onClick={handleSpeak}
+            className={`p-1 rounded-full ${
+              isDark
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-200 hover:bg-gray-300"
+            } transition-colors`}
+            title={
+              isSpeaking
+                ? isPaused
+                  ? "Retomar leitura"
+                  : "Pausar leitura"
+                : "Ler em voz alta"
+            }
+          >
+            {isSpeaking ? (
+              isPaused ? (
+                <Play size={14} className="text-yellow-500" />
+              ) : (
+                <Pause size={14} className="text-green-500 animate-pulse" />
+              )
+            ) : (
+              <Volume2
+                size={14}
+                className={isDark ? "text-white" : "text-gray-700"}
+              />
+            )}
+          </button>
         </div>
       </div>
     </div>

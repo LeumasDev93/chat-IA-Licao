@@ -106,40 +106,14 @@ export default function Home() {
 
   const [messages, setMessages] = useState<MessageType[]>(() => {
     // Carrega mensagens da conversa atual se existir
-    return (
-      chatHistory[currentChatId] || [
-        {
-          id: "1",
-          text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
-          sender: "bot",
-          timestamp: new Date(),
-          parts: [
-            {
-              text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
-            },
-          ],
-        },
-      ]
-    );
+    return chatHistory[currentChatId] || [];
   });
 
   useEffect(() => {
     if (chatHistory[currentChatId]) {
       setMessages(chatHistory[currentChatId]);
     } else {
-      setMessages([
-        {
-          id: "1",
-          text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
-          sender: "bot",
-          timestamp: new Date(),
-          parts: [
-            {
-              text: "Olá! Sou seu assistente virtual especializado para estudos da lição da escola sabatina. Como posso ajudar você hoje?",
-            },
-          ],
-        },
-      ]);
+      setMessages([]);
     }
   }, [currentChatId, chatHistory]);
 
@@ -249,8 +223,18 @@ export default function Home() {
     e?.preventDefault();
 
     if (isTyping) return;
+
     const content = messageContent || inputValue.trim();
-    if (!content) return;
+    if (!content || !user?.user?.id) return;
+
+    let chatId = currentChatId;
+
+    // Se ainda não houver chat atual, gera um novo automaticamente
+    if (!chatId) {
+      chatId = Date.now().toString();
+      setCurrentChatId(chatId);
+      setMessages([]); // zera mensagens anteriores
+    }
 
     const userMessage: MessageType = {
       id: Date.now().toString(),
@@ -262,7 +246,7 @@ export default function Home() {
 
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
-    addMessage(currentChatId, userMessage);
+    addMessage(chatId, userMessage);
 
     if (!messageContent) {
       setInputValue("");
@@ -271,6 +255,45 @@ export default function Home() {
     setIsTyping(true);
 
     try {
+      // Verifica se o chat já está salvo no Supabase
+      const { data: existingChat, error: fetchError } = await supabase
+        .from("user_chats")
+        .select("chat_id")
+        .eq("chat_id", chatId)
+        .single();
+
+      if (fetchError && fetchError.code !== "PGRST116") {
+        throw fetchError;
+      }
+
+      if (!existingChat) {
+        // Criar novo chat
+        const { error: insertError } = await supabase
+          .from("user_chats")
+          .insert({
+            user_id: user.user.id,
+            chat_id: chatId,
+            messages: [userMessage],
+            title: content.slice(0, 100),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+
+        if (insertError) throw insertError;
+      } else {
+        // Atualizar chat existente
+        const { error: updateError } = await supabase
+          .from("user_chats")
+          .update({
+            messages: updatedMessages,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("chat_id", chatId);
+
+        if (updateError) throw updateError;
+      }
+
+      // Resposta do bot
       const botResponse = await generateBotResponse(content);
       const botMessage: MessageType = {
         id: (Date.now() + 1).toString(),
@@ -280,12 +303,21 @@ export default function Home() {
         parts: [{ text: botResponse.text }],
       };
 
-      setMessages([...updatedMessages, botMessage]);
-      addMessage(currentChatId, botMessage);
+      const finalMessages = [...updatedMessages, botMessage];
+      setMessages(finalMessages);
+      addMessage(chatId, botMessage);
+
+      await supabase
+        .from("user_chats")
+        .update({
+          messages: finalMessages,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("chat_id", chatId);
     } catch (error) {
-      console.error("Erro ao obter resposta do bot:", error);
+      console.error("Erro ao processar mensagem:", error);
       const errorMessage: MessageType = {
-        id: (Date.now() + 1).toString(),
+        id: (Date.now() + 2).toString(),
         text: "Desculpe, estou tendo dificuldades técnicas. Poderia tentar novamente?",
         sender: "bot",
         timestamp: new Date(),
@@ -297,7 +329,7 @@ export default function Home() {
       };
 
       setMessages([...updatedMessages, errorMessage]);
-      addMessage(currentChatId, errorMessage);
+      addMessage(chatId, errorMessage);
     } finally {
       setIsTyping(false);
     }
@@ -336,34 +368,12 @@ export default function Home() {
       handleSendMessage();
     }
   };
-  const handleNewChat = async () => {
-    if (!user?.user?.id) {
-      console.error("Usuário não autenticado");
-      return;
-    }
+  const handleNewChat = () => {
+    if (!user?.user?.id) return;
 
-    try {
-      const newChatId = Date.now().toString();
-      const defaultTitle = `${
-        messages.length > 0 ? messages[0].text : "Novo Chat"
-      }`;
-
-      const { error } = await supabase.from("user_chats").insert({
-        user_id: user.user.id,
-        chat_id: newChatId,
-        messages: [],
-        title: defaultTitle,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
-
-      if (error) throw error;
-
-      // Define o novo chat como o atual
-      setCurrentChatId(newChatId);
-    } catch (error) {
-      console.error("Erro ao criar novo chat:", error);
-    }
+    const newChatId = Date.now().toString();
+    setMessages([]);
+    setCurrentChatId(newChatId);
   };
 
   const supabase = createComponentClient();

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, Plus, Trash, X } from "lucide-react";
 import { MessageType } from "@/types";
 import { ThemeSwitch } from "./ThemeSwitch";
@@ -84,8 +84,32 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const handleChatSelect = (chatId: string) => {
+  const fetchChatHistory = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("user_chats")
+      .select("chat_id, messages, title")
+      .eq("user_id", user?.user?.id);
+
+    if (error) {
+      console.error("Erro ao buscar histórico de chats:", error);
+      return;
+    }
+
+    const history: Record<string, { messages: any[]; title: string }> = {};
+
+    data?.forEach((chat) => {
+      history[chat.chat_id] = {
+        messages: chat.messages || [],
+        title: chat.title || "Nova conversa",
+      };
+    });
+
+    setChatHistory(history);
+  }, [supabase, user?.user?.id]);
+
+  const handleChatSelect = async (chatId: string) => {
     setCurrentChatId(chatId);
+    await fetchChatHistory();
     if (isMobile) setSidebarOpen(false);
   };
 
@@ -156,29 +180,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   useEffect(() => {
     if (!user?.user?.id) return;
 
-    const fetchChatHistory = async () => {
-      const { data, error } = await supabase
-        .from("user_chats")
-        .select("chat_id, messages, title")
-        .eq("user_id", user?.user?.id);
-
-      if (error) {
-        console.error("Erro ao buscar histórico de chats:", error);
-        return;
-      }
-
-      const history: Record<string, { messages: any[]; title: string }> = {};
-
-      data?.forEach((chat) => {
-        history[chat.chat_id] = {
-          messages: chat.messages || [],
-          title: chat.title || "Nova conversa",
-        };
-      });
-
-      setChatHistory(history);
-    };
-
     // Fetch inicial
     fetchChatHistory();
 
@@ -187,7 +188,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
     // Limpa intervalo ao desmontar o componente ou user mudar
     return () => clearInterval(intervalId);
-  }, [supabase, user?.user?.id]);
+  }, [supabase, user?.user?.id, fetchChatHistory]);
 
   // Componente DesktopSidebar
   const DesktopSidebar = () => {
@@ -374,55 +375,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     className="w-10 h-10"
                   />
                 </div>
-                {user?.user?.id && (
-                  <div className="relative">
-                    {user?.user?.user_metadata?.avatar_url ? (
-                      <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600">
-                        <Image
-                          src={user.user.user_metadata.avatar_url}
-                          alt={`Avatar de ${
-                            user.user.user_metadata.full_name || "usuário"
-                          }`}
-                          width={40}
-                          height={40}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            // Fallback em caso de erro no carregamento da imagem
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                            target.nextElementSibling?.classList.remove(
-                              "hidden"
-                            );
-                          }}
-                        />
-                        {/* Fallback visual - só aparece se a imagem falhar */}
-                        <div
-                          className={`w-full h-full flex items-center justify-center font-bold text-xl ${
-                            resolvedTheme === "dark"
-                              ? "bg-gray-600 text-white"
-                              : "bg-gray-100 text-black"
-                          }`}
-                        >
-                          {user.user.user_metadata.full_name
-                            ?.charAt(0)
-                            .toUpperCase() || "U"}
-                        </div>
-                      </div>
-                    ) : (
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ${
-                          resolvedTheme === "dark"
-                            ? "bg-gray-600 text-white"
-                            : "bg-gray-100 text-black border-2 border-gray-300"
-                        }`}
-                      >
-                        {user.user.user_metadata.full_name
-                          ?.charAt(0)
-                          .toUpperCase() || "U"}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Botão Nova Conversa */}
@@ -443,7 +395,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               {user?.user?.id && Object.keys(chatHistory).length > 0 ? (
                 <div className="flex-1 overflow-y-auto px-2">
                   <h2 className="font-bold mb-2 text-sm">Histórico</h2>
-
                   <ul className="space-y-2">
                     {Object.entries(chatHistory).map(([chatId, chatData]) => (
                       <li
@@ -453,11 +404,14 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                           currentChatId === chatId ? activeBg : hoverBg
                         }`}
                       >
-                        <span className="truncate text-sm">
+                        <span className="truncate text-sm flex-1">
                           {chatData.title || "Nova conversa"}
                         </span>
                         <button
-                          onClick={(e) => handleDeleteChat(e, chatId)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteChat(e, chatId);
+                          }}
                           className="text-red-400 hover:text-red-300 ml-2"
                         >
                           <Trash size={16} />
