@@ -22,5 +22,8 @@ const withPWA = require('next-pwa')({
 module.exports = withPWA({
   reactStrictMode: true,
    serverExternalPackages: ['puppeteer'],
+    images: {
+    domains: ['lh3.googleusercontent.com'],
+  },
   // Outras configurações do Next.js
 })

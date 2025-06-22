@@ -17,6 +17,13 @@
       }
     ],
     "apple-touch-icons": "off",
-    "compat-api/html": "off"
+    "compat-api/html": "off",
+    "axe/forms": [
+      "default",
+      {
+        "label": "off",
+        "select-name": "off"
+      }
+    ]
   }
 }

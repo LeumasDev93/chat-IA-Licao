@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { FaGoogle } from "react-icons/fa6";
@@ -228,7 +227,7 @@ export default function Login() {
             {typeAuth === "login" ? "Entrar" : "Criar Conta"}
           </button>
 
-          {/* <button
+          <button
             type="button"
             onClick={handleLoginWithGoogle}
             className={`flex items-center justify-center gap-4 border ${
@@ -238,7 +237,7 @@ export default function Login() {
             } rounded-lg px-4 py-2`}
           >
             <FaGoogle className="text-xl" /> Continuar com o Google
-          </button> */}
+          </button>
         </form>
       </div>
     </div>
