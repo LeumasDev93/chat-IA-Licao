@@ -20,6 +20,7 @@ import MobileConversationMenu from "@/components/MobileTopMenu";
 import { createBrowserClient } from "@supabase/ssr";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
 import { createComponentClient } from "@/models/supabase";
+import { FaSpinner } from "react-icons/fa6";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
@@ -72,6 +73,12 @@ export default function Home() {
   const currentYear = new Date().getFullYear();
   const { theme } = useTheme();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Garante que o tema já foi resolvido no cliente
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -390,6 +397,14 @@ export default function Home() {
     if (error) console.error("Erro ao carregar chats:", error);
     return data;
   };
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <FaSpinner className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <main
