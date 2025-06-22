@@ -17,7 +17,9 @@ import ChatSidebar from "@/components/Header";
 import { useChatHistory } from "@/hooks/useChatHistory";
 import { useTheme } from "@/contexts/ThemeContext";
 import MobileConversationMenu from "@/components/MobileTopMenu";
-import { auth } from "./lib/auth";
+import { createBrowserClient } from "@supabase/ssr";
+import { useSupabaseUser } from "@/hooks/useComponentClient";
+import { createComponentClient } from "@/models/supabase";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
@@ -140,6 +142,8 @@ export default function Home() {
       ]);
     }
   }, [currentChatId, chatHistory]);
+
+  const user = useSupabaseUser();
 
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -332,10 +336,49 @@ export default function Home() {
       handleSendMessage();
     }
   };
+  const handleNewChat = async () => {
+    if (!user?.user?.id) {
+      console.error("Usuário não autenticado");
+      return;
+    }
 
-  const handleNewChat = () => {
-    const newChatId = createNewChat();
-    setCurrentChatId(newChatId);
+    try {
+      const newChatId = Date.now().toString();
+      const defaultTitle = `${
+        messages.length > 0 ? messages[0].text : "Novo Chat"
+      }`;
+
+      const { error } = await supabase.from("user_chats").insert({
+        user_id: user.user.id,
+        chat_id: newChatId,
+        messages: [],
+        title: defaultTitle,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      if (error) throw error;
+
+      // Define o novo chat como o atual
+      setCurrentChatId(newChatId);
+    } catch (error) {
+      console.error("Erro ao criar novo chat:", error);
+    }
+  };
+
+  const supabase = createComponentClient();
+  // Função para carregar os chats do usuário
+  const loadUserChats = async () => {
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("user_chats")
+      .select("chat_id")
+      .eq("user_id", user?.user?.id)
+      .order("created_at", { ascending: false });
+
+    if (error) console.error("Erro ao carregar chats:", error);
+    return data;
   };
 
   return (

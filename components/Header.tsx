@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -26,10 +27,8 @@ interface ChatSidebarProps {
 
 const ChatSidebar: React.FC<ChatSidebarProps> = ({
   onNewChat,
-  chatHistory,
   currentChatId,
   setCurrentChatId,
-  deleteChat,
 }) => {
   const supabase = createComponentClient();
   const router = useRouter();
@@ -90,10 +89,31 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     if (isMobile) setSidebarOpen(false);
   };
 
-  const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
+  const handleDeleteChat = async (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
-    deleteChat(chatId);
-    if (currentChatId === chatId) onNewChat();
+
+    // Remove do Supabase
+    const { error } = await supabase
+      .from("user_chats")
+      .delete()
+      .eq("chat_id", chatId);
+
+    if (error) {
+      console.error("Erro ao deletar chat:", error);
+      return;
+    }
+
+    // Remove do estado local
+    setChatHistory((prev) => {
+      const updated = { ...prev };
+      delete updated[chatId];
+      return updated;
+    });
+
+    // Se o chat deletado for o atual, limpa a seleção
+    if (currentChatId === chatId) {
+      onNewChat(); // Cria novo chat ou redefine o estado
+    }
   };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -128,6 +148,47 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const [chatHistory, setChatHistory] = useState<
+    Record<string, { messages: any[]; title: string }>
+  >({});
+
+  useEffect(() => {
+    if (!user?.user?.id) return;
+
+    const fetchChatHistory = async () => {
+      const { data, error } = await supabase
+        .from("user_chats")
+        .select("chat_id, messages, title")
+        .eq("user_id", user?.user?.id);
+
+      if (error) {
+        console.error("Erro ao buscar histórico de chats:", error);
+        return;
+      }
+
+      const history: Record<string, { messages: any[]; title: string }> = {};
+
+      data?.forEach((chat) => {
+        history[chat.chat_id] = {
+          messages: chat.messages || [],
+          title: chat.title || "Nova conversa",
+        };
+      });
+
+      setChatHistory(history);
+    };
+
+    // Fetch inicial
+    fetchChatHistory();
+
+    // Configura intervalo de 5 segundos
+    const intervalId = setInterval(fetchChatHistory, 1000);
+
+    // Limpa intervalo ao desmontar o componente ou user mudar
+    return () => clearInterval(intervalId);
+  }, [supabase, user?.user?.id]);
+
   // Componente DesktopSidebar
   const DesktopSidebar = () => {
     // Adicionar referência para o popup
@@ -168,23 +229,25 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           {user?.user?.id && Object.keys(chatHistory).length > 0 ? (
             <div className="flex-1 overflow-y-auto px-2">
               <h2 className="font-bold mb-2 text-sm">Histórico</h2>
-
               <ul className="space-y-2">
-                {Object.entries(chatHistory).map(([chatId, messages]) => (
+                {Object.entries(chatHistory).map(([chatId, chatData]) => (
                   <li
                     key={chatId}
                     onClick={() => handleChatSelect(chatId)}
-                    className={`p-2 rounded cursor-pointer flex items-center justify-between
-                  transition-colors ${
-                    currentChatId === chatId ? activeBg : hoverBg
-                  }`}
+                    className={`p-2 rounded cursor-pointer flex items-center justify-between transition-colors ${
+                      currentChatId === chatId
+                        ? "bg-gray-800"
+                        : "hover:bg-gray-700"
+                    }`}
                   >
                     <span className="truncate text-sm flex-1">
-                      {messages.find((m) => m.sender === "user")?.text ||
-                        "Nova conversa"}
+                      {chatData.title || "Nova conversa"}
                     </span>
                     <button
-                      onClick={(e) => handleDeleteChat(e, chatId)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteChat(e, chatId);
+                      }}
                       className="text-red-400 hover:text-red-300 ml-2"
                     >
                       <Trash size={16} />
@@ -382,7 +445,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   <h2 className="font-bold mb-2 text-sm">Histórico</h2>
 
                   <ul className="space-y-2">
-                    {Object.entries(chatHistory).map(([chatId, messages]) => (
+                    {Object.entries(chatHistory).map(([chatId, chatData]) => (
                       <li
                         key={chatId}
                         onClick={() => handleChatSelect(chatId)}
@@ -391,8 +454,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                         }`}
                       >
                         <span className="truncate text-sm">
-                          {messages.find((m) => m.sender === "user")?.text ||
-                            "Nova conversa"}
+                          {chatData.title || "Nova conversa"}
                         </span>
                         <button
                           onClick={(e) => handleDeleteChat(e, chatId)}
