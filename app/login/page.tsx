@@ -101,23 +101,24 @@ export default function Login() {
   };
 
   const handleLoginWithGoogle = async () => {
-    // const redirectUrl =
-    //   process.env.NODE_ENV === "production"
-    //     ? "https://www.iasdlicao.cv/"
-    //     : process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000/";
+    // FORCE o domínio de produção independente do ambiente
+    const redirectUrl = "https://www.iasdlicao.cv/auth/callback"; // ← URL absoluta
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "https://www.iasdlicao.cv/auth/callback",
+        redirectTo: redirectUrl, // ← Isso deve sobrescrever qualquer configuração padrão
+        queryParams: {
+          // ← Parâmetros extras para garantir
+          access_type: "offline",
+          prompt: "consent",
+        },
       },
     });
 
     if (error) {
+      console.error("Erro no login:", error.message);
       setError(error.message);
-      setTimeout(() => {
-        setError(null);
-      }, 5000);
     }
   };
 

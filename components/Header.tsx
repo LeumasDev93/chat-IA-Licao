@@ -530,17 +530,15 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <BsSend className="size-4 xl:size-6" />
               <span className="text-xs xl:text-sm">Contacte-nos</span>
             </button>
-            {user?.user?.id && (
-              <form action={handleLogout} className="w-full">
-                <button
-                  type="submit"
-                  className={`w-full p-2 rounded flex items-center justify-between ${hoverBg} gap-2 text-sm `}
-                >
-                  <IoIosLogOut className="size-4 xl:size-6" />
-                  <span className="text-xs xl:text-sm">Sair</span>
-                </button>
-              </form>
-            )}
+            <form action={handleLogout} className="w-full">
+              <button
+                type="submit"
+                className={`w-full p-2 rounded flex items-center justify-between ${hoverBg} gap-2 text-sm `}
+              >
+                <IoIosLogOut className="size-4 xl:size-6" />
+                <span className="text-xs xl:text-sm">Sair</span>
+              </button>
+            </form>
           </div>
         </div>
       )}
