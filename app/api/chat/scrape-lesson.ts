@@ -19,7 +19,7 @@ const PUPPETEER_OPTIONS = {
   args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
 };
 const CACHE_FILE = path.join(__dirname, 'lesson-cache.json');
-
+console.log(CACHE_FILE);
 let cachedLesson: LessonData | null = null;
 
 // Carrega o cache do arquivo
@@ -73,7 +73,8 @@ scheduleWeeklyScraping();
 
 export async function getCachedLesson(): Promise<LessonData> {
   if (isCacheValid() && cachedLesson) {
-    console.log("Retornando lição do cache");
+    console.log("Retornando lição do cache" , cachedLesson);
+
     return cachedLesson;
   }
 

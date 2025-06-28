@@ -134,16 +134,16 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tLição 13\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tLição 1\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t21 a 27 de junho\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t28 de junho a 04 de julho\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tImagens do fim\n' +
+      '\t\t\t\t\t\tO povo oprimido e o nascimento de Moisés | 3º Trimestre 2025\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
@@ -155,23 +155,24 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: EX 16\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 23\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\tVerso para memorizar:\n' +
-      '\t\t\t\t\t\t“Jonas respondeu: – Eu sou hebreu e temo o Senhor, o Deus do céu, que fez o mar e a terra” (Jn 1:9).\n' +
+      '\t\t\t\t\t\t“Os filhos de Israel gemiam por causa da sua escravidão. Eles clamaram, e o seu clamor chegou até Deus. Deus ouviu o gemido deles e lembrou-Se da Sua aliança com Abraão, com Isaque e com jacó. E Deus viu os filhos de Israel e atentou e atentou para a situação deles” (Êx 2:23-25).\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\tLeituras da semana:\n' +
-      '\t\t\t\t\t\tMt 12:38-42; Jn 3:5-10; Ap 18:4; Dn 5:1-31; Ap 16:12-19; 2Cr 36:22, 23\n' +
+      '\t\t\t\t\t\tÊx 1; Gn 37:26-28; 39:2, 21; At 7:6; Gl 3:16, 17; Êx 2\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tNesta semana concluiremos nossos estudos sobre relatos bíblicos que ajudam a elucidar nossa compreensão dos eventos dos últimos dias. Desta vez, veremos a missão de Jonas em Nínive, a queda de Babilônia e a ascensão de Ciro, o rei persa que libertou o povo de Deus e lhe permitiu retornar à terra prometida.\n' +
-      'Assim como nas outras histórias que examinamos, esses relatos históricos têm significado profundo para cada geração. Contudo, também têm relevância especial para as gerações que vivem antes do retorno de Cristo. Podemos extrair desses relatos elementos que nos ajudam a compreender o que chamamos de “verdade presente”.\n' +
-      'Ao mesmo tempo, em relação a essas histórias que prenunciam os eventos dos últimos dias, ao estudar temas e alusões amplas, não podemos tentar analisar cada detalhe a ponto de criar especulações a respeito das profecias. Assim como nas parábolas de Jesus, devemos nos concentrar nas ideias centrais, em vez de analisar cada detalhe na esperança de encontrar verdades ocultas. Nossa ênfase deve estar nos princípios e nos contornos gerais, e a partir deles descobrimos elementos relevantes para os últimos dias.\n' +
+      '\t\t\t\t\t\tO livro de Êxodo está cheio de relatos de pessoas oprimidas, marginalizadas, perseguidas, exploradas e desprezadas. Assim, aqueles que hoje se sentem abandonados, esquecidos e escravizados podem encontrar esperança, pois o mesmo Deus que salvou os hebreus também pode salvá-los.\n' +
+      'Êxodo fala das batalhas existenciais e das injustiças da vida. Todos podem ser encorajados pelas histórias das intervenções de Deus em favor de Seu povo. Ele ouve o clamor dos oprimidos, vê suas lutas, observa suas lágrimas e vem em seu auxílio. \n' +
+      'Deus toma a iniciativa de libertar aqueles que confiam Nele. Precisamos aceitar, pela fé, o que Ele oferece. É por isso que devemos estudar o livro de Êxodo, pois ele aponta para o que Jesus fez por nós. É um livro que trata da redenção, libertação e salvação – e tudo isso nos pertence, pela fé em Cristo Jesus, com base no que Ele obteve em nosso favor. Em meio à adversidade e à escuridão, se nossos olhos estiverem fixos em Deus, podemos reconhecer Sua presença, cuidado e auxílio enquanto Ele nos guia em direção à eterna “terra prometida”. \n' +
+      'Nota do editor: A sigla “RPSP” significa “Reavivados Por Sua Palavra”.\n' +
       'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\n' +
@@ -189,30 +190,30 @@ const CacheLessonData : LessonData = {
       '\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
-      '\t\t\t\t\tDomingo, 22 de junho\n' +
+      '\t\t\t\t\tDomingo, 29 de junho\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 17\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO profeta relutante\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
+      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 24\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tA história de Jonas (Jn 1–4), embora breve, é impactante. Muitos crentes veem em si reflexos desse profeta relutante. A história contém lições a respeito de eventos futuros.\n' +
-      '1. Leia Mateus 12:38-42. A quais partes da história de Jonas Jesus Se referiu ao Se dirigir aos escribas e fariseus? Quais lições sobre o juízo final são encontradas em Sua declaração?\n' +
-      'Jesus declarou que era maior que Jonas. Ele sabia que vir ao mundo envolveria a cruz, e, ainda assim, Ele “veio buscar e salvar o perdido” (Lc 19:10). Jonas passou três dias dentro do grande peixe por causa de seus pecados; Jesus passou três dias no túmulo por causa dos nossos pecados. Isso era necessário para salvar os perdidos.\n' +
-      'Hoje, conhecemos Jonas como um profeta relutante, indisposto a ir a Nínive. Da perspectiva humana, é fácil entender a atitude dele: os assírios comandavam um governo violento. Os murais assírios estão repletos de cenas de crueldade incomum: povos conquistados eram mortos pelos métodos mais cruéis imagináveis. Quem gostaria de enfrentar a perspectiva de pregar arrependimento em uma capital assim?\n' +
-      'Há um momento importante na história que pode apontar para o movimento remanescente dos últimos dias: ao ser questionado sobre quem era, Jonas respondeu: “Eu sou hebreu e temo o Senhor, o Deus do Céu, que fez o mar e a terra” (Jn 1:9) – uma declaração muito parecida com a mensagem do primeiro anjo (Ap 14:7). De fato, a ênfase de Jonas no Senhor como Aquele “que fez o mar e a terra” obviamente aponta para Ele como o Criador. Esse fato é fundamental para o motivo pelo qual devemos adorá-Lo, e a adoração é central para os eventos dos últimos dias.\n' +
-      'Ao mesmo tempo, nós também somos acusados de pregar uma mensagem potencialmente impopular na Babilônia espiritual. Quando Deus diz: “Saiam dela, povo Meu” (Ap 18:4), Ele indica que essas pessoas devem se arrepender; uma mensagem que quase sempre provocou reações negativas de muitas pessoas, mesmo quando transmitida da maneira mais gentil possível. Quem de nós, ao testemunhar, não recebeu respostas negativas ou mesmo hostis? Precisamos entender que isso faz parte do trabalho.\n' +
+      '\t\t\t\t\t\tO povo de Deus no Egito\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tO livro de Êxodo é chamado em hebraico de shemot, que significa “nomes”. Esse título vem das primeiras palavras do livro: “São estes os nomes dos filhos de Israel que entraram com Jacó no Egito” (Êx 1:1).\n' +
+      '1. Leia Êxodo 1:1-7. Que verdade crucial é apresentada nesse texto?\n' +
+      'O livro de Êxodo começa com um lembrete da bênção de Deus. Quando o patriarca Jacó e sua família se estabeleceram no Egito, eram apenas 70 pessoas (Gn 46:27; Êx 1:5), mas os israelitas “foram fecundos, aumentaram muito, se multiplicaram e se tornaram extremamente fortes, de maneira que a terra se encheu deles” (Êx 1:7). Quando saíram do Egito, eles já eram “cerca de seiscentos mil a pé, somente de homens, sem contar mulheres e crianças” (Êx 12:37).\n' +
+      '2. Leia Êxodo 1:8-11. Qual era a condição dos israelitas na época do êxodo?\n' +
+      'O texto bíblico descreve a história dos filhos de Israel no Egito de maneira bastante sombria. O livro de Êxodo começa com a escravidão imposta pelos egípcios e o trabalho opressivo que eles impuseram aos hebreus. O livro termina, no entanto, com a presença serena e reconfortante de Deus no tabernáculo, que estava no centro do acampamento israelita (Êx 40). Entre essas duas situações opostas, é descrito o triunfo de Deus. Quando o Senhor libertou Seu povo da escravidão, ao abrir o Mar Vermelho e derrotar o exército mais poderoso da Terra, foi revelada a vitória espetacular de Deus sobre as forças do mal.\n' +
+      'A história destaca paradoxalmente que “quanto mais os afligiam, tanto mais se multiplicavam e tanto mais se espalhavam” (Êx 1:12). Não importa as intrigas humanas, Deus é soberano e salvará Seu povo, mesmo que as circunstâncias pareçam desesperadoras da perspectiva humana.\n' +
       'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\n' +
@@ -221,7 +222,7 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tQuanto de Jonas você encontra em si mesmo? Como vencer essas atitudes erradas?\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t“Levantou-se um novo rei sobre o Egito, que não havia conhecido José” (Êx 1:8). Como esse relato nos mostra que jamais devemos acreditar que qualquer circunstância, mesmo as boas, permanecerá a mesma para sempre?\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\n' +
@@ -232,60 +233,17 @@ const CacheLessonData : LessonData = {
       '\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
-      '\t\t\t\t\tSegunda-feira, 23 de junho\n' +
+      '\t\t\t\t\tSegunda-feira, 30 de junho\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 18\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tObra de arrependimento\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
+      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 25\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tJonas tinha uma mensagem bem distinta para o povo de Nínive. “Jonas começou a percorrer a cidade caminho de um dia, e pregava, dizendo: – Ainda quarenta dias, e Nínive será destruída” (Jn 3:4). Parece claro que o lugar estava condenado. Afinal, essa não era uma palavra enviada diretamente de um profeta do Senhor?\n' +
-      'No entanto, o que aconteceu com Nínive?\n' +
-      '2. Leia Jonas 3:5-10. Por que essa profecia não se cumpriu?\n' +
-      'Toda a cidade se arrependeu, e a condenação profetizada não se concretizou, pelo menos por um tempo. “Sua condenação foi evitada; o Deus de Israel fora exaltado e honrado em todo o mundo pagão, e Sua lei foi reverenciada. Apenas muitos anos mais tarde Nínive caiu presa das nações vizinhas por causa de seu esquecimento de Deus e vaidoso orgulho” (Ellen G. White, Profetas e Reis [CPB, 2021], p. 160).\n' +
-      'Podemos esperar algo assim nos últimos dias, com a mensagem final para o mundo caído? Sim e, ao mesmo tempo, não. Em todo o mundo, haverá muitas pessoas que atenderão ao chamado: “Saiam dela, povo Meu, para que vocês não sejam cúmplices em seus pecados e para que os seus flagelos não caiam sobre vocês” (Ap 18:4). Em todo o mundo, as pessoas tomarão posição e, desafiando a besta, guardarão “os mandamentos de Deus e a fé em Jesus” (Ap 14:12). Essas pessoas, como as de Nínive, serão livradas do juízo que recairá sobre os perdidos.\n' +
-      'Ao mesmo tempo, devemos lembrar de que algumas profecias, como o anúncio da destruição de Nínive, eram condicionais: ela seria destruída a menos que o povo se afastasse da maldade (Jr 18:7-10). No entanto, outras profecias não são condicionais, ou seja, elas serão cumpridas, não importa a resposta humana: as profecias messiânicas sobre a primeira e a segunda vinda de Cristo, a marca da besta, as últimas pragas e a perseguição do fim dos tempos; elas ocorrerão independentemente do que os seres humanos façam. As obras e as escolhas das pessoas determinarão apenas de que lado estarão quando se cumprirem os eventos finais, preditos pelos profetas.\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tQue escolhas atuais ajudarão a fazer as escolhas certas diante da ameaça da besta?\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição',
-    '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tTerça-feira, 24 de junho\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 19\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO banquete de Belsazar\n' +
+      '\t\t\t\t\t\tO contexto histórico\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
@@ -293,12 +251,13 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tDepois que Nínive foi conquistada (612 a.C.) por um exército de coalizão que incluía medos e babilônios (liderados pelo pai de Nabucodonosor), Babilônia experimentou um renascimento, como a cidade não via desde os dias de Hamurabi, seu grande legislador. Sob Nabucodonosor, que agora estava livre dos ataques assírios, Babilônia cresceu em riqueza e influência a ponto de as nações vizinhas terem pouca escolha a não ser reconhecer de má vontade seu domínio. Ela era a rainha do mundo, e as nações que desejavam prosperar declaravam sua lealdade a ela.\n' +
-      'Entretanto, até onde sabemos, Nabucodonosor morreu confessando que o Deus de Daniel é, de fato, o governante legítimo de todas as nações (Dn 4:34-37). O próximo relato que Daniel apresenta é o de seu sucessor, o vice-regente Belsazar.\n' +
-      '3. Que mensagens espirituais importantes tiramos de Daniel 5:1-31? O que, no fim das contas, levou Belsazar à destruição?\n' +
-      'Talvez a parte mais triste do relato esteja em Daniel 5:22. Depois de relatar ao rei a queda e a restauração de Nabucodonosor, Daniel repreendeu Belsazar. Embora ele pudesse conhecer a verdade e até ter testemunhado em primeira mão o que aconteceu com Nabucodonosor, escolheu ignorar esses eventos e embarcar no mesmo curso que trouxe problemas ao seu antecessor.\n' +
-      'Assim como Nabucodonosor fez ao erguer a estátua de ouro, Belsazar estava desafiando o que o Deus de Daniel havia previsto. Ao usar os utensílios do templo de modo profano, ele provavelmente estava ressaltando o fato de que Babilônia havia conquistado os judeus e agora possuía os artigos religiosos de seu Deus. Ou seja, eles ainda tinham supremacia sobre esse Deus que havia previsto a queda do império.\n' +
-      'Foi um ato de desafio total, embora Belsazar tivesse evidências mais do que suficientes, e até provas da verdade. Ele tinha conhecimento suficiente para entender a verdade. O problema era seu coração. Nos últimos dias, quando a crise final irromper sobre o mundo, as pessoas também terão a oportunidade de conhecer a verdade. O que determinará sua escolha, assim como aconteceu com Belsazar, será o coração. \n' +
+      '\t\t\t\t\t\tQuando a família de Jacó chegou ao Egito depois de passar fome em Canaã (Gn 46), o Faraó foi amigável com os hebreus por causa de José e de tudo o que ele havia feito pelos egípcios.\n' +
+      '“E Faraó disse mais a José: – Eis que eu o constituo autoridade sobre toda a terra do Egito. Então Faraó tirou o seu anel-sinete da mão e o pôs no dedo de José. Mandou que o vestissem com roupas de linho fino e lhe pôs no pescoço um colar de ouro. E o fez subir na sua segunda carruagem, e clamavam diante dele: ‘Inclinem-se todos!’” (Gn 41:41-43).\n' +
+      '3. Qual foi a causa do sucesso surpreendente de José no Egito depois de um começo tão difícil? Gn 37:26-28; 39:2, 21\n' +
+      'O contexto histórico mais provável para a história do êxodo é o seguinte: o novo Faraó, “que não havia conhecido José” (Êx 1:8), é Amés I (1570-1546 a.C.). Em seguida, veio Amenotepe I (1546-1526 a.C.), o governante que temia os israelitas e os oprimiu. Mais tarde, Tutemés I (1525-1512 a.C.) emitiu o decreto mandando matar todos os meninos hebreus recém-nascidos. Sua filha Hatshepsut (1503-1482 a.C.) foi a princesa que adotou Moisés. O Faraó Tutemés III (1504-1450 a.C.), que durante algum tempo governou junto com Hatshepsut, foi o Faraó do êxodo.\n' +
+      'Segundo os estudos mais confiáveis, o êxodo ocorreu em março de 1450 a.C. (William H. Shea, “Exodus, Date of the”, em International Standard Bible Encyclopedia, ed. Geoffrey W. Bromiley [Eerdmans, 1982], v. 2, p. 230-238). Vários textos nos ajudam a estabelecer a data do êxodo (Gn 15:13-16; Êx 12:40, 41; Jz 11:26; 1Rs 6:1; At 7:6; Gl 3:16, 17).\n' +
+      'O primeiro capítulo de Êxodo abrange um longo período, desde que Jacó entrou no Egito com sua família até o decreto de morte emitido pelo Faraó. Embora as datas exatas desses acontecimentos sejam debatidas pelos estudiosos, o mais importante é que, mesmo que o povo de Deus estivesse escravizado em terra estrangeira, Ele jamais o abandonou.\n' +
+      'Detalhes históricos sobre o período em que os hebreus estiveram no Egito ainda são desconhecidos (1Co 13:12). No entanto, a revelação do caráter de Deus resplandece nas páginas do livro de Êxodo, como ocorre em toda a Bíblia. Mesmo que alguma situação pareça desesperadora, Deus está sempre presente, e podemos confiar Nele.\n' +
       'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\n' +
@@ -312,28 +271,29 @@ const CacheLessonData : LessonData = {
       '\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
-      '\t\t\t\t\tQuarta-feira, 25 de junho\n' +
+      '\t\t\t\t\tTerça-feira, 01 de julho\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 20\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO secamento do Eufrates\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
+      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 26\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tUm dos pontos fortes de Babilônia era a maneira como o rio Eufrates passava por baixo de suas muralhas, fornecendo à cidade um suprimento ilimitado de água. Isso também provou ser sua fraqueza. Nitócris, uma antiga rainha babilônica, havia criado obras de terra ao longo do rio para desenvolvê-lo como uma rota para a cidade e, no processo, desviou o rio para um pântano, permitindo que as equipes trabalhassem confortavelmente. Ciro percebeu que poderia fazer a mesma coisa, secando o Eufrates o suficiente para que pudesse marchar confortavelmente com suas tropas sob o muro. Uma vez dentro dos muros da cidade, ele encontrou os muros defensivos que seguiam o rio pela cidade desprotegidos, e a cidade foi tomada em uma única noite. O antigo historiador grego Heródoto relata que “aqueles que viviam no centro de Babilônia não tinham ideia de que os subúrbios haviam caído, pois era uma época de festival, e todos estavam dançando e se entregando aos prazeres” (The Histories [Penguin, 2015], p. 94). Pode haver alguma dúvida de que essa é a mesma festa descrita em Daniel 5?\n' +
-      '4. Leia Daniel 5:18-31 e Apocalipse 16:12-19. Que paralelos você encontra entre as últimas pragas do Apocalipse e a história da queda de Babilônia?\n' +
-      'Ao explicar como discernir os sinais dos tempos, Jesus advertiu Seus discípulos: “Portanto, vigiem, porque vocês não sabem em que dia virá o Senhor de vocês. Porém, considerem isto: se o pai de família soubesse a que hora viria o ladrão, vigiaria e não deixaria que a sua casa fosse arrombada” (Mt 24:42, 43). Assim como na queda de Babilônia, o súbito aparecimento de Cristo tomará a Babilônia moderna de surpresa. No entanto, não precisa ser assim conosco: recebemos amplas evidências da breve volta de Jesus em inúmeras profecias detalhadas.\n' +
-      'O mundo não será pego de surpresa apenas porque ignora o que Deus previu; ficará surpreso porque escolheu não acreditar no que Ele disse que aconteceria.\n' +
+      '\t\t\t\t\t\tAs parteiras hebreias\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tNão podemos compreender o livro de Êxodo sem pressupor a veracidade dos ensinos de Gênesis. Os israelitas se mudaram para o Egito e, após um período de prosperidade e paz, foram escravizados. No entanto, Deus não abandonou Seu povo em meio às dificuldades, mesmo que pudesse parecer assim. Muitos hebreus estavam desesperados. Contudo, no momento de angústia, Deus veio para ajudar com Sua mão poderosa. Ele encoraja Seus servos: “Invoque-Me no dia da angústia; Eu o livrarei, e você Me glorificará” (Sl 50:15).\n' +
+      '4. Leia Êxodo 1:9-21. Qual foi o papel fundamental das parteiras fiéis e por que elas são lembradas na história?\n' +
+      'Nenhum Faraó é mencionado por nome no livro de Êxodo. Eles possuem apenas o título de “Faraó”, que significa “rei”. Os egípcios acreditavam que o Faraó era um deus na Terra, filho do deus Rá (e também identificado com os deuses Osíris e Hórus). Rá era considerado a mais importante divindade egípcia, o próprio deus-sol.\n' +
+      'Apesar do seu suposto poder, esse “deus” não foi capaz de forçar as parteiras a ir contra suas convicções. Em contraste com o Faraó sem nome, as duas parteiras têm seus nomes mencionados: Sifrá e Puá (Êx 1:15). Elas são altamente estimadas porque temeram ao Senhor. A ordem perversa do Faraó não teve efeito sobre elas, porque respeitavam a Deus mais do que as ordens de um governante terreno (At 5:29). Assim, Deus as abençoou, dando-lhes famílias numerosas. Que testemunho poderoso de fidelidade! Essas mulheres, mesmo que tivessem pouco conhecimento teológico, sabiam o que era certo e agiram corretamente.\n' +
+      'Quando o Faraó viu que seu plano havia falhado, ordenou aos egípcios que matassem todos os meninos hebreus recém-nascidos. Eles deveriam jogá-los no rio Nilo, provavelmente como oferta a Hapi, o deus do Nilo, que também era um dos deuses da fertilidade (a propósito, esse é o primeiro registro histórico de judeus sendo mortos apenas por serem judeus). O propósito do decreto de morte era dominar os hebreus, aniquilar os descendentes do sexo masculino e assimilar as mulheres à nação egípcia. Com isso, seria encerrada a ameaça que o Faraó acreditava que os hebreus representavam para sua nação.\n' +
       'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\n' +
@@ -342,7 +302,7 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tLeia Apocalipse 16:15. Em meio a essas advertências sobre o fim dos tempos, que mensagem do evangelho é encontrada nesse texto? O que significa não andar “nu”?\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tAs parteiras sabiam o que deviam fazer e fizeram. Qual é a lição para nós?\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\n' +
@@ -353,29 +313,30 @@ const CacheLessonData : LessonData = {
       '\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
-      '\t\t\t\t\tQuinta-feira, 26 de junho\n' +
+      '\t\t\t\t\tQuarta-feira, 02 de julho\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 21\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tCiro, o ungido\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
+      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 27\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tQuando Ciro saqueou a cidade de Babilônia, o período de cativeiro do povo de Deus chegou ao fim, e os persas permitiram que os israelitas retornassem à terra prometida e reconstruíssem o templo. Sob o domínio de Ciro, o Império Persa se tornou o maior da história, naquilo que o historiador Tom Holland chama de “a maior aglomeração de territórios que o mundo já vira” (Domínio: O Cristianismo e a Criação da Mentalidade Ocidental [Record, 2022], p. 37).\n' +
-      'Como era costume entre os persas, Ciro foi até chamado de “o grande rei” e “rei dos reis”. Ele prenuncia o que acontecerá quando Cristo retornar para Sua igreja: Ele é o Rei que vem do Oriente (compare com Mt 24:27), travando guerra contra Babilônia e libertando Seu povo para escapar de Babilônia e ir para a terra prometida (ver Ap 19:11-16). É por isso que Deus Se refere a Ciro como “Seu ungido” (Is 45:1). Esse famoso persa não apenas libertou o povo de Deus, mas sua campanha contra Babilônia também é um tipo (ou representação) da segunda vinda de Cristo.\n' +
-      '5. Leia 2 Crônicas 36:22 e 23. Quais são as semelhanças e as diferenças entre a história de Ciro e a de Nabucodonosor? Qual é o significado desse decreto? Como ele impactou a primeira vinda de Jesus séculos depois?\n' +
-      'Em nossas Bíblias, o AT termina em Malaquias, mas, na ordem hebraica, ele termina em 2 Crônicas, com o decreto de Ciro. Portanto, o próximo episódio no cânon das Escrituras é Mateus, que começa com o nascimento de Cristo, o Ciro antitípico. O rei Ciro ordenou a reconstrução do templo terrestre; Jesus inaugurou Seu ministério no santuário celestial – que terminará com Seu retorno e nossa libertação.\n' +
-      'É claro, Ciro não era uma representação perfeita de Cristo. Nenhum tipo se encaixa perfeitamente com o antítipo, e devemos ter cuidado para não nos prendermos a cada detalhe. Porém, em termos amplos, Ciro atuou como um “salvador”.\n' +
+      '\t\t\t\t\t\tO nascimento de Moisés\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t5. Leia Êxodo 2:1-10. Qual foi o papel da providência e proteção de Deus na história do nascimento de Moisés?\n' +
+      'O contexto histórico do nascimento e da vida de Moisés é emocionante, pois ele viveu durante o tempo da famosa 18a dinastia egípcia. Um rei dessa dinastia, Tutemés III, conhecido como o “Napoleão do Egito”, é considerado um dos Faraós mais importantes da história.\n' +
+      'Embora estivesse sob ameaça de morte (Êx 1:22), Moisés era um bebê “bonito” (Êx 2:2; em hebraico, tob, literalmente, “bom”). O termo hebraico indica mais do que beleza externa, sendo usado, por exemplo, para descrever a obra de Deus durante a semana da criação, quando Ele declarou que tudo era “bom” (Gn 1:4, 10, 12, 18, 21, 25) e até mesmo “muito bom” (Gn 1:31).\n' +
+      'Como uma espécie de nova criação, essa criança “boa” se tornaria, de acordo com o plano de Deus, o adulto que libertaria os hebreus da escravidão. Quando Moisés nasceu, em condições tão difíceis, quem poderia imaginar o futuro que o aguardava? No entanto, Deus cumpriria Suas promessas a Abraão, Isaque e Jacó. O Senhor havia feito uma aliança com eles de que daria a seus descendentes a terra prometida (Êx 2:24, 25). Décadas depois, Ele usaria esse bebê para cumprir Suas promessas.\n' +
+      'Até então, a princesa egípcia Hatshepsut adotou Moisés como seu filho. O nome dado a Moisés tem origem egípcia, significando “filho de” ou “nascido de”, conforme refletido nos nomes de Faraós como Amés (“filho de Akh”) e Tutemés (“filho de Tote”). Moisés, em hebraico, é Mosheh, que significa “tirado” ou “puxado”. Sua vida foi milagrosamente poupada quando foi “tirado” do rio.\n' +
+      'Sabemos pouco sobre a infância de Moisés. Após ser milagrosamente salvo e adotado por Hatshepsut, ele viveu os primeiros 12 anos com sua família hebreia. Moisés então recebeu a melhor educação egípcia, com o objetivo de prepará-lo para ser o próximo Faraó (Êx 2:7-9; Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 203, 204). É impressionante que, no final das contas, grande parte dessa educação seria inútil ou até mesmo prejudicial para o que realmente importava: o conhecimento de Deus e de Sua verdade.\n' +
       'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\n' +
@@ -384,7 +345,7 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tÉ fascinante que Deus tenha usado um rei pagão de maneira tão marcante para fazer Sua vontade. Apesar das aparências do mundo hoje, o que aprendemos com a verdade de que, em longo prazo, o Senhor realizará os eventos finais conforme profetizado?\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tVocê está aprendendo algo que é irrelevante para o que realmente importa?\t\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\n' +
@@ -395,11 +356,55 @@ const CacheLessonData : LessonData = {
       '\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
-      '\t\t\t\t\tSexta-feira, 27 de junho\n' +
+      '\t\t\t\t\tQuinta-feira, 03 de julho\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 22\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 28\t\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tMudança de planos\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t6. Leia Êxodo 2:11-25. Que fatos ocorridos rapidamente mudaram toda a direção da vida de Moisés? Que lições podemos aprender dessa história?\n' +
+      'O que Moisés faria: sucumbiria à atração do Egito e aos prazeres da corte, ou suportaria dificuldades com seu povo aflito? Os acontecimentos logo o forçaram a tomar uma decisão.\n' +
+      '“Informado desse caso, Faraó quis matar Moisés; porém Moisés fugiu da presença de Faraó e foi morar na terra de Midiã. Chegando lá, sentou-se junto a um poço” (Êx 2:15).\n' +
+      'Após o assassinato, Moisés não teve escolha, pelo menos no que diz respeito a permanecer no Egito. Assim, quaisquer que fossem os planos para que ele ocupasse o trono do Egito e se tornasse um “deus”, esses planos foram rapidamente destruídos. Em vez de se tornar um falso deus, Moisés serviria ao único Deus verdadeiro. Sem dúvida, na época em que fugiu, Moisés não tinha ideia do que o futuro reservava para ele.\n' +
+      '“Em pouco tempo, os egípcios ficaram sabendo do caso, e a notícia logo chegou com bastante exagero aos ouvidos do Faraó. Disseram ao rei que esse ato significava muito mais, e que Moisés planejava liderar seu povo contra os egípcios, derrubar o governo e assentar-se no trono. Disseram também que não poderia haver segurança para o reino enquanto Moisés estivesse vivo. O rei determinou que ele deveria morrer imediatamente, mas Moisés, percebendo o perigo que corria, fugiu para a Arábia” (Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 206).\n' +
+      'Moisés viveu 120 anos (Dt 34:7), e sua vida pode ser dividida em três períodos de 40 anos cada. Os primeiros 40 anos foram passados no Egito, muitos deles no palácio real. O segundo período de 40 anos foi vivido na casa de Jetro, em Midiã.\n' +
+      'São os últimos 40 anos, no entanto, que ocupam a maior parte dos primeiros cinco livros da Bíblia (e o estudo deste trimestre). Esse período inclui a história do chamado inicial de Israel para testemunhar a um mundo que estava mergulhado na idolatria, revelando a natureza e o caráter do verdadeiro Deus (ver Dt 4:6-8).\n' +
+      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+      '\t\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+      '\t\t\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tEra plano de Deus que Moisés matasse o egípcio? Se não, o que essa história nos ensina sobre como Ele pode tomar em Suas mãos qualquer situação e usá-la para cumprir Seus propósitos? Como Romanos 8:28 nos ajuda a compreender essa verdade importante?\t\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\t\t\t\t\t\n' +
+      '\t\t\t\t\tAssine a lição',
+    '‹›\n' +
+      '\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\tSexta-feira, 04 de julho\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\t\t\n' +
+      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 29\t\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
@@ -413,14 +418,13 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\n' +
       '\t\t\t\t\n' +
       '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tLeia, de Ellen G. White, Profetas e Reis [CPB, 2021], p. 311-313 (“A queda de Babilônia”).\n' +
-      '“A cada nação que entra em cena tem sido dada a oportunidade de ocupar seu lugar na Terra, para que se avalie se ela cumpriu ou não os objetivos do santo Vigia. A profecia traçou o surgimento e o progresso dos grandes impérios mundiais: Babilônia, Média-Pérsia, Grécia e Roma. Com cada uma delas, bem como com as nações de menor poder, a história tem se repetido. Todas têm tido seu período de prova. Cada uma tem falhado; sua glória tem desaparecido, e seu poder, passado. Embora as nações tenham rejeitado os princípios de Deus, e nessa rejeição tenham causado a própria ruína, um divino e soberano propósito tem atuado claramente ao longo dos séculos” (Profetas e Reis, p. 311).\n' +
-      'Jeremias viu um oleiro moldando o barro. Deus usou essa imagem para explicar o princípio de que há profecias condicionais. E, para que entenda-mos, o Senhor explicou: “No momento em que Eu falar a respeito de uma nação ou de um reino para o arrancar, derrubar e destruir, se essa nação se converter da maldade contra a qual Eu falei, também Eu mudarei de ideia a respeito do mal que pensava fazer-lhe. E, no momento em que Eu falar a respeito de uma nação ou de um reino, para o edificar e plantar, se ele fizer o que é mau aos Meus olhos e não obedecer à Minha voz, então Eu mudarei de ideia quanto ao bem que havia prometido fazer” (Jr 18:7-10).\n' +
+      '\t\t\t\t\t\tLeia, de Ellen G. White, Patriarcas e Profetas, p. 201-209 (“Moisés”).\n' +
+      'O texto bíblico afirma que as “parteiras, porém, temeram a Deus e não fizeram o que o rei do Egito lhes havia ordenado; pelo contrário, deixaram viver os meninos” (Êx 1:17). Ellen G. White comenta sobre a fidelidade das parteiras e a esperança messiânica: “Foram dadas ordens às parteiras, cujo trabalho permitia o cumprimento desse mandado, para que destruíssem as crianças hebreias do sexo masculino assim que nascessem. Satanás foi o instigador disso. Sabia que um libertador se levantaria entre os israelitas; e, levando o rei a destruir seus filhos, esperava frustrar o propósito divino. No entanto, aquelas mulheres temiam a Deus e não ousaram executar a cruel determinação. O Senhor aprovou o procedimento delas e as fez prosperar” (Patriarcas e Profetas [CPB, 2022], p. 202).\n' +
+      'A boa notícia em tudo isso é que, apesar dos planos de Satanás, Deus triunfou e usou pessoas fiéis para frustrar o inimigo. Nós vivemos no território de nosso inimigo, a quem Jesus chamou de “príncipe do mundo” (Jo 14:30; NAA) ou “governante deste mundo” (NVT; ver Ef 2:2). Satanás usurpou essa posição de Adão, mas Jesus Cristo o derrotou em Sua vida e em Sua morte na cruz (Mt 4:1-11; Jo 19:30; Hb 2:14). Embora Satanás ainda esteja vivo e ativo, como fica claro na tentativa de matar aquelas crianças, sua destruição está garantida (Jo 12:31; 16:11; Ap 20:9, 10, 14). A grande notícia é que as dificuldades da vida podem ser superadas pela graça de Deus (Fp 4:13). Essa graça é nossa única esperança.\n' +
       'Perguntas para consideração\n' +
-      '1. Jesus disse que o juízo será menos rigoroso para Nínive do que para o povo de Deus que se afastou da verdade (Mt 12:39-42). Que lição tiramos dessa advertência?\n' +      
-      '2. Ellen G. White disse que, com os impérios que se sucedem, “a história tem se repetido”. Quais elementos em comum há nos impérios listados na profecia? Em que aspecto eles seguiram o mesmo caminho? O mundo atual também segue essa trilha?  \n' +
-      '3. Frequentemente não é a mente, o intelecto, que afasta as pessoas da fé, mas o coração. Esse fato impacta sua maneira de testemunhar aos outros?\n' +
-      'Respostas às perguntas da semana: 1. Jesus passaria três dias morto, assim como Jonas ficou três dias no ventre do peixe. Ambos pregaram uma mensagem de juízo. 2. Ela não se cumpriu porque o povo se arrependeu de seus pecados. Deus deseja salvar as pessoas, e não condená-las. 3. Deus deu a Belsazar todas as oportunidades de se arrepender; ele sabia tudo o que havia acontecido com Nabucodonosor, mas pereceu por sua própria decisão de afrontar a Deus. 4. Cristo destruirá Babilônia para salvar Seu povo. A queda da Babilônia histórica é um tipo (ou representação) do que Cristo fará nas últimas pragas. 5. Semelhança: Ciro era um rei poderoso que libertou o povo de Deus e destruiu os inimigos dele. Diferença: Ciro era simplesmente um ser humano pecador, e seu livramento foi apenas temporário.\n' +
+      '1. Por que Deus permitiu que os hebreus vivessem no Egito e fossem oprimidos? Por que demorou tanto para intervir em favor deles? Lembre-se também de que cada pessoa sofre apenas durante o período de sua própria vida. Portanto, o tempo de sofrimento da nação foi longo, mas cada pessoa sofreu apenas durante sua breve existência. Por que fazer essa distinção é importante quando tentamos entender o sofrimento humano em geral?\n' +
+      '2. Pense sobre como Deus foi capaz de usar o ato impetuoso de Moisés de matar o egípcio. Suponha que ele não tivesse cometido aquele erro. Isso significaria que os hebreus não teriam escapado do Egito? Explique seu raciocínio.\n' +
+      'Respostas às perguntas da semana: 1. No início o povo de Israel era pequeno, mas Deus o abençoou e ele cresceu muito. 2. Eram escravizados pelos egípcios e submetidos a trabalhos pesados. 3. Deus estava com josé e o guiou para cumprir Seus propósitos. 4. Elas salvaram os meninos hebreus, temendo mais a Deus do que ao Faraó. 5. Deus protegeu Moisés no cesto de junco e o guiou até a filha do Faraó. 6. Moisés matou um egípcio e fugiu para Midiã.\n' +
       'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
       '\t\t\t\t\t\t\n' +
       '\t\t\t\t\t\t\t\n' +
@@ -432,9 +436,9 @@ const CacheLessonData : LessonData = {
       '\t\t\t\t\tAssine a lição'
   ],
   verses: [],
-  lessonLink: 'https://mais.cpb.com.br/licao/imagens-do-fim/',
-  lastUpdated: '2025-06-21T17:02:51.090Z',
-  expiresAt: '2025-06-28T17:02:51.929Z'
+  lessonLink: 'https://mais.cpb.com.br/licao/o-povo-oprimido-e-o-nascimento-de-moises/',
+  lastUpdated: '2025-06-28T15:12:01.713Z',
+  expiresAt: '2025-07-05T15:12:02.433Z'
 }
 function buildSystemPrompt(lesson: LessonData | null): string {
   const dayNames = ['Sábado', 'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];

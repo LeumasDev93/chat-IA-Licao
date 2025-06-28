@@ -8,6 +8,7 @@ import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { useSupabaseUser } from "@/hooks/useComponentClient";
 
 interface MessageProps {
   message: MessageType & { id?: string };
@@ -25,6 +26,7 @@ const Message: React.FC<MessageProps> = ({
   const [showActions, setShowActions] = useState(false);
   const [copied, setCopied] = useState(false);
   const [pdfSalve, setPdfSalve] = useState(false);
+  const user = useSupabaseUser();
 
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -355,7 +357,19 @@ const Message: React.FC<MessageProps> = ({
         }`}
         aria-label={isBot ? "Bot" : "Usuário"}
       >
-        {isBot ? <Bot size={20} /> : <User size={20} />}
+        {isBot ? (
+          <Bot size={20} />
+        ) : user?.user ? (
+          <Image
+            src={user.user?.user_metadata?.avatar_url}
+            alt="User profile"
+            width={20}
+            height={20}
+            className="w-full h-full rounded-full"
+          />
+        ) : (
+          <User size={20} />
+        )}
       </div>
 
       {/* Bubble da mensagem */}
