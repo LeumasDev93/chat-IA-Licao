@@ -7,6 +7,7 @@ import { createComponentClient } from "@/models/supabase";
 import Image from "next/image";
 import logo1 from "@/assets/Logo1.png";
 import { useRouter } from "next/navigation";
+import { AlertCircle, Mail, User, Lock } from "lucide-react";
 
 export default function Login() {
   const supabase = createComponentClient();
@@ -121,122 +122,224 @@ export default function Login() {
 
   return (
     <div
-      className={`flex flex-col space-y-8 ${
-        resolvedTheme === "dark" ? "bg-gray-800" : "bg-gray-200"
-      } items-center justify-center h-screen px-2`}
+      className={`min-h-screen flex flex-col items-center justify-center p-4 ${
+        resolvedTheme === "dark"
+          ? "bg-gradient-to-br from-gray-900 to-gray-800"
+          : "bg-gradient-to-br from-gray-50 to-gray-100"
+      }`}
     >
-      <button
-        onClick={handleClick}
-        className="cursor-pointer flex items-center justify-center w-20 h-20 bg-gray-50 border-b border-gray-200 rounded-full"
-      >
-        <Image
-          src={logo1}
-          alt="Logo"
-          width={200}
-          height={200}
-          className="w-full h-full"
-        />
-      </button>
-
+      {/* Card Principal */}
       <div
-        className={`flex flex-col items-center justify-center text-center ${
+        className={`relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-300 ${
           resolvedTheme === "dark"
-            ? "text-white bg-gray-600"
-            : "text-gray-900 bg-gray-300"
-        } rounded-lg p-5 shadow-lg w-full sm:w-[400px]`}
+            ? "bg-gradient-to-br from-gray-800 to-gray-700 border border-purple-500/20"
+            : "bg-white border border-gray-200"
+        }`}
       >
-        <h1 className="text-xl sm:text-2xl font-bold mb-4">
-          Bem-Vindo ao Assistente IA para estudos da Lição da Escola Sabatina
-        </h1>
-        <span>
-          {typeAuth === "login"
-            ? "Faça login para continuar"
-            : "Crie uma conta para começar"}
-        </span>
+        {/* Cabeçalho com gradiente */}
+        <div
+          className={`w-full py-6 ${
+            resolvedTheme === "dark"
+              ? "bg-gradient-to-r from-purple-600 to-blue-600"
+              : "bg-gradient-to-r from-purple-500 to-blue-500"
+          } text-center`}
+        >
+          <div className="flex justify-center mb-4">
+            <div
+              onClick={handleClick}
+              className={`p-3 rounded-full cursor-pointer ${
+                resolvedTheme === "dark" ? "bg-gray-800/30" : "bg-white/20"
+              } backdrop-blur-sm`}
+            >
+              <Image
+                src={logo1}
+                alt="Logo"
+                width={60}
+                height={60}
+                className="object-contain"
+              />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-white">
+            Bem-Vindo(a) de volta ao
+            <span className="block">Assistente IA</span>
+          </h1>
+          <p className="text-white/90 mt-1">
+            {typeAuth === "login"
+              ? "Faça login para continuar"
+              : "Crie sua conta gratuitamente"}
+          </p>
+        </div>
 
-        <div className="flex items-center justify-around w-full mt-4">
+        {/* Tabs Login/Registro */}
+        <div className="flex border-b">
           <button
             onClick={() => setTypeAuth("login")}
-            className={`underline ${
-              typeAuth === "login" ? "font-bold" : "opacity-50"
+            className={`flex-1 py-4 font-medium transition-colors ${
+              typeAuth === "login"
+                ? resolvedTheme === "dark"
+                  ? "text-purple-400 border-b-2 border-purple-400"
+                  : "text-purple-600 border-b-2 border-purple-600"
+                : resolvedTheme === "dark"
+                ? "text-gray-400 hover:text-gray-300"
+                : "text-gray-500 hover:text-gray-700"
             }`}
           >
             Entrar
           </button>
           <button
             onClick={() => setTypeAuth("register")}
-            className={`underline ${
-              typeAuth === "register" ? "font-bold" : "opacity-50"
+            className={`flex-1 py-4 font-medium transition-colors ${
+              typeAuth === "register"
+                ? resolvedTheme === "dark"
+                  ? "text-purple-400 border-b-2 border-purple-400"
+                  : "text-purple-600 border-b-2 border-purple-600"
+                : resolvedTheme === "dark"
+                ? "text-gray-400 hover:text-gray-300"
+                : "text-gray-500 hover:text-gray-700"
             }`}
           >
             Criar Conta
           </button>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col space-y-4 w-full mt-5"
-        >
+        {/* Formulário */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {error && (
-            <div className="bg-red-100 text-red-800 p-2 rounded mb-4">
-              {error}
+            <div
+              className={`p-3 rounded-lg ${
+                resolvedTheme === "dark"
+                  ? "bg-red-900/50 text-red-200"
+                  : "bg-red-100 text-red-800"
+              } flex items-center gap-2`}
+            >
+              <AlertCircle className="w-5 h-5" />
+              <span>{error}</span>
             </div>
           )}
+
           {typeAuth === "register" && (
-            <input
-              type="text"
-              name="name"
-              placeholder="Nome completo"
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="px-4 py-2 rounded border focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                name="name"
+                placeholder="Nome completo"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 ${
+                  resolvedTheme === "dark"
+                    ? "bg-gray-700 border-gray-600 focus:ring-purple-500"
+                    : "bg-white border-gray-300 focus:ring-blue-500"
+                }`}
+              />
+              <User className="absolute right-3 top-3.5 text-gray-400" />
+            </div>
           )}
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="px-4 py-2 rounded border focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              required
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 ${
+                resolvedTheme === "dark"
+                  ? "bg-gray-700 border-gray-600 focus:ring-purple-500"
+                  : "bg-white border-gray-300 focus:ring-blue-500"
+              }`}
+            />
+            <Mail className="absolute right-3 top-3.5 text-gray-400" />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Senha"
-            required
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="px-4 py-2 rounded border focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              type="password"
+              name="password"
+              placeholder="Senha"
+              required
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 ${
+                resolvedTheme === "dark"
+                  ? "bg-gray-700 border-gray-600 focus:ring-purple-500"
+                  : "bg-white border-gray-300 focus:ring-blue-500"
+              }`}
+            />
+            <Lock className="absolute right-3 top-3.5 text-gray-400" />
+          </div>
 
           <button
             type="submit"
-            className={`w-full font-semibold ${
+            className={`w-full py-3 px-4 rounded-lg font-bold transition-all duration-200 shadow-md hover:shadow-lg ${
               resolvedTheme === "dark"
-                ? "bg-gray-100 hover:bg-gray-300 text-gray-800"
-                : "bg-blue-400 hover:bg-blue-500 text-white"
-            } rounded-lg px-4 py-2`}
+                ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white"
+                : "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-400 hover:to-blue-400 text-white"
+            }`}
           >
             {typeAuth === "login" ? "Entrar" : "Criar Conta"}
           </button>
 
+          <div className="relative flex items-center py-4">
+            <div className="flex-grow border-t border-gray-300/50"></div>
+            <span
+              className={`flex-shrink mx-4 ${
+                resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
+              ou
+            </span>
+            <div className="flex-grow border-t border-gray-300/50"></div>
+          </div>
+
           <button
             type="button"
             onClick={handleLoginWithGoogle}
-            className={`flex items-center justify-center gap-4 border ${
+            className={`w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg font-medium border transition-colors ${
               resolvedTheme === "dark"
-                ? "text-white bg-gray-600 hover:bg-gray-700"
-                : "text-gray-900 bg-gray-300 hover:bg-gray-400"
-            } rounded-lg px-4 py-2`}
+                ? "bg-gray-700 border-gray-600 hover:bg-gray-600 text-white"
+                : "bg-white border-gray-300 hover:bg-gray-50 text-gray-700"
+            }`}
           >
-            <FaGoogle className="text-xl" /> Continuar com o Google
+            <FaGoogle
+              className={`text-xl ${
+                resolvedTheme === "dark" ? "text-red-400" : "text-red-500"
+              }`}
+            />
+            Continuar com Google
           </button>
         </form>
+
+        {/* Rodapé */}
+        <div
+          className={`px-6 py-4 text-center ${
+            resolvedTheme === "dark" ? "bg-gray-800/50" : "bg-gray-50"
+          }`}
+        >
+          <p
+            className={`text-sm ${
+              resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
+            {typeAuth === "login"
+              ? "Não tem uma conta? "
+              : "Já tem uma conta? "}
+            <button
+              onClick={() =>
+                setTypeAuth(typeAuth === "login" ? "register" : "login")
+              }
+              className={`font-medium ${
+                resolvedTheme === "dark"
+                  ? "text-purple-400 hover:text-purple-300"
+                  : "text-purple-600 hover:text-purple-500"
+              }`}
+            >
+              {typeAuth === "login" ? "Crie agora" : "Faça login"}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

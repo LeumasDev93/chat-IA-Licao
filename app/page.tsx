@@ -3,7 +3,15 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Send, Mic, X } from "lucide-react";
+import {
+  Send,
+  Mic,
+  X,
+  Sparkles,
+  LockKeyhole,
+  Zap,
+  History,
+} from "lucide-react";
 import { MessageType } from "@/types";
 import { generateBotResponse } from "@/utils/botResponses";
 import Message from "@/components/chatbot/Message";
@@ -480,34 +488,77 @@ export default function Home() {
   `}
           >
             {alertMessage && (
-              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-fadeIn">
                 <div
-                  className={`absolute flex flex-col ${
+                  className={`relative flex flex-col max-w-md w-full p-6 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-[1.01] ${
                     resolvedTheme === "dark"
-                      ? "bg-gray-500 text-white border-gray-600"
-                      : "bg-gray-300 text-gray-700 border-gray-400"
-                  } border justify-between items-center px-2 rounded-2xl`}
+                      ? "bg-gradient-to-br from-gray-800 to-gray-900 border border-purple-500/30 text-white"
+                      : "bg-gradient-to-br from-white to-gray-100 border border-purple-300 text-gray-800"
+                  }`}
                 >
-                  <div className="absolute top-2 right-2">
-                    <button onClick={() => setAlert(false)}>
-                      <X size={20} />
-                    </button>
+                  {/* Botão de fechar */}
+                  <button
+                    onClick={() => setAlert(false)}
+                    className={`absolute top-3 right-3 p-1 rounded-full ${
+                      resolvedTheme === "dark"
+                        ? "hover:bg-gray-700"
+                        : "hover:bg-gray-200"
+                    }`}
+                  >
+                    <X size={20} />
+                  </button>
+
+                  {/* Conteúdo principal */}
+                  <div className="flex flex-col items-center text-center space-y-4 mt-4">
+                    {/* Ícone animado */}
+                    <div className="relative">
+                      <div
+                        className={`absolute inset-0 rounded-full ${
+                          resolvedTheme === "dark"
+                            ? "bg-purple-500/20 animate-ping"
+                            : "bg-purple-300/40 animate-ping"
+                        }`}
+                      ></div>
+                      <LockKeyhole className="h-12 w-12 text-purple-500" />
+                    </div>
+
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+                      Acesso Bloqueado
+                    </h3>
+
+                    <p className="text-lg">Inicie sessão para desbloquear:</p>
+
+                    <ul className="space-y-2 text-left w-full pl-6">
+                      <li className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-yellow-400" />
+                        Respostas inteligentes e personalizadas
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <History className="h-4 w-4 text-blue-400" />
+                        Histórico completo das suas conversas
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 text-purple-400" />
+                        Acesso prioritário a novos recursos
+                      </li>
+                    </ul>
                   </div>
-                  <div className="flex text-center mt-10 items-center justify-center">
-                    <span>
-                      Inicie sessão para obter respostas mais inteligentes.
-                    </span>
-                  </div>
+
+                  {/* Botão de ação */}
                   <Link
                     href="/login"
-                    className={`p-2 ${
+                    className={`mt-6 py-3 px-6 rounded-xl font-bold text-center transition-all duration-200 shadow-lg ${
                       resolvedTheme === "dark"
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-200 text-blue-500"
-                    }   rounded-full my-5 px-5`}
+                        ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 hover:shadow-purple-500/30"
+                        : "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-400 hover:to-blue-400 hover:shadow-purple-400/40"
+                    }`}
                   >
-                    Inicie sessão
+                    Iniciar Sessão Agora
                   </Link>
+
+                  <p className="text-xs text-center mt-4 opacity-70">
+                    Leva menos de 30 segundos!
+                  </p>
                 </div>
               </div>
             )}
