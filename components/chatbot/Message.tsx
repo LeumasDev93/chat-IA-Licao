@@ -149,7 +149,7 @@ const Message: React.FC<MessageProps> = ({
     : "bg-gray-100 text-gray-900";
 
   const botAvatarClass = isDark
-    ? "bg-gray-800 text-white"
+    ? "bg-gray-100 text-white"
     : "bg-white text-gray-800";
 
   const handleCopy = () => {
@@ -358,8 +358,14 @@ const Message: React.FC<MessageProps> = ({
         aria-label={isBot ? "Bot" : "Usuário"}
       >
         {isBot ? (
-          <Bot size={20} />
-        ) : user?.user ? (
+          <Image
+            src={logo2}
+            alt="User profile"
+            width={20}
+            height={20}
+            className="w-full h-full rounded-full"
+          />
+        ) : user?.user?.user_metadata.avatar_url ? (
           <Image
             src={user.user?.user_metadata?.avatar_url}
             alt="User profile"

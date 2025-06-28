@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Bot } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import Image from "next/image";
+import logo2 from "@/assets/Logo2.png";
 
 const TypingIndicator: React.FC = () => {
   const { theme } = useTheme();
@@ -36,10 +37,16 @@ const TypingIndicator: React.FC = () => {
         <div className="flex-shrink-0 mr-2 self-end">
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              isDark ? "bg-gray-700 text-white" : "bg-gray-200 text-gray-800"
+              isDark ? "bg-gray-200 text-white" : "bg-white text-gray-800"
             }`}
           >
-            <Bot size={18} />
+            <Image
+              src={logo2}
+              alt="User profile"
+              width={20}
+              height={20}
+              className="w-full h-full rounded-full"
+            />
           </div>
         </div>
 

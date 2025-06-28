@@ -237,7 +237,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     onClick={() => handleChatSelect(chatId)}
                     className={`p-2 rounded cursor-pointer flex items-center justify-between transition-colors ${
                       currentChatId === chatId
-                        ? "bg-gray-800"
+                        ? "bg-gray-500"
                         : "hover:bg-gray-700"
                     }`}
                   >
@@ -249,7 +249,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                         e.stopPropagation();
                         handleDeleteChat(e, chatId);
                       }}
-                      className="text-red-400 hover:text-red-300 ml-2"
+                      className="text-red-500 hover:text-red-400 ml-2"
                     >
                       <Trash size={16} />
                     </button>
