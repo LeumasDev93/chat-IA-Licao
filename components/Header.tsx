@@ -184,7 +184,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     fetchChatHistory();
 
     // Configura intervalo de 5 segundos
-    const intervalId = setInterval(fetchChatHistory, 1000);
+    const intervalId = setInterval(fetchChatHistory, 10000);
 
     // Limpa intervalo ao desmontar o componente ou user mudar
     return () => clearInterval(intervalId);

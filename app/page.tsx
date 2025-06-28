@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Send, Mic } from "lucide-react";
+import { Send, Mic, X } from "lucide-react";
 import { MessageType } from "@/types";
 import { generateBotResponse } from "@/utils/botResponses";
 import Message from "@/components/chatbot/Message";
@@ -21,6 +21,7 @@ import { createBrowserClient } from "@supabase/ssr";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
 import { createComponentClient } from "@/models/supabase";
 import { FaSpinner } from "react-icons/fa6";
+import Link from "next/link";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
@@ -133,6 +134,7 @@ export default function Home() {
   const isMobile = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const [alertMessage, setAlert] = useState(false);
   const textFooter =
     resolvedTheme === "dark" ? "text-blue-400" : "text-blue-700";
 
@@ -477,6 +479,38 @@ export default function Home() {
     }
   `}
           >
+            {alertMessage && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+                <div
+                  className={`absolute flex flex-col ${
+                    resolvedTheme === "dark"
+                      ? "bg-gray-500 text-white border-gray-600"
+                      : "bg-gray-300 text-gray-700 border-gray-400"
+                  } border justify-between items-center px-2 rounded-2xl`}
+                >
+                  <div className="absolute top-2 right-2">
+                    <button onClick={() => setAlert(false)}>
+                      <X size={20} />
+                    </button>
+                  </div>
+                  <div className="flex text-center mt-10 items-center justify-center">
+                    <span>
+                      Inicie sessão para obter respostas mais inteligentes.
+                    </span>
+                  </div>
+                  <Link
+                    href="/login"
+                    className={`p-2 ${
+                      resolvedTheme === "dark"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-200 text-blue-500"
+                    }   rounded-full my-5 px-5`}
+                  >
+                    Inicie sessão
+                  </Link>
+                </div>
+              </div>
+            )}
             <div className="mx-auto max-w-3xl w-full sm:px-4 sm:pb-3">
               {messages.length <= 1 && (
                 <div className="mb-2">
@@ -486,13 +520,13 @@ export default function Home() {
                       <QuickReply
                         key={index}
                         text={reply}
-                        onClick={
-                          !isTyping
-                            ? () => {
-                                void handleSendMessage(undefined, reply);
-                              }
-                            : () => {}
-                        }
+                        onClick={() => {
+                          if (user.user) {
+                            void handleSendMessage(undefined, reply);
+                          } else {
+                            setAlert(true);
+                          }
+                        }}
                       />
                     ))}
                   </div>
@@ -503,13 +537,13 @@ export default function Home() {
                       <div key={index} className="flex-shrink-0">
                         <QuickReply
                           text={reply}
-                          onClick={
-                            !isTyping
-                              ? () => {
-                                  void handleSendMessage(undefined, reply);
-                                }
-                              : () => {}
-                          }
+                          onClick={() => {
+                            if (user.user) {
+                              void handleSendMessage(undefined, reply);
+                            } else {
+                              setAlert(true);
+                            }
+                          }}
                         />
                       </div>
                     ))}
@@ -527,24 +561,34 @@ export default function Home() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
-                        handleSendMessage(e);
+                        if (user.user) {
+                          handleSendMessage(e);
+                        } else {
+                          setAlert(true);
+                        }
                       }
                     }}
-                    placeholder="Digite sua mensagem..."
+                    placeholder={
+                      user.user
+                        ? "Digite sua mensagem..."
+                        : "Faça login para enviar mensagens..."
+                    }
                     rows={3}
                     style={{
                       minHeight: "40px",
                       maxHeight: "150px",
                     }}
                     className={`
-        w-full px-4 py-3 pr-16 text-base rounded-t-2xl sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
-        transition-all duration-200
-        ${
-          resolvedTheme === "dark"
-            ? "bg-gray-700 text-white focus:ring-gray-300"
-            : "bg-gray-100 text-black focus:ring-gray-300"
-        }
-      `}
+      w-full px-4 py-3 pr-16 text-base rounded-t-2xl sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
+      transition-all duration-200
+      ${
+        resolvedTheme === "dark"
+          ? "bg-gray-700 text-white focus:ring-gray-300"
+          : "bg-gray-100 text-black focus:ring-gray-300"
+      }
+      ${!user.user ? "cursor-pointer" : ""}
+    `}
+                    onClick={!user.user ? () => setAlert(true) : undefined}
                   />
 
                   {/* Botões dentro do textarea */}
@@ -553,28 +597,35 @@ export default function Home() {
                     <button
                       type="button"
                       disabled={isTyping}
-                      onMouseDown={!isTyping ? startRecording : undefined}
-                      onMouseUp={stopRecording}
+                      onClick={!user.user ? () => setAlert(true) : undefined}
+                      onMouseDown={
+                        user.user && !isTyping ? startRecording : undefined
+                      }
+                      onMouseUp={user.user ? stopRecording : undefined}
                       onMouseLeave={() => {
-                        if (isPressing && !isMobile.current) {
+                        if (user.user && isPressing && !isMobile.current) {
                           stopRecording();
                         }
                       }}
-                      onTouchStart={startRecording}
-                      onTouchEnd={stopRecording}
+                      onTouchStart={user.user ? startRecording : undefined}
+                      onTouchEnd={user.user ? stopRecording : undefined}
                       className={`
-          p-2 rounded-full transition-colors
-          ${isTyping ? "cursor-not-allowed opacity-50" : ""}
-          ${isPressing || isRecording ? "bg-red-500 animate-pulse" : ""}
-          ${
-            !isTyping && !(isPressing || isRecording)
-              ? resolvedTheme === "dark"
-                ? "hover:text-gray-300 hover:bg-gray-800"
-                : "hover:text-gray-800 hover:bg-gray-200"
-              : ""
-          }
-        `}
-                      aria-label="Pressione e segure para falar"
+        p-2 rounded-full transition-colors
+        ${isTyping ? "cursor-not-allowed opacity-50" : ""}
+        ${isPressing || isRecording ? "bg-red-500 animate-pulse" : ""}
+        ${
+          !isTyping && !(isPressing || isRecording)
+            ? resolvedTheme === "dark"
+              ? "hover:text-gray-300 hover:bg-gray-800"
+              : "hover:text-gray-800 hover:bg-gray-200"
+            : ""
+        }
+      `}
+                      aria-label={
+                        user.user
+                          ? "Pressione e segure para falar"
+                          : "Faça login para usar o microfone"
+                      }
                     >
                       <Mic size={18} />
                     </button>
@@ -583,18 +634,34 @@ export default function Home() {
                     <button
                       type="submit"
                       disabled={inputValue.trim() === "" || isTyping}
+                      onClick={(e) => {
+                        if (!user.user) {
+                          e.preventDefault();
+                          setAlert(true);
+                        } else if (inputValue.trim() !== "" && !isTyping) {
+                          handleSendMessage(e);
+                        }
+                      }}
                       className={`
-          p-2 rounded-full transition-colors
-          ${inputValue.trim() === "" ? "cursor-not-allowed opacity-50" : ""}
-          ${
-            inputValue.trim() !== ""
-              ? resolvedTheme === "dark"
-                ? "bg-gray-500 hover:bg-gray-800"
-                : "bg-gray-400 hover:bg-gray-600 text-white"
-              : ""
-          }
-        `}
-                      aria-label="Enviar mensagem"
+        p-2 rounded-full transition-colors
+        ${
+          inputValue.trim() === "" || isTyping
+            ? "cursor-not-allowed opacity-50"
+            : ""
+        }
+        ${
+          inputValue.trim() !== ""
+            ? resolvedTheme === "dark"
+              ? "bg-gray-500 hover:bg-gray-800"
+              : "bg-gray-400 hover:bg-gray-600 text-white"
+            : ""
+        }
+      `}
+                      aria-label={
+                        user.user
+                          ? "Enviar mensagem"
+                          : "Faça login para enviar mensagens"
+                      }
                     >
                       <Send size={18} />
                     </button>
