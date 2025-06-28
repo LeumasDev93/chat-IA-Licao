@@ -450,7 +450,7 @@ function buildSystemPrompt(lesson: LessonData | null): string {
 ${lesson ? `📖 *Lição Atual:* ${lesson.title} (${lesson.days})` : '📖 *Modo Geral de Estudo Bíblico*'}
 
 👋 *Saudação Inicial:* 
-"Boas-vindas ao estudo da Lição da Escola Sabatina! Eu sou seu companheiro de estudo digital. Como posso ajudar você a explorar a Palavra de Deus hoje?"
+"Bem-Vindo(a) ao estudo da Lição da Escola Sabatina! Eu sou seu companheiro de estudo digital. Como posso ajudar você a explorar a Palavra de Deus hoje?"
 
 🎯 *Objetivo:*
 Criar um diálogo natural onde você pode:

@@ -220,8 +220,12 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               onNewChat();
               if (isMobile) setSidebarOpen(false);
             }}
-            className={`p-2 rounded flex items-center gap-2 shadow-sm
-          ${resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"}`}
+            className={`p-2 rounded-xl  border flex items-center gap-2 shadow-xl cursor-pointer
+          ${
+            resolvedTheme === "dark"
+              ? "bg-gray-600 "
+              : "bg-gray-100 border-gray-300 hover:bg-gray-600 hover:text-white"
+          }`}
           >
             <Plus size={18} />
             <span className="text-sm">Nova Conversa</span>
@@ -238,7 +242,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     className={`p-2 rounded cursor-pointer flex items-center justify-between transition-colors ${
                       currentChatId === chatId
                         ? "bg-gray-500"
-                        : "hover:bg-gray-700"
+                        : "hover:bg-gray-600 hover:text-white rounded-xl"
                     }`}
                   >
                     <span className="truncate text-sm flex-1">
@@ -273,7 +277,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             )}
             {user?.user?.id && (
               <div
-                className={`relative cursor-pointer flex items-center p-2 rounded ${hoverBg} ${textColor}`}
+                className={`relative cursor-pointer flex items-center p-2 rounded-xl ${hoverBg} ${textColor}`}
                 onClick={() => setOpenProfile(true)}
               >
                 {user?.user?.user_metadata?.avatar_url ? (
@@ -383,8 +387,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   onNewChat();
                   setSidebarOpen(false);
                 }}
-                className={`p-2 rounded flex items-center gap-2 shadow-sm mb-2 ${
-                  resolvedTheme === "dark" ? "bg-gray-600" : "bg-gray-200"
+                className={`p-2 rounded-xl cursor-pointer flex border items-center gap-2 shadow-xl mb-2 ${
+                  resolvedTheme === "dark"
+                    ? "bg-gray-600"
+                    : "bg-gray-200 border-gray-400 hover:bg-gray-400 hover:text-white"
                 }`}
               >
                 <Plus size={18} />
@@ -400,7 +406,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       <li
                         key={chatId}
                         onClick={() => handleChatSelect(chatId)}
-                        className={`p-2 rounded cursor-pointer flex items-center justify-between transition-colors ${
+                        className={`p-2 rounded-xl cursor-pointer flex items-center justify-between transition-colors ${
                           currentChatId === chatId ? activeBg : hoverBg
                         }`}
                       >
@@ -428,7 +434,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 {!user?.user?.id && (
                   <Link
                     href="/login"
-                    className={`w-full p-2 rounded flex items-center border justify-center gap-2 text-sm ${sidebarBg} ${borderColor}`}
+                    className={`w-full p-2 cursor-pointer rounded-xl flex items-center border justify-center gap-2 text-sm ${sidebarBg} ${borderColor}`}
                   >
                     <IoIosLogIn className="size-4 xl:size-6" />
                     <span className="text-sm xl:text-lg">Entrar</span>
@@ -436,7 +442,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 )}
                 {user?.user?.id && (
                   <div
-                    className="relative cursor-pointer flex items-center p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                    className="relative cursor-pointer flex items-center p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-500"
                     onClick={() => setOpenProfile(true)}
                   >
                     {user?.user?.user_metadata?.avatar_url ? (
@@ -523,7 +529,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           <div className="flex flex-col space-y-2">
             {user?.user?.id && (
               <div
-                className={`px-3 py-2 text-xs xl:text-sm font-semibold ${textColor}`}
+                className={`px-3 py-2 text-xs xl:text-sm font-semibold border-b ${textColor}`}
               >
                 {user.user.user_metadata.full_name || user.user.email}
               </div>

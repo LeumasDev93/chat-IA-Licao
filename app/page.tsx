@@ -419,7 +419,7 @@ export default function Home() {
   return (
     <main
       className={`flex flex-col h-screen   ${
-        resolvedTheme === "dark" ? "dark" : "bg-gray-200"
+        resolvedTheme === "dark" ? "dark" : "bg-gray-300"
       }`}
     >
       <div className="flex-grow flex overflow-hidden">
@@ -483,7 +483,7 @@ export default function Home() {
     ${
       resolvedTheme === "dark"
         ? "bg-gray-900 text-gray-400"
-        : "bg-gray-200 text-gray-700"
+        : "bg-gray-300 text-gray-700"
     }
   `}
           >

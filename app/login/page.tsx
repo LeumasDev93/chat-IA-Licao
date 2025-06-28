@@ -125,7 +125,7 @@ export default function Login() {
       className={`min-h-screen flex flex-col items-center justify-center p-4 ${
         resolvedTheme === "dark"
           ? "bg-gradient-to-br from-gray-900 to-gray-800"
-          : "bg-gradient-to-br from-gray-50 to-gray-100"
+          : "bg-gradient-to-br from-gray-100 to-gray-300"
       }`}
     >
       {/* Card Principal */}
@@ -148,7 +148,7 @@ export default function Login() {
             <div
               onClick={handleClick}
               className={`p-3 rounded-full cursor-pointer ${
-                resolvedTheme === "dark" ? "bg-gray-800/30" : "bg-white/20"
+                resolvedTheme === "dark" ? "bg-white" : "bg-gray-200"
               } backdrop-blur-sm`}
             >
               <Image
