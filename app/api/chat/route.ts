@@ -126,319 +126,359 @@ type LessonData = {
   lessonLink: string;
   lastUpdated: string;
 }
-const CacheLessonData : LessonData = {
+const CacheLessonData: LessonData = {
   title: 'Lições',
   days: [
     '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tLição 1\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t28 de junho a 04 de julho\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO povo oprimido e o nascimento de Moisés | 3º Trimestre 2025\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tSábado à tarde\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 23\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tVerso para memorizar:\n' +
-      '\t\t\t\t\t\t“Os filhos de Israel gemiam por causa da sua escravidão. Eles clamaram, e o seu clamor chegou até Deus. Deus ouviu o gemido deles e lembrou-Se da Sua aliança com Abraão, com Isaque e com jacó. E Deus viu os filhos de Israel e atentou e atentou para a situação deles” (Êx 2:23-25).\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tLeituras da semana:\n' +
-      '\t\t\t\t\t\tÊx 1; Gn 37:26-28; 39:2, 21; At 7:6; Gl 3:16, 17; Êx 2\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO livro de Êxodo está cheio de relatos de pessoas oprimidas, marginalizadas, perseguidas, exploradas e desprezadas. Assim, aqueles que hoje se sentem abandonados, esquecidos e escravizados podem encontrar esperança, pois o mesmo Deus que salvou os hebreus também pode salvá-los.\n' +
-      'Êxodo fala das batalhas existenciais e das injustiças da vida. Todos podem ser encorajados pelas histórias das intervenções de Deus em favor de Seu povo. Ele ouve o clamor dos oprimidos, vê suas lutas, observa suas lágrimas e vem em seu auxílio. \n' +
-      'Deus toma a iniciativa de libertar aqueles que confiam Nele. Precisamos aceitar, pela fé, o que Ele oferece. É por isso que devemos estudar o livro de Êxodo, pois ele aponta para o que Jesus fez por nós. É um livro que trata da redenção, libertação e salvação – e tudo isso nos pertence, pela fé em Cristo Jesus, com base no que Ele obteve em nosso favor. Em meio à adversidade e à escuridão, se nossos olhos estiverem fixos em Deus, podemos reconhecer Sua presença, cuidado e auxílio enquanto Ele nos guia em direção à eterna “terra prometida”. \n' +
-      'Nota do editor: A sigla “RPSP” significa “Reavivados Por Sua Palavra”.\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição',
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tLição 2\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t05 a 11 de julho\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tA sarça ardente | 3º Trimestre 2025\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tSábado à tarde\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 30\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tVerso para memorizar:\n' +
+    '\t\t\t\t\t\t“Então o Senhor continuou: – Certamente vi a aflição do Meu povo, que está no Egito, e ouvi o seu clamor por causa dos seus feitores. Conheço o sofrimento do Meu povo. Por isso desci a fim de livrá-lo das mãos dos egípcios e para fazê-lo sair daquela terra e levá-lo para uma terra boa e ampla, terra que mana leite e mel” (Êx 3:7, 8).\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tLeituras da semana:\n' +
+    '\t\t\t\t\t\tÊx 3; 18:3, 4; Gn 22:11, 15-18; Êx 6:3; jl 2:32; Êx 4; Gn 17:10, 11\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tO chamado que Deus nos faz frequentemente mudará a direção da nossa vida. No entanto, se seguirmos esse chamado, descobriremos que o caminho de Deus é sempre a melhor rota. Ainda assim, às vezes, pelo menos no início, não é fácil aceitar o chamado divino.\n' +
+    'Esse foi o caso de Moisés e seu chamado, que ocorreu no encontro com o Senhor na sarça ardente. Embora não tivesse conhecimento sobre as leis da combustão, Moisés sabia que estava presenciando um milagre, e isso chamou sua atenção. Sem dúvida, o Senhor o estava chamando para uma tarefa específica. A questão era: ele atenderia ao chamado, não importando a mudança drástica que isso traria à sua vida? No início, Moisés não recebeu muito bem essa nova realidade.\n' +
+    'Você deve se lembrar de situações em que tinha objetivos, mas Deus redirecionou seus planos. Podemos servir a Deus de muitas maneiras, mas seguir Seu chamado e fazer o que Ele deseja é o caminho para uma existência satisfatória. Isso não é fácil, e não foi para Moisés, mas seria tolice seguir nosso caminho quando Deus mostra outra direção.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição',
     '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tDomingo, 29 de junho\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 24\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO povo de Deus no Egito\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO livro de Êxodo é chamado em hebraico de shemot, que significa “nomes”. Esse título vem das primeiras palavras do livro: “São estes os nomes dos filhos de Israel que entraram com Jacó no Egito” (Êx 1:1).\n' +
-      '1. Leia Êxodo 1:1-7. Que verdade crucial é apresentada nesse texto?\n' +
-      'O livro de Êxodo começa com um lembrete da bênção de Deus. Quando o patriarca Jacó e sua família se estabeleceram no Egito, eram apenas 70 pessoas (Gn 46:27; Êx 1:5), mas os israelitas “foram fecundos, aumentaram muito, se multiplicaram e se tornaram extremamente fortes, de maneira que a terra se encheu deles” (Êx 1:7). Quando saíram do Egito, eles já eram “cerca de seiscentos mil a pé, somente de homens, sem contar mulheres e crianças” (Êx 12:37).\n' +
-      '2. Leia Êxodo 1:8-11. Qual era a condição dos israelitas na época do êxodo?\n' +
-      'O texto bíblico descreve a história dos filhos de Israel no Egito de maneira bastante sombria. O livro de Êxodo começa com a escravidão imposta pelos egípcios e o trabalho opressivo que eles impuseram aos hebreus. O livro termina, no entanto, com a presença serena e reconfortante de Deus no tabernáculo, que estava no centro do acampamento israelita (Êx 40). Entre essas duas situações opostas, é descrito o triunfo de Deus. Quando o Senhor libertou Seu povo da escravidão, ao abrir o Mar Vermelho e derrotar o exército mais poderoso da Terra, foi revelada a vitória espetacular de Deus sobre as forças do mal.\n' +
-      'A história destaca paradoxalmente que “quanto mais os afligiam, tanto mais se multiplicavam e tanto mais se espalhavam” (Êx 1:12). Não importa as intrigas humanas, Deus é soberano e salvará Seu povo, mesmo que as circunstâncias pareçam desesperadoras da perspectiva humana.\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t“Levantou-se um novo rei sobre o Egito, que não havia conhecido José” (Êx 1:8). Como esse relato nos mostra que jamais devemos acreditar que qualquer circunstância, mesmo as boas, permanecerá a mesma para sempre?\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição',
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tDomingo, 06 de julho\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 31\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tA sarça ardente\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tDepois que Moisés fugiu para Midiã, ele teve uma vida relativamente fácil. Ele se casou, teve dois filhos, Gérson e Eliézer (Êx 18:3, 4), e fazia parte da família de Jetro, seu sogro e sacerdote de Midiã. Moisés passou 40 anos tranquilos sendo pastor, a mesma atividade de Davi (2Sm 7:8), e desfrutando a presença de Deus, especialmente revelada na natureza.\n' +
+    'No entanto, Moisés não passou todo esse tempo simplesmente sentindo o aroma das flores (ou talvez, dos cactos do deserto). Esses anos de caminhada com o Senhor o transformaram e o prepararam para a liderança. Deus também usou Moisés naquele deserto pacato para escrever, sob inspiração divina, os dois livros mais antigos da Bíblia: Jó e Gênesis (Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 209; Comentário Bíblico Adventista do Sétimo Dia [CPB, 2016], v. 3, p. 1140). Ao escrever esses livros, Moisés recebeu de Deus revelações essenciais sobre o grande conflito, a criação, a queda, o dilúvio, os patriarcas e, mais importante ainda, o plano da salvação. Assim, ele teve papel fundamental em transmitir à humanidade o verdadeiro conhecimento do Criador e Mantenedor, e sobre o que Ele faz em relação ao pecado, que causou profundos danos ao planeta. A história da salvação não faz sentido sem o fundamento crucial que, sob inspiração, Moisés comunicou, especialmente em Gênesis.\n' +
+    '1. Leia Êxodo 3:1-6. O Senhor Se apresentou a Moisés como “o Deus de Abraão, o Deus de Isaque e o Deus de Jacó”. Qual é a relevância desse fato?\n' +
+    'Moisés viu que a sarça ardente não se consumia pelo fogo. Então percebeu que estava testemunhando um milagre e que algo espetacular e importante deveria estar acontecendo bem diante dele. Ao se aproximar, o Senhor lhe disse para tirar as sandálias dos pés como sinal de profundo respeito, porque a presença de Deus tornava o lugar santo.\n' +
+    'O Senhor Se apresentou a Moisés como “o Deus de Abraão, o Deus de Isaque e o Deus de Jacó” (Êx 3:6). Ele havia prometido a esses patriarcas que seus descendentes herdariam a terra de Canaã, uma promessa que Moisés conhecia bem. Portanto, mesmo antes de dizê-lo, Deus já estava abrindo o caminho para que Moisés soubesse o que estava por vir e o papel crucial que deveria desempenhar.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tMoisés precisou de 80 anos para que Deus o considerasse pronto para a tarefa. O que isso nos ensina sobre paciência?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição',
     '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tSegunda-feira, 30 de junho\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 25\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO contexto histórico\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tQuando a família de Jacó chegou ao Egito depois de passar fome em Canaã (Gn 46), o Faraó foi amigável com os hebreus por causa de José e de tudo o que ele havia feito pelos egípcios.\n' +
-      '“E Faraó disse mais a José: – Eis que eu o constituo autoridade sobre toda a terra do Egito. Então Faraó tirou o seu anel-sinete da mão e o pôs no dedo de José. Mandou que o vestissem com roupas de linho fino e lhe pôs no pescoço um colar de ouro. E o fez subir na sua segunda carruagem, e clamavam diante dele: ‘Inclinem-se todos!’” (Gn 41:41-43).\n' +
-      '3. Qual foi a causa do sucesso surpreendente de José no Egito depois de um começo tão difícil? Gn 37:26-28; 39:2, 21\n' +
-      'O contexto histórico mais provável para a história do êxodo é o seguinte: o novo Faraó, “que não havia conhecido José” (Êx 1:8), é Amés I (1570-1546 a.C.). Em seguida, veio Amenotepe I (1546-1526 a.C.), o governante que temia os israelitas e os oprimiu. Mais tarde, Tutemés I (1525-1512 a.C.) emitiu o decreto mandando matar todos os meninos hebreus recém-nascidos. Sua filha Hatshepsut (1503-1482 a.C.) foi a princesa que adotou Moisés. O Faraó Tutemés III (1504-1450 a.C.), que durante algum tempo governou junto com Hatshepsut, foi o Faraó do êxodo.\n' +
-      'Segundo os estudos mais confiáveis, o êxodo ocorreu em março de 1450 a.C. (William H. Shea, “Exodus, Date of the”, em International Standard Bible Encyclopedia, ed. Geoffrey W. Bromiley [Eerdmans, 1982], v. 2, p. 230-238). Vários textos nos ajudam a estabelecer a data do êxodo (Gn 15:13-16; Êx 12:40, 41; Jz 11:26; 1Rs 6:1; At 7:6; Gl 3:16, 17).\n' +
-      'O primeiro capítulo de Êxodo abrange um longo período, desde que Jacó entrou no Egito com sua família até o decreto de morte emitido pelo Faraó. Embora as datas exatas desses acontecimentos sejam debatidas pelos estudiosos, o mais importante é que, mesmo que o povo de Deus estivesse escravizado em terra estrangeira, Ele jamais o abandonou.\n' +
-      'Detalhes históricos sobre o período em que os hebreus estiveram no Egito ainda são desconhecidos (1Co 13:12). No entanto, a revelação do caráter de Deus resplandece nas páginas do livro de Êxodo, como ocorre em toda a Bíblia. Mesmo que alguma situação pareça desesperadora, Deus está sempre presente, e podemos confiar Nele.\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição',
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tSegunda-feira, 07 de julho\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 32\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tO Anjo do Senhor\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tO “Anjo do Senhor” apareceu a Moisés “numa chama de fogo, no meio de uma sarça” (Êx 3:2). Quem falou com ele “do meio da sarça” foi o próprio Senhor Jesus (Êx 3:4).\n' +
+    'Não precisamos nos preocupar com o fato de que o Anjo do Senhor era Jesus Cristo. O termo anjo significa “mensageiro” (em hebraico, malakhi). Dependendo do contexto, “anjo” pode ser um ser angélico, humano ou divino (Ml 3:1). Em vários casos do Antigo Testamento (AT), o Anjo do Senhor é uma Pessoa divina (Gn 22:11, 15-18; 31:3, 11, 13; Jz 2:1, 2; 6:11-22; Zc 3:1, 2). O Anjo do Senhor não apenas falava em nome do Senhor, mas era o próprio Senhor – Jesus é o mensageiro de Deus, que nos transmite a palavra do Pai.\n' +
+    '2. Leia Êxodo 3:7-12. Como Deus explicou a Moisés por que queria intervir em favor dos israelitas escravizados no Egito?\n' +
+    'O sofrimento do povo de Deus no Egito é descrito de forma poética como um “gemido” e um profundo “clamor” por ajuda. Deus ouviu o clamor dos israelitas e revelou preocupação por eles (Êx 2:23-25). O Senhor os chamou de “Meu povo” (Êx 3:7). Ou seja, antes mesmo do Sinai e da confirmação da aliança, eles eram Seu povo, e Ele os faria habitar e prosperar (se obedecessem) na terra de Canaã, como havia prometido a seus antepassados.\n' +
+    'Deus disse a Moisés que o estava enviando ao Faraó para cumprir uma tarefa específica: “Agora venha, e Eu o enviarei a Faraó, para que você tire do Egito o Meu povo, os filhos de Israel” (Êx 3:10). Novamente, Deus os chamou de “o Meu povo”.\n' +
+    'Que tarefa gigantesca! Diante disso, Moisés reagiu com uma pergunta: “Quem sou eu para ir a Faraó e tirar do Egito os filhos de Israel?” (Êx 3:11). Compreendendo tudo o que iria acontecer e qual seria seu papel em tudo isso, Moisés se perguntou por que alguém como ele teria sido escolhido. Logo no início da história, temos uma indicação do caráter de Moisés, de sua humildade e do senso de indignidade para a tarefa que ele estava sendo chamado a fazer.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tPor que a humildade e o senso de nossa própria indignidade são essenciais para quem deseja seguir o Senhor e fazer Sua vontade?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição',
     '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tTerça-feira, 01 de julho\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 26\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAs parteiras hebreias\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tNão podemos compreender o livro de Êxodo sem pressupor a veracidade dos ensinos de Gênesis. Os israelitas se mudaram para o Egito e, após um período de prosperidade e paz, foram escravizados. No entanto, Deus não abandonou Seu povo em meio às dificuldades, mesmo que pudesse parecer assim. Muitos hebreus estavam desesperados. Contudo, no momento de angústia, Deus veio para ajudar com Sua mão poderosa. Ele encoraja Seus servos: “Invoque-Me no dia da angústia; Eu o livrarei, e você Me glorificará” (Sl 50:15).\n' +
-      '4. Leia Êxodo 1:9-21. Qual foi o papel fundamental das parteiras fiéis e por que elas são lembradas na história?\n' +
-      'Nenhum Faraó é mencionado por nome no livro de Êxodo. Eles possuem apenas o título de “Faraó”, que significa “rei”. Os egípcios acreditavam que o Faraó era um deus na Terra, filho do deus Rá (e também identificado com os deuses Osíris e Hórus). Rá era considerado a mais importante divindade egípcia, o próprio deus-sol.\n' +
-      'Apesar do seu suposto poder, esse “deus” não foi capaz de forçar as parteiras a ir contra suas convicções. Em contraste com o Faraó sem nome, as duas parteiras têm seus nomes mencionados: Sifrá e Puá (Êx 1:15). Elas são altamente estimadas porque temeram ao Senhor. A ordem perversa do Faraó não teve efeito sobre elas, porque respeitavam a Deus mais do que as ordens de um governante terreno (At 5:29). Assim, Deus as abençoou, dando-lhes famílias numerosas. Que testemunho poderoso de fidelidade! Essas mulheres, mesmo que tivessem pouco conhecimento teológico, sabiam o que era certo e agiram corretamente.\n' +
-      'Quando o Faraó viu que seu plano havia falhado, ordenou aos egípcios que matassem todos os meninos hebreus recém-nascidos. Eles deveriam jogá-los no rio Nilo, provavelmente como oferta a Hapi, o deus do Nilo, que também era um dos deuses da fertilidade (a propósito, esse é o primeiro registro histórico de judeus sendo mortos apenas por serem judeus). O propósito do decreto de morte era dominar os hebreus, aniquilar os descendentes do sexo masculino e assimilar as mulheres à nação egípcia. Com isso, seria encerrada a ameaça que o Faraó acreditava que os hebreus representavam para sua nação.\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAs parteiras sabiam o que deviam fazer e fizeram. Qual é a lição para nós?\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição',
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tTerça-feira, 08 de julho\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 33\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tO nome do Senhor\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t3. Leia Êxodo 3:13-22. Por que Moisés desejava conhecer o nome de Deus? Qual é a importância desse nome?\n' +
+    'Deus Se apresentou a Moisés como “eheyeh asher eheyeh”, que significa “Eu Sou o Que Sou” ou “Eu Serei o Que Serei”. O Senhor usou esse mesmo verbo (eheyeh) ao dizer a Moisés: “Eu estarei com você” (Êx 3:12). Essas palavras significam que Deus é eterno. Ele é o Deus transcendente, que habita “no alto e santo lugar”, e também o Deus imanente, que habita “com o contrito e abatido de espírito” (Is 57:15).\n' +
+    'O nome próprio de Deus, Yahweh (geralmente traduzido na Bíblia como “Senhor”), era conhecido desde o início pelos israelitas, mesmo que não entendessem seu significado mais profundo. Moisés também conhecia o nome de Yahweh, mas, como outras pessoas, não sabia o que ele significa. Por isso perguntou: “Qual é o nome Dele?” (Êx 3:13).\n' +
+    'Êxodo 6:3 ajuda a entender essa questão. Deus disse: “Apareci a Abraão, a Isaque e a Jacó como o Deus Todo-Poderoso; mas pelo Meu nome, o Senhor, não lhes fui conhecido”. Isso não significa que os patriarcas não conhecessem o nome Yahweh (Gn 2:4, 9; 4:1, 26; 7:5; 15:6-8); eles não conheciam o significado mais profundo desse nome.\n' +
+    'O nome Yahweh aponta para o fato de que Ele é um Deus pessoal de Seu povo, o Deus da aliança, um Deus próximo e íntimo que Se envolve nas questões humanas. O título “Deus Todo-Poderoso” (Gn 17:1) indica que Ele age milagrosamente, usando Seu poder infinito. Já o nome Yahweh mostra que Ele é um Deus que revela Seu poder por meio de Seu amor e cuidado. Ele também é chamado de Elohim (traduzido como “Deus”), indicando o Deus poderoso, forte e transcendente, o Deus de toda a humanidade, o Governante do Universo e o Criador de todas as coisas. Yahweh e Elohim são nomes diferentes que revelam diferentes aspectos de Seu relacionamento com os seres humanos.\n' +
+    'Conhecer ou invocar o nome do Senhor não é um mero ritual místico. Proclamar Seu nome significa ensinar a verdade sobre Deus e a salvação que Ele oferece aos que vão a Ele com fé. “Todo aquele que invocar o nome do Senhor será salvo” (Jl 2:32).\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tYahweh busca a proximidade e a intimidade com todos os que se entregam a Ele. Você já teve essa experiência?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição',
     '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tQuarta-feira, 02 de julho\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 27\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tO nascimento de Moisés\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t5. Leia Êxodo 2:1-10. Qual foi o papel da providência e proteção de Deus na história do nascimento de Moisés?\n' +
-      'O contexto histórico do nascimento e da vida de Moisés é emocionante, pois ele viveu durante o tempo da famosa 18a dinastia egípcia. Um rei dessa dinastia, Tutemés III, conhecido como o “Napoleão do Egito”, é considerado um dos Faraós mais importantes da história.\n' +
-      'Embora estivesse sob ameaça de morte (Êx 1:22), Moisés era um bebê “bonito” (Êx 2:2; em hebraico, tob, literalmente, “bom”). O termo hebraico indica mais do que beleza externa, sendo usado, por exemplo, para descrever a obra de Deus durante a semana da criação, quando Ele declarou que tudo era “bom” (Gn 1:4, 10, 12, 18, 21, 25) e até mesmo “muito bom” (Gn 1:31).\n' +
-      'Como uma espécie de nova criação, essa criança “boa” se tornaria, de acordo com o plano de Deus, o adulto que libertaria os hebreus da escravidão. Quando Moisés nasceu, em condições tão difíceis, quem poderia imaginar o futuro que o aguardava? No entanto, Deus cumpriria Suas promessas a Abraão, Isaque e Jacó. O Senhor havia feito uma aliança com eles de que daria a seus descendentes a terra prometida (Êx 2:24, 25). Décadas depois, Ele usaria esse bebê para cumprir Suas promessas.\n' +
-      'Até então, a princesa egípcia Hatshepsut adotou Moisés como seu filho. O nome dado a Moisés tem origem egípcia, significando “filho de” ou “nascido de”, conforme refletido nos nomes de Faraós como Amés (“filho de Akh”) e Tutemés (“filho de Tote”). Moisés, em hebraico, é Mosheh, que significa “tirado” ou “puxado”. Sua vida foi milagrosamente poupada quando foi “tirado” do rio.\n' +
-      'Sabemos pouco sobre a infância de Moisés. Após ser milagrosamente salvo e adotado por Hatshepsut, ele viveu os primeiros 12 anos com sua família hebreia. Moisés então recebeu a melhor educação egípcia, com o objetivo de prepará-lo para ser o próximo Faraó (Êx 2:7-9; Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 203, 204). É impressionante que, no final das contas, grande parte dessa educação seria inútil ou até mesmo prejudicial para o que realmente importava: o conhecimento de Deus e de Sua verdade.\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tVocê está aprendendo algo que é irrelevante para o que realmente importa?\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição',
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tQuarta-feira, 09 de julho\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 34\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tQuatro desculpas\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t4. Leia Êxodo 4:1-17. Que sinais o Senhor ordenou que Moisés realizasse para fortalecer sua posição como mensageiro de Deus?\n' +
+    'Moisés tentou novamente se justificar para evitar a missão que Deus lhe havia designado (Êx 3:11). Ele não queria ir ao Egito e confrontar o Faraó. Afinal, já havia falhado quando tentou, por conta própria, ajudar os hebreus. Além disso, seu povo não acreditou nele nem o aceitou como líder. Por isso, ele apresentou a terceira objeção: “E se eles não acreditarem em mim nem quiserem me ouvir?” (Êx 4:1, NVI). Moisés não estava buscando uma resposta. Essa foi uma forma de recusar a tarefa que Deus lhe pediu que assumisse.\n' +
+    'Deus deu a Moisés dois sinais milagrosos que ele devia realizar diante dos anciãos de Israel e, depois, diante do Faraó: (1) sua vara se transformaria em serpente e depois em vara novamente; e (2) sua mão ficaria leprosa, mas depois seria curada instantaneamente. Ambos os milagres deviam convencer os anciãos de que Deus estava trabalhando por eles. Se não cressem, haveria um terceiro milagre, o de transformar água em sangue (Êx 4:8, 9).\n' +
+    'Mesmo que Deus tivesse dado a Moisés esses grandes prodígios, ele ainda expressou uma quarta desculpa: ele tinha dificuldade para falar.\n' +
+    '5. Leia Êxodo 4:10-18. Como o Senhor respondeu a Moisés? Que lições podemos tirar disso em qualquer situação para a qual Deus nos chamar?\n' +
+    'As quatro desculpas mostram a relutância de Moisés em seguir o chamado de Deus. Com objeções aparentemente “lógicas”, ele escondia sua relutância em ir. As três primeiras desculpas expressam perguntas: (1) “Quem sou eu?”; (2) Quem és Tu?; e (3) E se eles não acreditarem em mim? A quarta objeção é uma declaração: “Eu nunca fui eloquente” (Êx 4:10). Deus reagiu trazendo uma solução poderosa e apresentando promessas motivadoras.\n' +
+    'Então Moisés fez um quinto e último apelo, pedindo diretamente: “Ah! Senhor! Envia alguém outro que quiseres enviar” (Êx 4:13). Em resposta, Deus lhe disse que já estava enviando seu irmão Arão para ir ao encontro dele e ajudá-lo. Por fim, Moisés cedeu em silêncio e pediu a bênção de Jetro antes de partir para o Egito.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição',
     '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tQuinta-feira, 03 de julho\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 28\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tMudança de planos\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t6. Leia Êxodo 2:11-25. Que fatos ocorridos rapidamente mudaram toda a direção da vida de Moisés? Que lições podemos aprender dessa história?\n' +
-      'O que Moisés faria: sucumbiria à atração do Egito e aos prazeres da corte, ou suportaria dificuldades com seu povo aflito? Os acontecimentos logo o forçaram a tomar uma decisão.\n' +
-      '“Informado desse caso, Faraó quis matar Moisés; porém Moisés fugiu da presença de Faraó e foi morar na terra de Midiã. Chegando lá, sentou-se junto a um poço” (Êx 2:15).\n' +
-      'Após o assassinato, Moisés não teve escolha, pelo menos no que diz respeito a permanecer no Egito. Assim, quaisquer que fossem os planos para que ele ocupasse o trono do Egito e se tornasse um “deus”, esses planos foram rapidamente destruídos. Em vez de se tornar um falso deus, Moisés serviria ao único Deus verdadeiro. Sem dúvida, na época em que fugiu, Moisés não tinha ideia do que o futuro reservava para ele.\n' +
-      '“Em pouco tempo, os egípcios ficaram sabendo do caso, e a notícia logo chegou com bastante exagero aos ouvidos do Faraó. Disseram ao rei que esse ato significava muito mais, e que Moisés planejava liderar seu povo contra os egípcios, derrubar o governo e assentar-se no trono. Disseram também que não poderia haver segurança para o reino enquanto Moisés estivesse vivo. O rei determinou que ele deveria morrer imediatamente, mas Moisés, percebendo o perigo que corria, fugiu para a Arábia” (Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 206).\n' +
-      'Moisés viveu 120 anos (Dt 34:7), e sua vida pode ser dividida em três períodos de 40 anos cada. Os primeiros 40 anos foram passados no Egito, muitos deles no palácio real. O segundo período de 40 anos foi vivido na casa de Jetro, em Midiã.\n' +
-      'São os últimos 40 anos, no entanto, que ocupam a maior parte dos primeiros cinco livros da Bíblia (e o estudo deste trimestre). Esse período inclui a história do chamado inicial de Israel para testemunhar a um mundo que estava mergulhado na idolatria, revelando a natureza e o caráter do verdadeiro Deus (ver Dt 4:6-8).\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tEra plano de Deus que Moisés matasse o egípcio? Se não, o que essa história nos ensina sobre como Ele pode tomar em Suas mãos qualquer situação e usá-la para cumprir Seus propósitos? Como Romanos 8:28 nos ajuda a compreender essa verdade importante?\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição',
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tQuinta-feira, 10 de julho\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 35\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tA circuncisão\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t6. Leia Êxodo 4:18-31. Como entender essa história estranha? O que aprendemos com ela?\n' +
+    'Muitas pessoas ficam chocadas ao lerem que, depois que Moisés obedeceu a Deus e começou sua jornada de volta ao Egito, o Senhor “procurou matá-lo” (Êx 4:24, NVI). Pelo contexto da história, fica claro que a questão era a circuncisão. O filho mais novo de Moisés não havia sido circuncidado, como exigia a aliança com Abraão (Gn 17:10, 11).\n' +
+    'Moisés, como líder do povo de Deus, precisava mostrar sua perfeita submissão e obediência ao Senhor, a fim de ser qualificado para levar outros a ser obedientes. Ele tinha que ser um modelo de entrega completa a Deus. Sua esposa Zípora era uma mulher de ação e circuncidou seu filho para salvar a vida de seu marido. Ela tocou em Moisés com o prepúcio cheio de sangue, e esse sangue representa expiação, vida e confirmação da aliança. O fato de que a circuncisão tinha sido feita rapidamente aumentou o drama da situação.\n' +
+    'Podemos aprender uma lição importante com esse episódio: jamais devemos deixar de fazer o que sabemos ser correto.\n' +
+    '“No caminho, quando vinha de Midiã, Moisés recebeu uma advertência assustadora e terrível do desagrado do Senhor. Um anjo apareceu-lhe de maneira ameaçadora, como se fosse destruí-lo imediatamente. Nenhuma explicação havia sido dada. No entanto, Moisés se lembrou de que havia desatendido a uma das ordens de Deus; [...] negligenciara efetuar o rito da circuncisão em seu filho mais novo. Deixara de satisfazer a condição pela qual seu filho poderia ter direito às bênçãos da aliança de Deus com Israel, e tal negligência por parte do dirigente escolhido de Israel diminuiria a força dos preceitos divinos sobre o povo.\n' +
+    '“Zípora, temendo que seu marido fosse morto, realizou ela mesma o rito, e então o anjo permitiu que Moisés prosseguisse com a jornada. Em sua missão diante do Faraó, Moisés seria colocado em posição de grande perigo; sua vida só poderia ser preservada pela proteção de santos anjos. No entanto, enquanto vivesse negligenciando um dever conhecido, não estaria livre de perigo, pois não poderia estar protegido pelos anjos de Deus” (Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 213).\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tVocê tem negligenciado algo que deveria fazer? O que essa história lhe diz a respeito dessa questão? Quais mudanças você precisa fazer neste exato momento?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição',
     '‹›\n' +
-      '\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\tSexta-feira, 04 de julho\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 29\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tEstudo adicional\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\tLeia, de Ellen G. White, Patriarcas e Profetas, p. 201-209 (“Moisés”).\n' +
-      'O texto bíblico afirma que as “parteiras, porém, temeram a Deus e não fizeram o que o rei do Egito lhes havia ordenado; pelo contrário, deixaram viver os meninos” (Êx 1:17). Ellen G. White comenta sobre a fidelidade das parteiras e a esperança messiânica: “Foram dadas ordens às parteiras, cujo trabalho permitia o cumprimento desse mandado, para que destruíssem as crianças hebreias do sexo masculino assim que nascessem. Satanás foi o instigador disso. Sabia que um libertador se levantaria entre os israelitas; e, levando o rei a destruir seus filhos, esperava frustrar o propósito divino. No entanto, aquelas mulheres temiam a Deus e não ousaram executar a cruel determinação. O Senhor aprovou o procedimento delas e as fez prosperar” (Patriarcas e Profetas [CPB, 2022], p. 202).\n' +
-      'A boa notícia em tudo isso é que, apesar dos planos de Satanás, Deus triunfou e usou pessoas fiéis para frustrar o inimigo. Nós vivemos no território de nosso inimigo, a quem Jesus chamou de “príncipe do mundo” (Jo 14:30; NAA) ou “governante deste mundo” (NVT; ver Ef 2:2). Satanás usurpou essa posição de Adão, mas Jesus Cristo o derrotou em Sua vida e em Sua morte na cruz (Mt 4:1-11; Jo 19:30; Hb 2:14). Embora Satanás ainda esteja vivo e ativo, como fica claro na tentativa de matar aquelas crianças, sua destruição está garantida (Jo 12:31; 16:11; Ap 20:9, 10, 14). A grande notícia é que as dificuldades da vida podem ser superadas pela graça de Deus (Fp 4:13). Essa graça é nossa única esperança.\n' +
-      'Perguntas para consideração\n' +
-      '1. Por que Deus permitiu que os hebreus vivessem no Egito e fossem oprimidos? Por que demorou tanto para intervir em favor deles? Lembre-se também de que cada pessoa sofre apenas durante o período de sua própria vida. Portanto, o tempo de sofrimento da nação foi longo, mas cada pessoa sofreu apenas durante sua breve existência. Por que fazer essa distinção é importante quando tentamos entender o sofrimento humano em geral?\n' +
-      '2. Pense sobre como Deus foi capaz de usar o ato impetuoso de Moisés de matar o egípcio. Suponha que ele não tivesse cometido aquele erro. Isso significaria que os hebreus não teriam escapado do Egito? Explique seu raciocínio.\n' +
-      'Respostas às perguntas da semana: 1. No início o povo de Israel era pequeno, mas Deus o abençoou e ele cresceu muito. 2. Eram escravizados pelos egípcios e submetidos a trabalhos pesados. 3. Deus estava com josé e o guiou para cumprir Seus propósitos. 4. Elas salvaram os meninos hebreus, temendo mais a Deus do que ao Faraó. 5. Deus protegeu Moisés no cesto de junco e o guiou até a filha do Faraó. 6. Moisés matou um egípcio e fugiu para Midiã.\n' +
-      'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-      '\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\n' +
-      '\t\t\t\t\t\n' +
-      '\t\t\t\t\t\t\t\t\t\t\n' +
-      '\t\t\t\t\tAssine a lição'
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tSexta-feira, 11 de julho\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: ÊX 36\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tEstudo adicional\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tLeia, de Ellen G. White, Patriarcas e Profetas, p. 209-213 (“Moisés”).\n' +
+    'O chamado espetacular vindo da sarça ardente provavelmente foi a experiência mais transformadora da vida de Moisés. Todos os outros pontos altos de sua vida dependeram de sua resposta positiva e obediente ao chamado de Deus para conduzir os hebreus para fora do Egito, rumo à terra prometida.\n' +
+    'Hoje conhecemos a história completa. Mas coloque-se no lugar de Moisés na época da sarça ardente. Ele havia fugido do Egito para salvar a própria vida. Depois de 40 anos, uma nova geração de hebreus havia surgido, e muitos provavelmente sabiam pouco sobre ele, ou talvez tivessem ouvido histórias distorcidas sobre ele. E então ele foi chamado para liderar o povo a sair da nação mais poderosa do mundo? Não é de admirar sua relutância!\n' +
+    'Era uma tarefa extremamente difícil, mas imagine o que Moisés teria perdido se a sua resposta final a Deus tivesse sido “não”. Talvez ele tivesse simplesmente desaparecido da história, em vez de, pelo poder de Deus, literalmente fazer história e se tornar uma das maiores e mais influentes pessoas, não apenas da Bíblia, mas da civilização humana.\n' +
+    'Perguntas para consideração\n' +
+    '1. Nos anos tranquilos passados no deserto, Moisés fez tudo o que o Senhor o chamou para realizar: foi um homem de família, cuidava de ovelhas e escreveu dois livros bíblicos sob a inspiração divina antes de ser chamado para ser um grande líder do povo de Deus. O que a experiência de Moisés ensina sobre nossos deveres da vida diária?\n' +
+    '2. Alguém poderia argumentar que, à primeira vista, as desculpas de Moisés tinham sentido. “Por que alguém acreditaria em mim? Quem sou eu? Não sei falar bem.” O que essa história ensina sobre aprender a confiar que Deus nos capacita a fazer o que Ele nos chama a realizar?\n' +
+    '3. A lição de domingo explica que Moisés escreveu o livro de Gênesis e destaca a importância desse livro para compreender a história sagrada e o plano da salvação. Por que devemos resistir às tentativas de enfraquecer a autoridade de Gênesis, especialmente a realidade histórica de seus primeiros 11 capítulos?\n' +
+    'Respostas às perguntas da semana: 1. O mesmo Deus que havia feito promessas aos patriarcas estava com o povo de Israel. 2. Deus estava atento aos sofrimentos de Seu povo, ouviu o clamor dele e estava pronto para agir. 3. Moisés não entendia o que o nome de Deus realmente significa. O nome do Senhor revela Seu caráter. 4. Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    'livros bíblicos sob a inspiração divina antes de ser chamado para ser um grande líder do povo de Deus. O que a experiência de Moisés ensina sobre nossos deveres da vida diária?\n' +
+    '2. Alguém poderia argumentar que, à primeira vista, as desculpas de Moisés tinham sentido. “Por que alguém acreditaria em mim? Quem sou eu? Não sei falar bem.” O que essa história ensina sobre aprender a confiar que Deus nos capacita a fazer o que Ele nos chama a realizar?\n' +
+    '3. A lição de domingo explica que Moisés escreveu o livro de Gênesis e destaca a importância desse livro para compreender a história sagrada e o plano da salvação. Por que devemos resistir às tentativas de enfraquecer a autoridade de Gênesis, especialmente a realidade histórica de seus primeiros 11 capítulos?\n' +
+    'Respostas às perguntas da semana: 1. O mesmo Deus que havia feito promessas aos patriarcas estava com o povo de Israel. 2. Deus estava atento aos sofrimentos de Seu povo, ouviu o clamor dele e estava pronto para agir. 3. Moisés não entendia o que o nome de Deus realmente significa. O nome do Senhor revela Seu caráter. 4. Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    'vida diária?\n' +
+    '2. Alguém poderia argumentar que, à primeira vista, as desculpas de Moisés tinham sentido. “Por que alguém acreditaria em mim? Quem sou eu? Não sei falar bem.” O que essa história ensina sobre aprender a confiar que Deus nos capacita a fazer o que Ele nos chama a realizar?\n' +
+    '3. A lição de domingo explica que Moisés escreveu o livro de Gênesis e destaca a importância desse livro para compreender a história sagrada e o plano da salvação. Por que devemos resistir às tentativas de enfraquecer a autoridade de Gênesis, especialmente a realidade histórica de seus primeiros 11 capítulos?\n' +
+    'Respostas às perguntas da semana: 1. O mesmo Deus que havia feito promessas aos patriarcas estava com o povo de Israel. 2. Deus estava atento aos sofrimentos de Seu povo, ouviu o clamor dele e estava pronto para agir. 3. Moisés não entendia o que o nome de Deus realmente significa. O nome do Senhor revela Seu caráter. 4. Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '2. Alguém poderia argumentar que, à primeira vista, as desculpas de Moisés tinham sentido. “Por que alguém acreditaria em mim? Quem sou eu? Não sei falar bem.” O que essa história ensina sobre aprender a confiar que Deus nos capacita a fazer o que Ele nos chama a realizar?\n' +
+    '3. A lição de domingo explica que Moisés escreveu o livro de Gênesis e destaca a importância desse livro para compreender a história sagrada e o plano da salvação. Por que devemos resistir às tentativas de enfraquecer a autoridade de Gênesis, especialmente a realidade histórica de seus primeiros 11 capítulos?\n' +
+    'Respostas às perguntas da semana: 1. O mesmo Deus que havia feito promessas aos patriarcas estava com o povo de Israel. 2. Deus estava atento aos sofrimentos de Seu povo, ouviu o clamor dele e estava pronto para agir. 3. Moisés não entendia o que o nome de Deus realmente significa. O nome do Senhor revela Seu caráter. 4. Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '” O que essa história ensina sobre aprender a confiar que Deus nos capacita a fazer o que Ele nos chama a realizar?\n' +
+    '3. A lição de domingo explica que Moisés escreveu o livro de Gênesis e destaca a importância desse livro para compreender a história sagrada e o plano da salvação. Por que devemos resistir às tentativas de enfraquecer a autoridade de Gênesis, especialmente a realidade histórica de seus primeiros 11 capítulos?\n' +
+    'Respostas às perguntas da semana: 1. O mesmo Deus que havia feito promessas aos patriarcas estava com o povo de Israel. 2. Deus estava atento aos sofrimentos de Seu povo, ouviu o clamor dele e estava pronto para agir. 3. Moisés não entendia o que o nome de Deus realmente significa. O nome do Senhor revela Seu caráter. 4. Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '3. A lição de domingo explica que Moisés escreveu o livro de Gênesis e destaca a importância desse livro para compreender a história sagrada e o plano da salvação. Por que devemos resistir às tentativas de enfraquecer a autoridade de Gênesis, especialmente a realidade histórica de seus primeiros 11 capítulos?\n' +
+    'Respostas às perguntas da semana: 1. O mesmo Deus que havia feito promessas aos patriarcas estava com o povo de Israel. 2. Deus estava atento aos sofrimentos de Seu povo, ouviu o clamor dele e estava pronto para agir. 3. Moisés não entendia o que o nome de Deus realmente significa. O nome do Senhor revela Seu caráter. 4. Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    'Respostas às perguntas da semana: 1. O mesmo Deus que havia feito promessas aos patriarcas estava com o povo de Israel. 2. Deus estava atento aos sofrimentos de Seu povo, ouviu o clamor dele e estava pronto para agir. 3. Moisés não entendia o que o nome de Deus realmente significa. O nome do Senhor revela Seu caráter. 4. Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    'Transformar a vara em serpente, tornar a pele leprosa e transformar água em sangue. 5. Deus disse que Ele é quem capacita as pessoas a falar e ver, e enviaria Arão. Deus oferece os recursos para a missão à qual nos chama. 6. Moisés errou em não circuncidar seu filho. Devemos obedecer ao que sabemos ser certo.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição'
   ],
   verses: [],
-  lessonLink: 'https://mais.cpb.com.br/licao/o-povo-oprimido-e-o-nascimento-de-moises/',
-  lastUpdated: '2025-06-28T15:12:01.713Z',
-  expiresAt: '2025-07-05T15:12:02.433Z'
+  lessonLink: 'https://mais.cpb.com.br/licao/a-sarca-ardente/',
+  lastUpdated: '2025-07-08T23:49:34.111Z',
+  expiresAt: '2025-07-15T23:49:35.865Z'
 }
 function buildSystemPrompt(lesson: LessonData | null): string {
   const dayNames = ['Sábado', 'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
@@ -469,8 +509,7 @@ Criar um diálogo natural onde você pode:
 OBSERVAÇÃO: estas formas não são regras rígidas, mas diretrizes para manter o diálogo fluido e interessante e não ser mostradas como um roteiro.
 te
 📅 *Destaque do Dia (${dayNames[currentDay]}):*
-${
-  lesson ? `
+${lesson ? `
 "Hoje estudamos: *${lesson.days[currentDay] || 'Tópico do dia'}*
 
 Versículo-chave: (${lesson.days[currentDay] || 'a definir'})
@@ -480,7 +519,7 @@ Que aspecto gostaria de explorar?
 2. Aplicação prática
 3. Conexões proféticas"
 ` : 'Vamos explorar a Bíblia juntos! Sobre qual passagem gostaria de refletir hoje?'
-}
+    }
 
 🔗 *Sugestões de Engajamento:*
 "Posso:
@@ -530,19 +569,19 @@ export async function POST(req: NextRequest) {
     });
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash", 
+      model: "gemini-2.5-flash",
       contents: conversationHistory,
     });
 
     const text = response.candidates?.[0]?.content?.parts?.[0]?.text || "Não entendi sua pergunta.";
 
-  
+
     conversationHistory.push({
       role: "model",
       parts: [{ text }],
     });
 
-    return NextResponse.json({ message: text,  conversationHistory }, { status: 200 });
+    return NextResponse.json({ message: text, conversationHistory }, { status: 200 });
 
   } catch (error) {
     console.error("Erro com Gemini:", error);
