@@ -4,8 +4,9 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import AnalyticsHandler from "@/components/AnalyticsHandler";
+import { urlBase64ToUint8Array } from "@/utils/push";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +15,48 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  useEffect(() => {
+    async function initPush() {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          console.warn("Permissão de notificação negada");
+          return;
+        }
+
+        // ⚠️ Registra o SW e aguarda ele estar *pronto*
+        const swRegistration = await navigator.serviceWorker.register("/sw.js");
+        await navigator.serviceWorker.ready;
+
+        console.log("Service Worker pronto!");
+
+        const subscription = await swRegistration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(
+            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+          ),
+        });
+
+        console.log("Inscrição realizada:", subscription);
+
+        // Envia para o backend (Supabase ou API)
+        await fetch("/api/notifications/subscribe", {
+          method: "POST",
+          body: JSON.stringify(subscription),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        console.error("Erro ao configurar notificações push:", error);
+      }
+    }
+
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      initPush();
+    }
+  }, []);
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
@@ -28,7 +71,6 @@ export default function RootLayout({
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-
         <title>IA - Lição da Escola Sabatina</title>
         <meta
           name="description"
@@ -38,7 +80,6 @@ export default function RootLayout({
         <link rel="icon" href="/icons/favicon.ico" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
-
       <body className={inter.className}>
         <SessionProvider>
           <ThemeProvider>
@@ -46,35 +87,9 @@ export default function RootLayout({
               <AnalyticsHandler />
             </Suspense>
             {children}
-            <PWAComponents />
           </ThemeProvider>
         </SessionProvider>
       </body>
     </html>
-  );
-}
-
-function PWAComponents() {
-  return (
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `
-          if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
-            window.addEventListener('load', () => {
-              navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('SW registrado com sucesso'))
-                .catch(err => console.log('Erro ao registrar SW:', err));
-            });
-          }
-
-          let deferredPrompt;
-          window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log('PWA pode ser instalado');
-          });
-        `,
-      }}
-    />
   );
 }

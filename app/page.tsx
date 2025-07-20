@@ -20,12 +20,9 @@ import QuickReply from "@/components/chatbot/QuickReply";
 import Image from "next/image";
 import logo1 from "@/assets/Logo1.png";
 
-import MobileTopMenu from "@/components/MobileTopMenu";
 import ChatSidebar from "@/components/Header";
 import { useChatHistory } from "@/hooks/useChatHistory";
 import { useTheme } from "@/contexts/ThemeContext";
-import MobileConversationMenu from "@/components/MobileTopMenu";
-import { createBrowserClient } from "@supabase/ssr";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
 import { createComponentClient } from "@/models/supabase";
 import { FaSpinner } from "react-icons/fa6";
