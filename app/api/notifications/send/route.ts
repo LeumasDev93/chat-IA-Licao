@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createComponentClient } from '@/models/supabase';
+import { createSupabaseServerClient } from '@/models/supabase';
+import { cookies } from 'next/headers';
 
 // Função para enviar notificação push usando fetch (sem web-push)
 async function sendPushNotification(subscription: any, payload: any) {
@@ -19,12 +20,17 @@ async function sendPushNotification(subscription: any, payload: any) {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createComponentClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const cookieStore = cookies();
+    const supabase = createSupabaseServerClient({
+      req: { cookies: Object.fromEntries(cookieStore.getAll().map(c => [c.name, c.value])) },
+      res: { setHeader: () => {}, getHeader: () => undefined }
+    } as any);
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (authError || !user) {
       return NextResponse.json(
-        { error: 'Usuário não autenticado' },
+        { error: 'Usuário não autenticado', details: authError?.message },
         { status: 401 }
       );
     }

@@ -173,28 +173,42 @@ class NotificationManager {
 
   private async saveSubscriptionToServer(subscription: PushSubscriptionData): Promise<void> {
     try {
-      await fetch('/api/notifications/subscribe', {
+      const response = await fetch('/api/notifications/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(subscription),
+        credentials: 'include', // Importante para incluir cookies de sessão
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Erro ${response.status}: ${errorData.error || 'Erro desconhecido'}`);
+      }
     } catch (error) {
       console.error('Erro ao salvar subscription no servidor:', error);
+      throw error; // Re-throw para que o erro seja tratado no nível superior
     }
   }
 
   private async removeSubscriptionFromServer(): Promise<void> {
     try {
-      await fetch('/api/notifications/unsubscribe', {
+      const response = await fetch('/api/notifications/unsubscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Importante para incluir cookies de sessão
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Erro ${response.status}: ${errorData.error || 'Erro desconhecido'}`);
+      }
     } catch (error) {
       console.error('Erro ao remover subscription do servidor:', error);
+      throw error;
     }
   }
 

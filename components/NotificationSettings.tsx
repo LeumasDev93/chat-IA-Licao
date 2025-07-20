@@ -78,7 +78,8 @@ export default function NotificationSettings({ isOpen, onClose }: NotificationSe
       }
     } catch (error) {
       console.error('Erro ao ativar notificações:', error);
-      alert('Erro ao ativar notificações. Verifique as permissões do navegador.');
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      alert(`Erro ao ativar notificações: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }

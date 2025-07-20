@@ -93,9 +93,10 @@ export function useNotifications() {
       return success;
     } catch (error) {
       console.error('Erro ao se inscrever:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao ativar notificações';
       updateState({
         isLoading: false,
-        error: 'Erro ao ativar notificações'
+        error: errorMessage
       });
       return false;
     }
