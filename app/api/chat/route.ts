@@ -464,7 +464,7 @@ ${!lesson ?
 
 **TEMA CENTRAL**: ${lesson.title}
 ${lesson.days.map((content, index) => {
-        const dayNames = ['Sábado', 'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Auxiliar', 'Comentário'];
+        const dayNames = ['Sábado', 'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Auxiliar', 'Comentário', 'Resumo Semanal'];
         return `
 **${dayNames[index]} - ANÁLISE APROFUNDADA**:
 ${content}
