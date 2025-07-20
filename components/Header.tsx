@@ -9,6 +9,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { MdOutlineSettings } from "react-icons/md";
 import { IoIosLogIn, IoIosLogOut } from "react-icons/io";
 import { BsSend } from "react-icons/bs";
+import { Bell } from "lucide-react";
 
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
@@ -16,6 +17,8 @@ import Link from "next/link";
 import { createComponentClient } from "@/models/supabase";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
+import NotificationSettings from "./NotificationSettings";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface ChatSidebarProps {
   onNewChat: () => void;
@@ -39,6 +42,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const notifications = useNotifications();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -546,6 +551,19 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <span className="text-xs xl:text-sm">Configurações</span>
             </button>
             <button
+              onClick={() => {
+                setOpenProfile(false);
+                setShowNotificationSettings(true);
+              }}
+              className={`w-full p-2 rounded flex items-center justify-between gap-2 text-sm ${hoverBg} `}
+            >
+              <Bell className="size-4 xl:size-6" />
+              <span className="text-xs xl:text-sm">Notificações</span>
+              {notifications.isSubscribed && (
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              )}
+            </button>
+            <button
               type="submit"
               className={`w-full p-2 rounded flex items-center justify-between ${hoverBg} gap-2 text-sm `}
             >
@@ -627,6 +645,19 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       <ThemeSwitch />
                     </div>
                     <div>
+                      <h4 className="font-medium mb-2">Notificações</h4>
+                      <button
+                        onClick={() => {
+                          setOpenSettings(false);
+                          setShowNotificationSettings(true);
+                        }}
+                        className={`w-full p-2 border rounded ${sidebarBg} ${borderColor} flex items-center justify-between`}
+                      >
+                        <span>Configurar notificações</span>
+                        <Bell className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div>
                       <h4 className="font-medium mb-2">Idioma</h4>
                       <select
                         className={`w-full p-2 border rounded ${sidebarBg} d${borderColor}`}
@@ -695,6 +726,11 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           </div>
         </div>
       )}
+      
+      <NotificationSettings
+        isOpen={showNotificationSettings}
+        onClose={() => setShowNotificationSettings(false)}
+      />
     </>
   );
 };
