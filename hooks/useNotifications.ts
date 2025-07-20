@@ -26,7 +26,9 @@ export function useNotifications() {
     updateState({ isLoading: true, error: null });
 
     try {
-      const isSupported = 'Notification' in window && 'serviceWorker' in navigator;
+      const isSupported = typeof window !== 'undefined' && 
+        'Notification' in window && 
+        'serviceWorker' in navigator;
       
       if (!isSupported) {
         updateState({
@@ -153,7 +155,9 @@ export function useNotifications() {
   }, []);
 
   useEffect(() => {
-    initialize();
+    if (typeof window !== 'undefined') {
+      initialize();
+    }
   }, [initialize]);
 
   return {

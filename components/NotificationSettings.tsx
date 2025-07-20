@@ -29,16 +29,16 @@ export default function NotificationSettings({ isOpen, onClose }: NotificationSe
 
     if (theme === "system") {
       setResolvedTheme(getSystemTheme());
-      mediaQuery.addEventListener("change", () => setResolvedTheme(getSystemTheme()));
+      const handler = () => setResolvedTheme(getSystemTheme());
+      mediaQuery.addEventListener("change", handler);
+      return () => mediaQuery.removeEventListener("change", handler);
     } else {
       setResolvedTheme(theme === "dark" ? "dark" : "light");
     }
-
-    return () => mediaQuery.removeEventListener("change", () => {});
   }, [theme]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && typeof window !== 'undefined') {
       checkNotificationStatus();
     }
   }, [isOpen]);
@@ -244,7 +244,7 @@ export default function NotificationSettings({ isOpen, onClose }: NotificationSe
           )}
 
           {/* Informações sobre o Navegador */}
-          {!('Notification' in window) && (
+          {typeof window !== 'undefined' && !('Notification' in window) && (
             <div className="mt-6 p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
               <p className="text-sm text-yellow-700 dark:text-yellow-300">
                 Seu navegador não suporta notificações push. 
