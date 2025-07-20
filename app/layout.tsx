@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Inter } from "next/font/google";
@@ -20,35 +21,36 @@ export default function RootLayout({
       try {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
-          console.warn("Permissão de notificação negada");
+          //console.warn("Permissão de notificação negada");
           return;
         }
 
-        // ⚠️ Registra o SW e aguarda ele estar *pronto*
-        const swRegistration = await navigator.serviceWorker.register("/sw.js");
-        await navigator.serviceWorker.ready;
+        const swReg = await navigator.serviceWorker.register("/sw.js");
+        const readyReg = await navigator.serviceWorker.ready;
 
-        console.log("Service Worker pronto!");
+        console.log("SW pronto:", readyReg);
 
-        const subscription = await swRegistration.pushManager.subscribe({
+        const subscription = await swReg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(
             process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
           ),
         });
 
-        console.log("Inscrição realizada:", subscription);
+        console.log("Inscrição criada:", subscription);
 
-        // Envia para o backend (Supabase ou API)
-        await fetch("/api/notifications/subscribe", {
+        const res = await fetch("/api/notifications/subscribe", {
           method: "POST",
           body: JSON.stringify(subscription),
           headers: {
             "Content-Type": "application/json",
           },
         });
+
+        const json = await res.json();
+        console.log("Resposta do backend:", json);
       } catch (error) {
-        console.error("Erro ao configurar notificações push:", error);
+        // console.error("Erro no push:", error);
       }
     }
 

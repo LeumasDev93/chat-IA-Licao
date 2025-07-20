@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -27,6 +28,7 @@ import { useSupabaseUser } from "@/hooks/useComponentClient";
 import { createComponentClient } from "@/models/supabase";
 import { FaSpinner } from "react-icons/fa6";
 import Link from "next/link";
+import { useNotifications } from "@/hooks/useNotifications";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
@@ -75,11 +77,20 @@ interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
+const LIMITE_HORAS = 8;
 export default function Home() {
   const currentYear = new Date().getFullYear();
   const { theme } = useTheme();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
+
+  const {
+    isSubscribed,
+    error,
+    subscribe,
+    showNotification,
+    requestPermission,
+  } = useNotifications();
 
   useEffect(() => {
     // Garante que o tema já foi resolvido no cliente
@@ -140,6 +151,34 @@ export default function Home() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [alertMessage, setAlert] = useState(false);
+
+  const verificarUltimoAcesso = async () => {
+    const ultimoAcesso = localStorage.getItem("ultimoAcesso");
+    const agora = new Date().getTime();
+
+    if (ultimoAcesso) {
+      const diferencaHoras = (agora - Number(ultimoAcesso)) / 1000;
+
+      if (diferencaHoras >= LIMITE_HORAS) {
+        if (!isSubscribed) {
+          await subscribe();
+        }
+
+        await showNotification({
+          title: "Ola!",
+          body: "Vamos Estudar Lição Juntos?!",
+        });
+      }
+    }
+
+    // Atualiza o tempo atual como último acesso
+    localStorage.setItem("ultimoAcesso", agora.toString());
+  };
+
+  useEffect(() => {
+    verificarUltimoAcesso();
+  }, []);
+
   const textFooter =
     resolvedTheme === "dark" ? "text-blue-400" : "text-blue-700";
 

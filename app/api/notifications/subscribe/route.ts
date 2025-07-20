@@ -1,28 +1,57 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextRequest, NextResponse } from 'next/server';
+import { createSupabaseServerClient } from '@/models/supabase';
+import { cookies } from 'next/headers';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_BD_PASSWORD!
-);
+export async function POST(req: NextRequest) {
+    try {
+        const cookieStore = await cookies();
+        const supabase = createSupabaseServerClient({
+            req: { cookies: Object.fromEntries(cookieStore.getAll().map(c => [c.name, c.value])) },
+            res: { setHeader: () => { }, getHeader: () => undefined }
+        } as any);
 
-export async function POST(req: Request) {
-    const subscription = await req.json();
-    const { endpoint, keys } = subscription;
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    const { data: existing } = await supabase
-        .from("push_subscriptions")
-        .select("id")
-        .eq("endpoint", endpoint)
-        .limit(1);
+        if (authError || !user) {
+            console.log('Auth error:', authError);
+            return NextResponse.json(
+                { error: 'Usuário não autenticado', details: authError?.message },
+                { status: 401 }
+            );
+        }
 
-    if (existing && existing.length > 0) {
-        return NextResponse.json({ message: "Subscription já existe" });
+        const subscription = await req.json();
+
+        // Salvar subscription no banco de dados
+        const { error } = await supabase
+            .from('push_subscriptions')
+            .upsert({
+                user_id: user.id,
+                endpoint: subscription.endpoint,
+                p256dh_key: subscription.keys.p256dh,
+                auth_key: subscription.keys.auth,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                is_active: true
+            }, {
+                onConflict: 'user_id'
+            });
+
+        if (error) {
+            console.error('Erro ao salvar subscription:', error);
+            return NextResponse.json(
+                { error: 'Erro ao salvar subscription' },
+                { status: 500 }
+            );
+        }
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Erro na API de subscribe:', error);
+        return NextResponse.json(
+            { error: 'Erro interno do servidor' },
+            { status: 500 }
+        );
     }
-
-    const { error } = await supabase.from("push_subscriptions").insert([{ endpoint, keys }]);
-
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-    return NextResponse.json({ success: true });
 }
