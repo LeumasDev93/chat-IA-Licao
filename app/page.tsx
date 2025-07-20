@@ -449,8 +449,12 @@ export default function Home() {
                 />
               </div>
 
-              <div className="p-4 sm:p-6 text-center">
-                <p className="text-[12px] md:text-xs xl:text-sm">
+              <div className="text-center mb-8">
+                <h1 className="text-2xl font-bold mb-4 flex items-center justify-center gap-2">
+                  <Sparkles className="text-primary" />
+                  Assistente IA - Escola Sabatina
+                </h1>
+                <p className="text-muted-foreground max-w-2xl">
                   Esta é a Inteligência Artificial oficial da Igreja Adventista
                   do Sétimo Dia Em Cabo Verde, desenvolvida para apoiar nos
                   estudos da lição da escola sabatina, inspirar e fortalecer sua
@@ -562,185 +566,110 @@ export default function Home() {
                 </div>
               </div>
             )}
-            <div className="mx-auto max-w-3xl w-full sm:px-4 sm:pb-3">
-              {messages.length <= 1 && (
-                <div className="mb-2">
-                  {/* Desktop (grid) */}
-                  <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                    {quickReplies.map((reply, index) => (
-                      <QuickReply
-                        key={index}
-                        text={reply}
-                        onClick={() => {
-                          if (user.user) {
-                            void handleSendMessage(undefined, reply);
-                          } else {
-                            setAlert(true);
-                          }
-                        }}
-                      />
-                    ))}
-                  </div>
 
-                  {/* Mobile (scroll horizontal sem barra visível) */}
-                  <div className="sm:hidden mx-2 flex overflow-x-auto space-x-2 pb-2 no-scrollbar">
-                    {quickReplies.map((reply, index) => (
-                      <div key={index} className="flex-shrink-0">
+            <div className="sticky bottom-0 bg-background border-t p-4">
+              <div className="mx-auto max-w-3xl w-full">
+                {/* Quick replies */}
+                {messages.length === 0 && (
+                  <div className="mb-4">
+                    <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                      {quickReplies.map((reply, index) => (
                         <QuickReply
+                          key={index}
                           text={reply}
                           onClick={() => {
                             if (user.user) {
-                              void handleSendMessage(undefined, reply);
-                            } else {
-                              setAlert(true);
+                              handleSendMessage(undefined, reply);
                             }
                           }}
                         />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                      ))}
+                    </div>
 
-              <form onSubmit={(e) => handleSendMessage(e)} className="relative">
-                <div className="relative">
-                  <textarea
-                    id="message-input"
-                    disabled={isTyping}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        if (user.user) {
-                          handleSendMessage(e);
-                        } else {
-                          setAlert(true);
-                        }
-                      }
-                    }}
-                    placeholder={
-                      user.user
-                        ? "Digite sua mensagem..."
-                        : "Faça login para enviar mensagens..."
-                    }
-                    rows={3}
-                    style={{
-                      minHeight: "40px",
-                      maxHeight: "150px",
-                    }}
-                    className={`
-      w-full px-4 py-3 pr-16 text-base rounded-t-2xl sm:rounded-xl focus:outline-none focus:ring-1 shadow-lg resize-none
-      transition-all duration-200
-      ${
-        resolvedTheme === "dark"
-          ? "bg-gray-700 text-white focus:ring-gray-300"
-          : "bg-gray-100 text-black focus:ring-gray-300"
-      }
-      ${!user.user ? "cursor-pointer" : ""}
-    `}
-                    onClick={!user.user ? () => setAlert(true) : undefined}
-                  />
-
-                  {/* Botões dentro do textarea */}
-                  <div className="absolute right-2 bottom-2 flex gap-1">
-                    {/* Botão de gravação */}
-                    <button
-                      type="button"
-                      disabled={isTyping}
-                      onClick={!user.user ? () => setAlert(true) : undefined}
-                      onMouseDown={
-                        user.user && !isTyping ? startRecording : undefined
-                      }
-                      onMouseUp={user.user ? stopRecording : undefined}
-                      onMouseLeave={() => {
-                        if (user.user && isPressing && !isMobile.current) {
-                          stopRecording();
-                        }
-                      }}
-                      onTouchStart={user.user ? startRecording : undefined}
-                      onTouchEnd={user.user ? stopRecording : undefined}
-                      className={`
-        p-2 rounded-full transition-colors
-        ${isTyping ? "cursor-not-allowed opacity-50" : ""}
-        ${isPressing || isRecording ? "bg-red-500 animate-pulse" : ""}
-        ${
-          !isTyping && !(isPressing || isRecording)
-            ? resolvedTheme === "dark"
-              ? "hover:text-gray-300 hover:bg-gray-800"
-              : "hover:text-gray-800 hover:bg-gray-200"
-            : ""
-        }
-      `}
-                      aria-label={
-                        user.user
-                          ? "Pressione e segure para falar"
-                          : "Faça login para usar o microfone"
-                      }
-                    >
-                      <Mic size={18} />
-                    </button>
-
-                    {/* Botão de enviar */}
-                    <button
-                      type="submit"
-                      disabled={inputValue.trim() === "" || isTyping}
-                      onClick={(e) => {
-                        if (!user.user) {
-                          e.preventDefault();
-                          setAlert(true);
-                        } else if (inputValue.trim() !== "" && !isTyping) {
-                          handleSendMessage(e);
-                        }
-                      }}
-                      className={`
-        p-2 rounded-full transition-colors
-        ${
-          inputValue.trim() === "" || isTyping
-            ? "cursor-not-allowed opacity-50"
-            : ""
-        }
-        ${
-          inputValue.trim() !== ""
-            ? resolvedTheme === "dark"
-              ? "bg-gray-500 hover:bg-gray-800"
-              : "bg-gray-400 hover:bg-gray-600 text-white"
-            : ""
-        }
-      `}
-                      aria-label={
-                        user.user
-                          ? "Enviar mensagem"
-                          : "Faça login para enviar mensagens"
-                      }
-                    >
-                      <Send size={18} />
-                    </button>
-                  </div>
-                </div>
-
-                {isRecording && (
-                  <div className="text-center text-sm text-red-500 mt-1">
-                    {isMobile.current
-                      ? "Gravando... Solte para enviar"
-                      : "Gravando... Fale agora"}
+                    <div className="sm:hidden flex overflow-x-auto space-x-2 pb-2">
+                      {quickReplies.map((reply, index) => (
+                        <div key={index} className="flex-shrink-0">
+                          <QuickReply
+                            text={reply}
+                            onClick={() => {
+                              if (user.user) {
+                                handleSendMessage(undefined, reply);
+                              }
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
-              </form>
-            </div>
 
-            <div className="hidden sm:flex flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
-              <span>
-                O Assistente IA para estudos da lição pode cometer erros.
-                Verifique informações importantes.
-              </span>
-              <span>
-                Copyright © {currentYear} | desenvolvido por
-                <span className={`${textFooter} font-semibold`}>
-                  {" "}
-                  Leumas Andrade
-                </span>
-              </span>
+                {/* Input form */}
+                <form onSubmit={handleSendMessage} className="relative">
+                  <div className="relative">
+                    <textarea
+                      id="message-input"
+                      disabled={isTyping}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          if (user.user) {
+                            handleSendMessage(e);
+                          }
+                        }
+                      }}
+                      placeholder={
+                        user.user
+                          ? "Digite sua mensagem..."
+                          : "Faça login para enviar mensagens..."
+                      }
+                      rows={3}
+                      className="w-full px-4 py-3 pr-16 text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-primary shadow-lg resize-none bg-card border border-border"
+                      style={{
+                        minHeight: "50px",
+                        maxHeight: "150px",
+                      }}
+                    />
+
+                    {/* Botões */}
+                    <div className="absolute right-2 bottom-2 flex gap-1">
+                      <button
+                        type="button"
+                        disabled={isTyping}
+                        className="p-2 rounded-full hover:bg-muted transition-colors"
+                        aria-label="Gravação de voz"
+                      >
+                        <Mic size={18} />
+                      </button>
+
+                      <button
+                        type="submit"
+                        disabled={inputValue.trim() === "" || isTyping}
+                        className="p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        aria-label="Enviar mensagem"
+                      >
+                        <Send size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </form>
+
+                {/* Footer */}
+                <div className="hidden sm:flex flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
+                  <span>
+                    O Assistente IA para estudos da lição pode cometer erros.
+                    Verifique informações importantes.
+                  </span>
+                  <span>
+                    Copyright © {currentYear} | desenvolvido por
+                    <span className={`${textFooter} font-semibold`}>
+                      {" "}
+                      Leumas Andrade
+                    </span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
