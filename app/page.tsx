@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -77,7 +76,6 @@ interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
-const LIMITE_HORAS = 8;
 export default function Home() {
   const currentYear = new Date().getFullYear();
   const { theme } = useTheme();
@@ -152,31 +150,36 @@ export default function Home() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [alertMessage, setAlert] = useState(false);
 
-  const verificarUltimoAcesso = async () => {
-    const ultimoAcesso = localStorage.getItem("ultimoAcesso");
-    const agora = new Date().getTime();
+  useEffect(() => {
+    const INTERVALO_MS = 6 * 60 * 60 * 1000; // 6 horas
 
-    if (ultimoAcesso) {
-      const diferencaHoras = (agora - Number(ultimoAcesso)) / 1000;
+    const solicitarPermissaoENotificar = async () => {
+      if (Notification.permission === "default") {
+        await Notification.requestPermission();
+      }
 
-      if (diferencaHoras >= LIMITE_HORAS) {
-        if (!isSubscribed) {
-          await subscribe();
-        }
-
-        await showNotification({
-          title: "Ola!",
+      if (Notification.permission === "granted") {
+        new Notification("Olá!", {
           body: "Vamos Estudar Lição Juntos?!",
         });
       }
-    }
+    };
 
-    // Atualiza o tempo atual como último acesso
-    localStorage.setItem("ultimoAcesso", agora.toString());
-  };
+    // Garantir que só comece após uma interação do usuário
+    const onUserInteraction = () => {
+      solicitarPermissaoENotificar(); // Primeira notificação imediata
+      const interval = setInterval(solicitarPermissaoENotificar, INTERVALO_MS);
 
-  useEffect(() => {
-    verificarUltimoAcesso();
+      window.removeEventListener("click", onUserInteraction);
+      window.removeEventListener("touchstart", onUserInteraction);
+
+      // Opcional: limpar ao desmontar
+      return () => clearInterval(interval);
+    };
+
+    // Aguarda interação do usuário (obrigatório no Chrome)
+    window.addEventListener("click", onUserInteraction);
+    window.addEventListener("touchstart", onUserInteraction);
   }, []);
 
   const textFooter =

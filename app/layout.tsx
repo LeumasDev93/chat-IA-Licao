@@ -37,7 +37,7 @@ export default function RootLayout({
           ),
         });
 
-        console.log("Inscrição criada:", subscription);
+        //console.log("Inscrição criada:", subscription);
 
         const res = await fetch("/api/notifications/subscribe", {
           method: "POST",
