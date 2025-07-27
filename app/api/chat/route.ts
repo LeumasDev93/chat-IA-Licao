@@ -134,16 +134,16 @@ const CacheLessonData: LessonData = {
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tLição 4\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tLição 5\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t19 a 25 de julho\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t26 de julho a 01 de agosto\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAs pragas | 3º Trimestre 2025\n' +
+    '\t\t\t\t\t\tA Páscoa | 3º Trimestre 2025\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
@@ -155,24 +155,23 @@ const CacheLessonData: LessonData = {
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 4\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 11\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\tVerso para memorizar:\n' +
-    '\t\t\t\t\t\t“E assim Faraó, de coração endurecido, não deixou ir os filhos de Israel, como o Senhor tinha dito a Moisés” (Êx 9:35).\n' +
+    '\t\t\t\t\t\t“Quando os seus filhos perguntarem: ‘Que rito é este?’, respondam: ‘É o sacrifício da Páscoa ao Senhor, que passou por cima das casas dos filhos de Israel no Egito, quando matou os egípcios e livrou as nossas casas’” (Êx 12:26, 27).\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\tLeituras da semana:\n' +
-    '\t\t\t\t\t\tÊx 7:8-25; 8; 9; 10; Nm 33:4; Rm 1:24-32; Sl 104:27, 28; Is 28:2, 12-17; 44:9, 10, 12-17\n' +
+    '\t\t\t\t\t\tÊx 11; Mq 6:8; Êx 12:1-30; 1Co 5:7; Êx 13:14-16; hb 11:28\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tUm fazendeiro estava tentando fazer seu jumento se mover, mas não estava tendo sucesso. Então, pegou um galho grosso e bateu no animal. Em seguida, falou novamente com o jumento, que então começou a se mover.\n' +
-    'Quando alguém perguntou ao fazendeiro por que isso funcionou, ele respondeu: “Bem, primeiro é necessário chamar a atenção dele.”\n' +
-    'Deixando de lado a crueldade com os animais, essa história ilustra uma verdade especial no contexto da saída dos hebreus do Egito. Moisés recebeu suas ordens de marcha e foi ao Faraó com as palavras de Deus, shalach et ami (“Deixe o Meu povo ir!”; Êx 5:1).\n' +
-    'O Faraó, no entanto, não queria permitir que o povo de Deus fosse embora. A Bíblia nunca explica explicitamente por que o Faraó estava tão relutante, apesar da ameaça militar que os egípcios temiam que os hebreus pudessem representar (Êx 1:10). Muito provavelmente, como costuma acontecer com a escravidão, era uma questão econômica. Como os israelitas eram uma fonte de mão de obra barata, o Faraó não queria perder as vantagens econômicas que esses escravos lhe proporcionavam. Assim, ele precisaria de algo mais convincente, não apenas para chamar sua atenção, mas também para mudar seus pensamentos.\n' +
+    '\t\t\t\t\t\tA décima e última praga estava prestes a cair. A última advertência havia sido dada, e a decisão final precisava ser tomada. Era realmente uma questão de vida ou morte: não apenas a vida de um indivíduo, mas a prosperidade de famílias e de toda a nação estava em jogo. O Faraó e seus oficiais eram responsáveis pelo destino de muitas pessoas. A atitude dele em relação ao Deus vivo determinaria não apenas seu próprio futuro, mas também o de sua nação.\n' +
+    'Como nos sentimos e o que fazemos quando a gravidade das circunstâncias pesa sobre nós, e precisamos escolher o próximo passo e a direção a seguir? Essa é uma escolha que pode afetar a vida de muitos outros além de nós mesmos. Deus está sempre disposto a nos conceder sabedoria, entendimento e poder para fazermos o que é certo (1Co 1:30; Fp 2:13).\n' +
+    'O problema, no entanto, é que, em nosso coração teimoso, nem sempre desejamos fazer o que é certo. Sabemos o que é correto, mas nos recusamos a fazê-lo. No relato de Êxodo, a recusa de um homem em se submeter a Deus, mesmo diante de evidências, trouxe tragédia para muitos outros.\n' +
     'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\n' +
@@ -190,29 +189,31 @@ const CacheLessonData: LessonData = {
     '\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
-    '\t\t\t\t\tDomingo, 20 de julho\n' +
+    '\t\t\t\t\tDomingo, 27 de julho\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 5\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tDeus versus deuses\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 12\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t1. Leia Êxodo 7:8-15. Quais lições podemos aprender desse primeiro confronto entre o Deus dos hebreus e os deuses do Egito?\n' +
-    'As batalhas que se seguiriam seriam entre o Deus vivo e os “deuses” egípcios. O que agravava a situação era que o Faraó se considerava um desses deuses. O Senhor não lutou simplesmente contra os egípcios ou contra o Egito em si, mas contra suas divindades (os egípcios veneravam mais de 1.500 deuses e deusas). O texto bíblico é claro: “Executarei juízo sobre todos os deuses do Egito. Eu sou o Senhor” (Êx 12:12). Essa verdade foi enfatizada novamente quando a jornada de Israel foi recontada: “Contra os deuses o Senhor executou juízos” (Nm 33:4).\n' +
-    'Um exemplo desse juízo sobre os deuses do Egito é o milagre da vara que se transformou em serpente (Êx 7:9-12). No Egito, Uadjet era a deusa do Urel, a representação de uma cobra erguida, colocada nas coroas dos Faraós e deuses do Egito e que simbolizava o poder soberano sobre o Baixo Egito. O símbolo da serpente representava a divindade, realeza e autoridade divina do Faraó, pois essa deusa cuspia veneno em seus inimigos. Os egípcios também acreditavam que a serpente sagrada guiaria o Faraó na vida após a morte.\n' +
-    'Quando a vara de Arão se transformou em serpente e devorou as outras serpentes diante do rei, foi demonstrada a supremacia do Deus vivo sobre a magia e feitiçaria egípcias. O emblema do poder do Faraó não apenas foi conquistado, mas Arão e Moisés o seguraram em suas mãos (Êx 7:12, 15). Esse confronto inicial demonstrou o poder e a soberania de Deus sobre o Egito. Moisés, como representante do Senhor, tinha maior autoridade e poder do que o deus Faraó.\n' +
-    'Também é significativo que os antigos egípcios adorassem um deusserpente, Nehebkau (que significa “aquele que controla os espíritos”). Segundo a mitologia, esse deus tinha grande poder por ter engolido sete serpentes. Assim, Deus estava dizendo aos egípcios que Ele, e não o deus-serpente, possui o poder e a autoridade supremos. Após um confronto tão intenso, os líderes do Egito foram capazes de compreender essa mensagem de maneira imediata e bastante clara.\n' +
+    '\t\t\t\t\t\tMais uma praga\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAmós declarou que “certamente o Senhor Deus não fará coisa alguma, sem primeiro revelar o Seu segredo aos Seus servos, os profetas” (Am 3:7). Por meio de Moisés, Deus revelou ao Faraó o que aconteceria a seguir. A advertência mais solene foi dada ao Faraó: seria um justo juízo sobre o orgulho, a exploração, a violência e a idolatria (tudo o que havia desencadeado essas calamidades sobre o Egito).\n' +
+    '1. Que advertência o Senhor fez antes de executar o juízo sobre o Egito? Êx 11\n' +
+    'Deus deu tempo aos egípcios, três dias de escuridão (Êx 10:22, 23), para refletirem sobre os eventos recentes e compreenderem seu significado. Ele também ofereceu uma última advertência explícita, dando a eles uma derradeira chance de fazer o que era certo.\n' +
+    'No entanto, Êxodo 11:8 relata que “enfurecido, Moisés se retirou da presença de Faraó”. Mas por que ele ficou tão enfurecido? Provavelmente porque sabia que a tragédia da décima praga atingiria muitos inocentes – tudo por causa da teimosia do Faraó.\n' +
+    'Além disso, o número dez possui um simbolismo significativo na Bíblia, representando plenitude ou completude (por exemplo, os Dez Mandamentos são uma revelação completa da lei moral divina). De forma semelhante, as dez pragas do Egito representam a manifestação plena da justiça e retribuição de Deus.\n' +
+    'O Senhor é o Juiz supremo e Se opõe ao orgulho, à injustiça, à discriminação, à arrogância, à exploração, à crueldade e ao egoísmo. Ele está ao lado dos que sofrem, daqueles que enfrentam abusos e maus-tratos e dos perseguidos. Deus aplicará a justiça, o que, na verdade, é uma das expressões de Seu amor (Sl 2:12; 33:5; 85:11; 89:14; 101:1; Is 16:5; Jr 9:24).\n' +
+    'Nós também devemos expressar amor e justiça da melhor maneira possível. Contudo, podemos facilmente cair em extremos, seja de um lado ou de outro. Em nome de um suposto “amor”, podemos ignorar erros e questões que precisam ser corrigidos. Por outro lado, podemos aplicar a justiça de maneira fria e inflexível. Nenhum dos extremos é correto. Este é o ideal: “O que o Senhor pede de você? Que pratique a justiça, ame a misericórdia e ande humildemente com o seu Deus” (Mq 6:8).\n' +
     'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\n' +
@@ -221,7 +222,7 @@ const CacheLessonData: LessonData = {
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tComo podemos permitir que o Senhor tenha soberania sobre qualquer um dos “deuses” que buscam supremacia em nossa vida?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tSe não temos o equilíbrio perfeito, preferir o lado da misericórdia seria um erro?\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\n' +
@@ -232,31 +233,31 @@ const CacheLessonData: LessonData = {
     '\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
-    '\t\t\t\t\tSegunda-feira, 21 de julho\n' +
+    '\t\t\t\t\tSegunda-feira, 28 de julho\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 6\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tQuem endureceu o coração do Faraó?\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 13\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t2. Leia Êxodo 7:3, 13, 14, 22. Como podemos entender esses textos?\n' +
-    'Nove vezes o livro de Êxodo afirma que Deus endureceu o coração do Faraó (Êx 4:21; 7:3; 9:12; 10:1, 20, 27; 11:10; 14:4, 8; ver Rm 9:17, 18). Outras nove vezes é dito que o próprio Faraó endureceu seu coração (Êx 7:13, 14, 22; 8:15, 19, 32; 9:7, 34, 35).\n' +
-    'Afinal, quem endureceu o coração do rei: Deus ou o próprio Faraó?\n' +
-    'É significativo que, no relato das dez pragas, nas cinco primeiras, apenas o Faraó seja considerado aquele que endureceu seu próprio coração. Ele começou o processo de endurecimento por sua própria vontade. A partir da sexta praga, no entanto, o texto bíblico afirma que foi Deus quem endureceu o coração do Faraó (Êx 9:12). Isso mostra que Deus fortaleceu ou aprofundou a própria escolha do Faraó, sua decisão voluntária, conforme havia dito a Moisés que faria (Êx 4:21).\n' +
-    'Em outras palavras, Deus enviou as pragas com o propósito de ajudar o Faraó a se arrepender e a se libertar da escuridão e do erro em que sua mente se encontrava. Deus não criou o mal ou o pecado no coração do Faraó; ao contrário, simplesmente o entregou aos seus próprios impulsos malignos. Deus o deixou sem Sua graça restritiva, abandonando-o à sua própria maldade (ver Rm 1:24-32).\n' +
-    'O Faraó tinha livre-arbítrio, podia escolher a favor de Deus ou contra Ele, e decidiu contra. A lição é clara: recebemos a capacidade de escolher entre o certo e o errado, o bem e o mal, a obediência ou a desobediência. Desde Lúcifer no Céu, passando por Adão e Eva no Éden e o Faraó no Egito, até nós, hoje, onde quer que estejamos, temos que escolher entre a vida e a morte (Dt 30:19).\n' +
-    'Uma ilustração pode nos ajudar a compreender esse tema. Imagine a luz do Sol incidindo sobre a manteiga e o barro. A manteiga derrete, mas o barro endurece. O calor do Sol é o mesmo em ambos os casos, mas há duas reações diferentes e dois resultados distintos. O efeito depende da natureza do material. No caso do Faraó, podemos dizer que dependia das atitudes de seu coração em relação a Deus e ao Seu povo.\n' +
+    '\t\t\t\t\t\tA Páscoa\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t2. Leia Êxodo 12:1-20. Quais instruções específicas Deus deu a Moisés e Arão antes de Israel deixar o Egito?\n' +
+    'Seria de se esperar que Deus instruísse Moisés e Arão sobre como organizar a partida do Egito; ou seja, como fazer os preparativos para a fuga, especialmente para cuidar de idosos, mães com crianças pequenas, animais, entre outros. No entanto, a instrução de Deus foi surpreendente: Ele ensinou como celebrar a Páscoa. Em outras palavras, o foco estava em adorar o Senhor, que iria redimi-los. Todo o resto aconteceria no devido tempo.\n' +
+    'Cada família deveria preparar um cordeiro, sem desperdiçar nada. Todos precisavam comer sua porção e, se uma família não conseguisse consumir o cordeiro inteiro, deveriam partilhar a refeição com outra família. \n' +
+    '3. Leia Êxodo 12:13, 14. O que o Senhor faria pelo povo quando a última praga viesse? O que tudo isso simbolizava?\n' +
+    'O êxodo deveria ser celebrado anualmente, não apenas como uma comemoração do que Deus havia feito pelos antepassados, mas também como uma atualização do ato libertador de Deus para a geração presente. Essa deveria ser uma experiência renovadora para cada grupo.\n' +
+    'Êxodo 12:12 e 13 explica o significado da Páscoa: o juízo divino de destruição passaria sobre os israelitas (passaria por cima e não os atingiria); assim, eles deveriam comemorar a Páscoa. Em hebraico, Páscoa é Pesach, que significa “passar sobre”, porque a destruição “passou sobre” as casas cujos batentes das portas foram marcados com o sangue do cordeiro, o símbolo de vida e salvação.\n' +
+    'A celebração da Páscoa tinha o propósito de lembrar a cada israelita dos atos de Deus, cheios de poder e de graça, que Ele realizou em favor de Seu povo. Essa celebração ajudaria a reafirmar a identidade nacional de Israel e fortalecer suas convicções religiosas.\n' +
     'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\n' +
@@ -265,7 +266,7 @@ const CacheLessonData: LessonData = {
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tComo você usará seu livre-arbítrio nos próximos dias? Se você sabe qual é a escolha certa, como pode se preparar para fazê-la?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tPor que é tão importante recordar o bem que Deus fez por você no passado e confiar que Ele continuará a fazer o bem no futuro?\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\n' +
@@ -276,31 +277,32 @@ const CacheLessonData: LessonData = {
     '\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
-    '\t\t\t\t\tTerça-feira, 22 de julho\n' +
+    '\t\t\t\t\tTerça-feira, 29 de julho\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 7\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAs três primeiras pragas\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 14\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAs dez pragas do Egito não foram direcionadas ao povo egípcio, mas aos seus deuses. Cada praga atingiu, pelo menos, um deles.\n' +
-    '3. Leia Êxodo 7:14-25; 8:1-19. O que aconteceu durante essas pragas?\n' +
-    'Deus informou a Moisés que o diálogo com o Faraó seria difícil; na verdade, quase impossível (Êx 7:14). No entanto, Ele queria Se revelar ao Faraó e aos egípcios. Portanto, decidiu Se comunicar com eles de uma forma que pudessem entender. Além disso, os hebreus se beneficiariam desse confronto, pois aprenderiam mais sobre o seu Deus.\n' +
-    'A primeira praga foi dirigida contra Hapi, o deus do Nilo (Êx 7:17-25). O Egito dependia das águas do Nilo. Onde havia água, havia vida. A água era vista como a fonte da vida, então os egípcios criaram o deus Hapi e o adoravam como o provedor da vida.\n' +
-    'Entretanto, só o Deus vivo é a Fonte da vida, o Criador de todas as coisas, incluindo a água e o alimento (Gn 1:1, 2, 20-22; Sl 104:27, 28; 136:25; Jo 11:25; 14:6). Transformar a água em sangue simbolizava transformar vida em morte. Hapi não foi capaz de prover e proteger a vida; isso só é possível pelo poder do Senhor.\n' +
-    'Deus então deu outra chance ao Faraó. A deusa-rã, Heqet, foi confrontada diretamente (Êx 8:1-15). Em vez de vida, o Nilo produziu rãs, que os egípcios temiam e detestavam. Eles queriam se livrar desses animais. O momento exato em que essa praga foi eliminada demonstrou que o poder de Deus estava também por trás desse evento.\n' +
-    'A terceira praga tem a descrição mais curta de todas (Êx 8:16-19). A palavra original (em hebraico, kinnim) pode se referir a animais como mosquitos, carrapatos ou piolhos. Essa praga foi direcionada contra Gebe, o deus egípcio da terra. Do pó da terra (remetendo à história bíblica da criação), Deus produziu mosquitos, que se espalharam por toda a terra. Incapazes de imitar esse milagre (pois somente Deus pode criar vida), os magos declararam: “Isto é o dedo de Deus” (Êx 8:19). O Faraó, no entanto, ainda se recusava a ceder.\n' +
+    '\t\t\t\t\t\tPesach\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t4. Leia Êxodo 12:17-23. Qual era o papel do sangue na celebração dessa nova festa?\n' +
+    'O sangue do animal sacrificado era um elemento central nessa celebração. Os participantes colocavam o sangue do cordeiro morto nos batentes das portas de suas casas. Dessa forma, demonstravam fé em Deus, crendo que Ele os livraria do destino reservado àqueles que não estavam sob a proteção do sangue. Que expressão poderosa do evangelho!\n' +
+    'O cordeiro da Páscoa precisava ser sem defeito, pois simbolizava Jesus Cristo, o “Cordeiro de Deus, que tira o pecado do mundo” (Jo 1:29). O sangue do animal tinha papel crucial: simbolizava proteção e era um sinal de vida em meio à morte iminente.\n' +
+    '"O sangue será um sinal para indicar as casas em que vocês se encontram. Quando Eu vir o sangue, passarei por vocês, e não haverá entre vocês praga destruidora, quando Eu ferir a terra do Egito"(Êx 12:13).\n' +
+    'O evangelho está ligado à celebração da Páscoa, pois ela apontava não apenas para a libertação da escravidão e a jornada à terra prometida, mas também para o sacrifício de Cristo pelos pecados e para Seus méritos, aplicados aos que são cobertos por Seu sangue.\n' +
+    'Séculos depois, fazendo referência à Páscoa, Paulo escreveu: “Joguem fora o velho fermento, para que vocês sejam nova massa, como, de fato, já são, sem fermento. Pois também Cristo, nosso Cordeiro pascal, foi sacrificado” (1Co 5:7).\n' +
+    'O fermento era utilizado na preparação de diferentes tipos de massa. Ele é mencionado pela primeira vez na Bíblia na preparação do pão sem fermento, na véspera da saída dos israelitas do Egito. O fermento também precisava ser removido das casas (Êx 12:8, 15-20; 13:3-7). Nesse contexto específico, o fermento simbolizava o pecado (1Co 5:6-8); portanto, não deveria ser usado durante a Páscoa, que durava uma semana.\n' +
+    'O pão sem fermento simboliza o Messias sem pecado, que venceu todas as tentações e entregou a vida por nós (Jo 1:29; 1Co 5:7; Hb 4:15). Os “ramos de hissopo” (Êx 12:22), que eram molhados no sangue, simbolizavam a graça purificadora de Deus (Sl 51:7). Em resumo, toda a celebração da Pesach revela a obra redentiva de Jesus.\n' +
     'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\n' +
@@ -309,7 +311,7 @@ const CacheLessonData: LessonData = {
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tO coração do Faraó era duro. A rejeição das orientações de Deus piorou a situação. Que lições aprendemos dessa história sobre a rejeição das orientações do Senhor?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tFoi necessário o sangue de Jesus, que é o próprio Deus, para fazer expiação pelo pecado. O que esse fato nos ensina sobre a gravidade do pecado?\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\n' +
@@ -320,61 +322,17 @@ const CacheLessonData: LessonData = {
     '\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
-    '\t\t\t\t\tQuarta-feira, 23 de julho\n' +
+    '\t\t\t\t\tQuarta-feira, 30 de julho\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 8\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tMoscas, gado e úlceras\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 15\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t4. Leia Êxodo 8:20-32; 9:1-12. Mesmo conhecendo grandes manifestações do poder e da glória de Deus, os seres humanos ainda têm a liberdade de rejeitá-Lo?\n' +
-    'A deusa egípcia Uatchit era considerada a deusa das moscas e a senhora dos pântanos e brejos. O deus Khepri (associado ao sol nascente, à criação e ao renascimento) era representado com uma cabeça de escaravelho [besouro]. Esses “deuses” foram derrotados pelo Senhor. Enquanto os egípcios sofriam, os hebreus eram protegidos (Êx 8:20-24). Nenhuma outra praga os afetou.\n' +
-    'Tudo isso foi uma tentativa de Deus de mostrar ao Faraó a grande verdade de que Ele é o Senhor no meio da terra (Êx 8:22).\n' +
-    'Assim, o Faraó começou a barganhar. A pressão aumentou. Ele se dispôs a permitir que Israel adorasse a Deus e sacrificasse a Ele, mas apenas no Egito (Êx 8:25). Essas condições não podiam ser atendidas porque os egípcios adoravam alguns animais, e sacrificá-los provocaria a ira deles contra os hebreus. Além disso, esse não era o plano de Deus para Israel.\n' +
-    'A próxima praga (Êx 9:1-7) atingiu o gado. Hator, a deusa egípcia do amor e da proteção, era retratada com uma cabeça de vaca. O deus-touro Ápis também era muito popular e estimado no Egito. Na quinta praga, outras importantes divindades foram derrotadas quando o gado dos egípcios morreu.\n' +
-    'Na sexta praga (Êx 9:8-12), manifestou-se a derrota de Ísis, a deusa da medicina, magia e sabedoria, bem como de Sequemete (deusa da guerra e das epidemias) e Imotepe (deus da medicina e da cura), que foram incapazes de proteger seus adoradores. Ironicamente, os magos e feiticeiros ficaram tão aflitos que não podiam comparecer diante do Faraó, mostrando que eram impotentes contra o Criador do céu e da Terra.\n' +
-    'Pela primeira vez no relato das dez pragas, a Bíblia diz que “o Senhor endureceu o coração de Faraó” (Êx 9:12). Por mais difícil que essa frase pareça, quando entendida no contexto, revela que o Senhor nos permite colher as consequências de nossa própria rejeição persistente a Ele.\n' +
-    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
-    '\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
-    '\t\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tO problema do Faraó não era intelectual, mas espiritual; diante de evidências suficientes, ele fez a escolha errada. Como proteger nosso coração do orgulho, de modo que não resistamos aos apelos de Deus?\t\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t\t\t\t\t\n' +
-    '\t\t\t\t\tAssine a lição',
-    '‹›\n' +
-    '\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\tQuinta-feira, 24 de julho\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 9\t\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\n' +
-    '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tGranizo, gafanhotos e escuridão\n' +
+    '\t\t\t\t\t\tPassando a tocha\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
@@ -382,14 +340,12 @@ const CacheLessonData: LessonData = {
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\t5. Leia Êxodo 9:13-35; 10:1-29. Essas pragas fizeram o Faraó mudar de ideia?\n' +
-    'Nut era a deusa egípcia da atmosfera e do espaço sideral, retratada como aquela que controlava o que ocorria sob o céu e na terra. Osíris era o deus das colheitas e da fertilidade. O granizo é associado ao juízo divino (Is 28:2, 17; Ez 13:11-13). Nessa praga, aqueles que esconderam suas propriedades em um abrigo seguro foram protegidos (Êx 9:20, 21). Todos foram testados: creriam na Palavra de Deus e agiriam de acordo com ela?\n' +
-    'A preservação da vida do Faraó tinha como propósito tornar Deus conhecido no mundo (Êx 9:16). O rei confessou que havia pecado, mas logo depois voltou atrás.\n' +
-    'Set era o deus da tempestade, guerra e desordem. Junto com Ísis, era considerado uma divindade da agricultura. Shu era o deus da atmosfera. Serápis personificava a majestade divina, fertilidade, cura e vida após a morte. Nenhum dos deuses egípcios impediu os juízos divinos (Êx 10:4-20), pois os ídolos não são nada (Is 44:9, 10, 12-17). Os servos do Faraó insistiram para que ele deixasse Israel ir, mas ele recusou novamente.\n' +
-    'O Faraó ofereceu um acordo, que Moisés rejeitou, e com razão, pois mulheres e crianças eram parte vital e inseparável da adoração e da comunidade de fé.\n' +
-    'Rá era o principal deus egípcio, o deus-sol, e Tote era o deus-lua. Eles não conseguiram produzir luz. O Faraó tentou negociar, mas em vão. Uma escuridão de três dias cobriu o Egito, mas os israelitas tinham luz. A separação não poderia ser mais clara.\n' +
-    'No entanto, independentemente das calamidades que atingiram a nação, o Faraó continuou resistindo e não cedeu. Não conhecemos suas motivações mais profundas, mas, em algum momento, isso pode ter se tornado simplesmente uma questão de orgulho. Não importavam as poderosas evidências, a clareza de tudo o que estava acontecendo e que a escolha correta estivesse bem diante dele – após um pouco de hesitação, o Faraó não se submeteu à vontade de Deus. Por outro lado, seus servos declararam: “Até quando este homem será um perigo para nós? Deixe essa gente ir, para que adorem o Senhor, o Deus deles. Será que o rei ainda não sabe que o Egito está arruinado?” (Êx 10:7).\n' +
-    'Esse é um exemplo marcante das palavras: “Antes da ruína vem a soberba, e o espírito orgulhoso precede a queda” (Pv 16:18).\n' +
+    '\t\t\t\t\t\tO salmista descreve como nossos filhos podem conhecer a Deus e Seu cuidado amoroso (Sl 145:4). As famílias devem dialogar sobre Deus, Seus feitos maravilhosos e Seus ensinos, para transmitir o conhecimento bíblico às futuras gerações.\n' +
+    '5. Leia Êxodo 12:24-28. Qual é a ideia central desse texto?\n' +
+    'Em Israel, os pais eram os primeiros professores e deviam contar a história do êxodo aos filhos. A história não deveria ser narrada apenas como um evento histórico distante, mas como uma experiência pessoal que fazia parte da vida de cada um, mesmo tendo ocorrido muito tempo antes. Ao celebrar a festa, os israelitas deveriam se conectar com seus antepassados, de modo que a história fosse revivida. Séculos depois, um pai poderia dizer à sua família: “Vivi no Egito, presenciei as pragas, vi a derrota dos deuses egípcios e fui libertado.” No Livro de Êxodo, vemos duas vezes como os pais deveriam responder às perguntas dos filhos sobre a Páscoa (Êx 12:26, 27; 13:14-16; compare com Dt 6:6-8).\n' +
+    'É notável que os israelitas estavam no Egito quando foram orientados a celebrar a libertação do Egito. Essa celebração foi um ato de fé. Ao receber as instruções, “o povo se inclinou e adorou” seu Redentor. Depois, seguiu as instruções da Páscoa (Êx 12:27).\n' +
+    'Em Deuteronômio, os israelitas são lembrados de que deveriam contar a história do êxodo de uma forma que as novas gerações a internalizassem como se fosse a jornada deles. Veja o tom coletivo da narrativa e a ênfase na experiência presente: “Meu pai foi um arameu prestes a perecer. Ele foi para o Egito, e ali viveu como estrangeiro com pouca gente; e ali veio a ser uma nação grande, forte e numerosa. Mas os egípcios nos maltrataram [...]. Clamamos ao Senhor [...]; e o Senhor ouviu a nossa voz e viu a nossa angústia, o nosso trabalho e a nossa opressão. E o Senhor nos tirou do Egito com mão poderosa, com braço estendido, com grande espanto, com sinais e com milagres. Ele nos trouxe a este lugar e nos deu esta terra, terra que mana leite e mel” (Dt 26:5-9).\n' +
+    'Ao relembrar e contar aos filhos a história da Páscoa (ou qualquer evento importante da história sagrada), os pais eram ajudados a lembrar o que Deus tinha feito por eles e pelo povo. Contar essas histórias era significativo para quem falava e para quem ouvia.\n' +
     'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\n' +
@@ -403,11 +359,55 @@ const CacheLessonData: LessonData = {
     '\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
-    '\t\t\t\t\tSexta-feira, 25 de julho\n' +
+    '\t\t\t\t\tQuinta-feira, 31 de julho\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 10\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 16\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tO juízo divino\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t6. Deus feriu todos primogênitos no Egito. Por que Ele Se concentrou nos primogênitos? Êx 12:29, 30; Hb 11:28\n' +
+    'A última praga do Egito atingiu os primogênitos. Esse foi um juízo divino contra todos os deuses do Egito e também contra todas as famílias que adoravam esses falsos deuses, que eram apenas ídolos sem valor, refletindo os sentimentos, desejos e medos do próprio povo.\n' +
+    'Como as pragas anteriores já haviam demonstrado, os ídolos eram incapazes de salvar o povo. Sua inutilidade ficou mais evidente com a décima praga, que trouxe as consequências mais graves para os egípcios.\n' +
+    '"Por todo o vasto reino do Egito, o orgulho de cada casa tinha sido derrubado. Gritos e choro de lamentação enchiam o ar. O rei e seus oficiais, com rosto pálido e membros trêmulos, estavam apavorados diante do horror que dominava a todos"(Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 233).\n' +
+    'O Faraó era visto como a personificação do poder do Egito e o deus supremo da nação, e seu filho primogênito era considerado filho de um deus. Ísis era uma deusa que protegia as crianças; Heqet, a deusa que assistia as mulheres no parto; e Min, um deus na reprodução. Além desses, havia outros deuses egípcios relacionados à fertilidade. No entanto, eles se mostraram impotentes diante do Deus vivo. Moisés e Jetro fizeram declarações sobre o poder e a superiodade de Deus (Êx 15:11; Êx 18:11).\n' +
+    'De acordo com Êxodo 1, o Faraó mandou que as parteiras egípcias matassem os filhos recém-nascidos dos israelitas numa tentativa de enfraquecê-los, dominá-los e humilhá-los. Agora, a punição de Deus recaiu sobre os primogênitos do Egito. Isso ilustra o princípio de que colhemos aquilo que semeamos.\n' +
+    'Nossas decisões e comportamentos têm consequências reais. E a dolorosa verdade, que todos nós já experimentamos, é que não sofremos sozinhos as consequências de nossas ações erradas. Outras pessoas, às vezes até mesmo inocentes, também sofrem. Essa é a natureza do pecado.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tVocê já sofreu por causa dos pecados de outras pessoas? Outras pessoas já sofreram por causa dos seus pecados? Qual é a nossa única esperança?\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição',
+    '‹›\n' +
+    '\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\tSexta-feira, 01 de agosto\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\tAno Bíblico: RPSP: LV 17\t\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
@@ -421,27 +421,61 @@ const CacheLessonData: LessonData = {
     '\t\t\t\t\n' +
     '\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
-    '\t\t\t\t\t\tLeia, de Ellen G. White, Patriarcas e Profetas, p. 214-227 (“As pragas do Egito”).\n' +
-    '“Foi permitido que Seu povo experimentasse a esmagadora crueldade dos egípcios, para que não se enganasse em relação à influência degradante da idolatria. Em Sua maneira de lidar com o Faraó, o Senhor manifestou Seu ódio à idolatria e Sua decisão de punir a crueldade e a opressão. [...] Não se exerceu um poder sobrenatural para endurecer o coração do rei. Deus deu ao Faraó a mais notável evidência do poder divino, mas o rei obstinadamente se recusou a aceitar a luz. Cada manifestação do poder infinito rejeitada por ele tornava-o mais resoluto em sua rebeldia. As sementes de rebelião que semeara quando rejeitou o primeiro milagre produziram sua colheita” (Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 222, 223).\n' +
-    '“O Sol e a Lua eram adorados pelos egípcios. Nessas trevas misteriosas, o povo e seus deuses foram de modo semelhante atingidos pelo poder que havia se comprometido com a causa dos escravos. Contudo, por mais estranho que tivesse sido, esse juízo é uma prova da compaixão de Deus e de Sua indisposição para destruir. Ele deu ao povo tempo para refletir e se arrepender, antes de trazer sobre ele a última e mais terrível das pragas” (Patriarcas e Profetas, p. 226).\n' +
-    'Perguntas para consideração\n' +
-    '1. Por que o Faraó se permitiu ser tão endurecido que, mesmo diante do que deveria ser a escolha evidente e correta (deixar o povo ir), ele ainda se recusou. Como alguém poderia se enganar tanto a ponto de não enxergar o óbvio? Que advertência isso traz a nós? Podemos ficar tão endurecidos no pecado a ponto de tomar decisões desastrosas quando a decisão correta e o caminho certo estão bem diante de nós o tempo todo? Quais outros personagens bíblicos cometeram o mesmo tipo de erro? Pense, por exemplo, em Judas.\n' +
-    '2. Em determinado momento, em meio à devastação que o Faraó havia causado em sua própria terra e ao seu povo, ele declarou: “Desta vez pequei. O Senhor é justo, porém eu e o meu povo somos ímpios” (Êx 9:27). Embora tenha sido uma confissão notável de pecado naquela ocasião, por que sabemos que não foi autêntica?\n' +
-    'Respostas às perguntas da semana: 1. Por meio das pragas e do juízo contra os deuses do Egito, Deus revelou que Seu poder e autoridade são supremos. 2. O Faraó decidiu rejeitar a vontade de Deus, e o Senhor o entregou ao seu próprio pecado. 3. Deus enviou as três primeiras pragas: águas transformadas em sangue, rãs e piolhos. 4. O poder de Deus foi revelado de maneira mais notável do que antes, mas o Faraó endureceu seu coração. 5. O Faraó chegou a confessar que havia pecado, e seus servos insistiram para que deixasse Israel ir, mas ele se recusou mais intensamente.\n' +
+    '\t\t\t\t\t\tLeia, de Ellen G. White, Patriarcas e Profetas, p. 229-233 (“A Páscoa”).\n' +
+    '“A Páscoa devia ser tanto comemorativa quanto simbólica, apontando não somente para a libertação do Egito, mas também para o maior livramento que, no futuro, Cristo realizaria libertando Seu povo do cativeiro do pecado. O cordeiro sacrifical representa o ‘Cordeiro de Deus’ (Jo 1:29), em quem se acha nossa única esperança de salvação. O apóstolo escreveu: ‘Cristo, nossa páscoa, foi sacrificado por nós’ (1Co 5:7, ARC). Não bastava que o cordeiro pascal fosse morto; seu sangue devia ser aspergido nos batentes das portas. Assim também, os méritos do sangue de Cristo devem ser aplicados no coração. Devemos crer que Ele morreu não somente pelo mundo, mas também por cada um de nós individualmente. Devemos apropriar-nos dos benefícios do sacrifício expiatório” (Ellen G. White, Patriarcas e Profetas [CPB, 2022], p. 231).\n' +
+    'Até hoje, famílias judaicas celebram a Páscoa (em hebraico, Pessach). Elas realizam o que chamam de “sêder de Pesach” – “sêder” significa “ordem” ou “sequência” e, nesse caso, refere-se ao jantar cerimonial. Nesse momento, eles recontam a história do êxodo e depois desfrutam uma refeição especial em família. É impressionante como essa celebração tem sido mantida, literalmente, desde a época do êxodo! Somente o sábado, que também é observado pelos judeus praticantes, é mais antigo.\n' +
+    'Perguntas para consideração1. Como entender que o Senhor foi justo ao matar os primogênitos do Egito e o mundo no dilúvio, muitos dos quais eram “inocentes”? É possível conciliar isso com o amor de Deus? \n' +
+    '2. O que significa ser coberto pelo sangue de Jesus e que Seu sangue nos purifica do pecado? Como podemos aplicar esse conceito em nossa vida diária? \n' +
+    '3. Leia as seguintes palavras: “Os seguidores de Cristo devem ser participantes de Sua experiência. Devem receber e assimilar a Palavra de Deus de modo que ela se torne a força que impulsiona a vida e as ações. Pelo poder de Cristo, devem ser transformados à Sua semelhança e refletir os atributos divinos. [...] O espírito e a obra de Cristo devem se tornar o espírito e a obra de Seus discípulos” (Patriarcas e Profetas, p. 231). Como podemos permitir que Cristo faça em nós o que esse texto descreve?\n' +
+    'Respostas às perguntas da semana: 1. Deus deu aos egípcios uma última advertência e uma derradeira chance de se arrepender. 2. O Senhor deu instruções detalhadas para a celebração da Páscoa. 3. Deus passaria sobre as casas dos hebreus que colocassem sangue nas portas, poupando a vida dos israelitas. O sangue simbolizava a salvação divina. 4. O sangue representava proteção e era sinal de vida diante da morte. 5. Os pais deveriam explicar aos filhos o significado da Páscoa, contando o que Deus havia feito por eles. 6. A morte dos primogênitos representava o juízo contra todas as famílias que haviam rejeitado o Senhor.\n' +
     'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    'portas, poupando a vida dos israelitas. O sangue simbolizava a salvação divina. 4. O sangue representava proteção e era sinal de vida diante da morte. 5. Os pais deveriam explicar aos filhos o significado da Páscoa, contando o que Deus havia feito por eles. 6. A morte dos primogênitos representava o juízo contra todas as famílias que haviam rejeitado o Senhor.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    'diante da morte. 5. Os pais deveriam explicar aos filhos o significado da Páscoa, contando o que Deus havia feito por eles. 6. A morte dos primogênitos representava o juízo contra todas as famílias que haviam rejeitado o Senhor.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    'dos primogênitos representava o juízo contra todas as famílias que haviam rejeitado o Senhor.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    'Garanta o conteúdo completo da Lição da Escola Sabatina para o ano inteiro. Faça aqui a sua assinatura!\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
     '\t\t\t\t\t\t\t\tEsse tipo de conteúdo não está disponível nesse navegador.\n' +
     '\t\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\n' +
     '\t\t\t\t\t\n' +
     '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição' +
+    '\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\n' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição' +
+    '\t\t\t\t\t\n' +
+    '\t\t\t\t\t\t\t\t\t\t\n' +
+    '\t\t\t\t\tAssine a lição' +
     '\t\t\t\t\tAssine a lição'
   ],
   verses: [],
-  lessonLink: 'https://mais.cpb.com.br/licao/as-pragas/',
-  lastUpdated: '2025-07-19T14:21:00.200Z',
-  expiresAt: '2025-07-26T14:21:01.308Z'
+  lessonLink: 'https://mais.cpb.com.br/licao/a-pascoa/',
+  lastUpdated: '2025-07-27T17:22:00.903Z',
+  expiresAt: '2025-08-03T17:22:02.175Z'
 }
 
 function buildSystemPrompt(lesson: LessonData | null): string {
