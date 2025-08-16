@@ -21,9 +21,17 @@ const withPWA = require('next-pwa')({
 
 module.exports = withPWA({
   reactStrictMode: true,
-   serverExternalPackages: ['puppeteer'],
-    images: {
+  serverExternalPackages: ['puppeteer'],
+  images: {
     domains: ['lh3.googleusercontent.com'],
   },
-  // Outras configurações do Next.js
+  // Configurações para Vercel
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    if (isServer) {
+      config.externals.push({
+        'puppeteer': 'commonjs puppeteer',
+      });
+    }
+    return config;
+  },
 })

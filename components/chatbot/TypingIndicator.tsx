@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
 
 const TypingIndicator: React.FC = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -82,7 +84,7 @@ const TypingIndicator: React.FC = () => {
               isDark ? "text-gray-400" : "text-gray-500"
             }`}
           >
-            respondendo...
+            {t("typing")}
           </div>
         </div>
       </div>

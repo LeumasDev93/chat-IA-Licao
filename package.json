@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:lesson": "node scripts/test-lesson-update.js",
+    "test:simple": "node scripts/test-simple.js",
+    "test:chat": "node scripts/test-chat.js",
+    "test:history": "node scripts/test-history.js",
+    "test:fix": "node scripts/test-fix.js",
+    "check:supabase": "node scripts/check-supabase.js"
   },
   "dependencies": {
     "@auth/firebase-adapter": "^2.9.1",
@@ -20,6 +26,7 @@
     "cheerio": "^1.1.0",
     "chrome-aws-lambda": "^10.1.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "firebase-admin": "^12.7.0",
     "html-to-image": "^1.11.13",
@@ -28,7 +35,6 @@
     "lucide-react": "^0.513.0",
     "next": "15.3.3",
     "next-auth": "^5.0.0-beta.28",
-    "node-schedule": "^2.1.1",
     "playwright-core": "^1.53.1",
     "puppeteer": "^24.10.0",
     "puppeteer-core": "^10.4.0",
@@ -45,7 +51,6 @@
     "@types/firebase": "^3.2.3",
     "@types/next-pwa": "^5.6.9",
     "@types/node": "^20.19.0",
-    "@types/node-schedule": "^2.1.7",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/web-push": "^3.6.4",

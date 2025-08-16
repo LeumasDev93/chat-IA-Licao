@@ -6,8 +6,8 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Send,
   Mic,
-  X,
   Sparkles,
+  X,
   LockKeyhole,
   Zap,
   History,
@@ -21,12 +21,16 @@ import Image from "next/image";
 import logo1 from "@/assets/Logo1.png";
 
 import ChatSidebar from "@/components/Header";
+import ChatHistory from "@/components/ChatHistory";
 import { useChatHistory } from "@/hooks/useChatHistory";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
 import { createComponentClient } from "@/models/supabase";
+
 import { FaSpinner } from "react-icons/fa6";
 import Link from "next/link";
+
 import { useNotifications } from "@/hooks/useNotifications";
 // Tipagens globais para reconhecimento de voz
 declare global {
@@ -79,6 +83,7 @@ interface SpeechRecognitionAlternative {
 export default function Home() {
   const currentYear = new Date().getFullYear();
   const { theme } = useTheme();
+  const { language, t } = useLanguage();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
 
@@ -123,32 +128,47 @@ export default function Home() {
     addMessage,
     createNewChat,
     deleteChat,
+    updateChatTitle,
     setCurrentChatId,
+    loading: historyLoading,
+    currentMessages,
+    currentChat,
   } = useChatHistory();
 
-  const [messages, setMessages] = useState<MessageType[]>(() => {
-    // Carrega mensagens da conversa atual se existir
-    return chatHistory[currentChatId] || [];
-  });
+  const [messages, setMessages] = useState<MessageType[]>([]);
 
   useEffect(() => {
-    if (chatHistory[currentChatId]) {
-      setMessages(chatHistory[currentChatId]);
-    } else {
-      setMessages([]);
+    if (currentMessages.length > 0) {
+      setMessages(currentMessages);
     }
-  }, [currentChatId, chatHistory]);
+  }, [currentMessages]);
 
   const user = useSupabaseUser();
+
+  // Carrega mensagens do localStorage quando o chat atual mudar
+  useEffect(() => {
+    if (currentChatId && currentMessages.length === 0) {
+      try {
+        const savedHistory = localStorage.getItem("chat_history") || "{}";
+        const history = JSON.parse(savedHistory);
+        const currentChat = history[currentChatId];
+        if (currentChat && currentChat.messages) {
+          setMessages(currentChat.messages);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar mensagens do localStorage:", error);
+      }
+    }
+  }, [currentChatId, currentMessages.length]);
 
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
+  const [alertMessage, setAlert] = useState(false);
   const isMobile = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const [alertMessage, setAlert] = useState(false);
 
   useEffect(() => {
     const INTERVALO_MS = 6 * 60 * 60 * 1000; // 6 horas
@@ -193,16 +213,16 @@ export default function Home() {
   }, []);
 
   const quickReplies = [
-    "Sábado à tarde",
-    "Domingo",
-    "Segunda-feira",
-    "Terça-feira",
-    "Quarta-feira",
-    "Quinta-feira",
-    "Sexta-feira",
-    "Auxiliar",
-    "Comentário",
-    "Resumo Semanal",
+    t("saturday_afternoon"),
+    t("sunday"),
+    t("monday"),
+    t("tuesday"),
+    t("wednesday"),
+    t("thursday"),
+    t("friday"),
+    t("auxiliary"),
+    t("commentary"),
+    t("weekly_summary"),
   ];
 
   useEffect(() => {
@@ -285,11 +305,12 @@ export default function Home() {
 
     let chatId = currentChatId;
 
-    // Se ainda não houver chat atual, gera um novo automaticamente
+    // Se ainda não houver chat atual, cria um novo
     if (!chatId) {
-      chatId = Date.now().toString();
-      setCurrentChatId(chatId);
-      setMessages([]); // zera mensagens anteriores
+      const newChatId = createNewChat();
+      chatId = newChatId;
+      setCurrentChatId(newChatId);
+      setMessages([]);
     }
 
     const userMessage: MessageType = {
@@ -311,46 +332,13 @@ export default function Home() {
     setIsTyping(true);
 
     try {
-      // Verifica se o chat já está salvo no Supabase
-      const { data: existingChat, error: fetchError } = await supabase
-        .from("user_chats")
-        .select("chat_id")
-        .eq("chat_id", chatId)
-        .single();
-
-      if (fetchError && fetchError.code !== "PGRST116") {
-        throw fetchError;
-      }
-
-      if (!existingChat) {
-        // Criar novo chat
-        const { error: insertError } = await supabase
-          .from("user_chats")
-          .insert({
-            user_id: user.user.id,
-            chat_id: chatId,
-            messages: [userMessage],
-            title: content.slice(0, 100),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
-
-        if (insertError) throw insertError;
-      } else {
-        // Atualizar chat existente
-        const { error: updateError } = await supabase
-          .from("user_chats")
-          .update({
-            messages: updatedMessages,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("chat_id", chatId);
-
-        if (updateError) throw updateError;
-      }
-
       // Resposta do bot
-      const botResponse = await generateBotResponse(content);
+      const isNewConversation = messages.length === 0; // Se não há mensagens, é uma nova conversa
+      const botResponse = await generateBotResponse(
+        content,
+        language,
+        isNewConversation
+      );
       const botMessage: MessageType = {
         id: (Date.now() + 1).toString(),
         text: botResponse.text,
@@ -362,14 +350,6 @@ export default function Home() {
       const finalMessages = [...updatedMessages, botMessage];
       setMessages(finalMessages);
       addMessage(chatId, botMessage);
-
-      await supabase
-        .from("user_chats")
-        .update({
-          messages: finalMessages,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("chat_id", chatId);
     } catch (error) {
       console.error("Erro ao processar mensagem:", error);
       const errorMessage: MessageType = {
@@ -424,27 +404,38 @@ export default function Home() {
       handleSendMessage();
     }
   };
-  const handleNewChat = () => {
-    if (!user?.user?.id) return;
-
-    const newChatId = Date.now().toString();
+  const handleNewChat = async () => {
+    const newChatId = createNewChat();
     setMessages([]);
-    setCurrentChatId(newChatId);
-  };
 
-  const supabase = createComponentClient();
-  // Função para carregar os chats do usuário
-  const loadUserChats = async () => {
-    if (!user) return;
+    // Adiciona uma saudação automática para nova conversa
+    const welcomeMessages = {
+      pt: "🌟 Olá! Que alegria ter você aqui! Como posso iluminar seu estudo da Lição da Escola Sabatina hoje?",
+      en: "🌟 Hello! What a joy to have you here! How can I illuminate your Sabbath School lesson study today?",
+      es: "🌟 ¡Hola! ¡Qué alegría tenerte aquí! ¿Cómo puedo iluminar tu estudio de la Lección de la Escuela Sabática hoy?",
+      fr: "🌟 Bonjour! Quelle joie de vous avoir ici! Comment puis-je éclairer votre étude de la Leçon de l'École du Sabbat aujourd'hui?",
+      krioulu:
+        "🌟 Olá, nha fidju/fidja! Que alegria ter bu li! Como posso iluminar bu estudo da Lição da Escola Sabatina hoje?",
+    };
 
-    const { data, error } = await supabase
-      .from("user_chats")
-      .select("chat_id")
-      .eq("user_id", user?.user?.id)
-      .order("created_at", { ascending: false });
+    const welcomeMessage: MessageType = {
+      id: Date.now().toString(),
+      text:
+        welcomeMessages[language as keyof typeof welcomeMessages] ||
+        welcomeMessages.pt,
+      sender: "bot",
+      timestamp: new Date(),
+      parts: [
+        {
+          text:
+            welcomeMessages[language as keyof typeof welcomeMessages] ||
+            welcomeMessages.pt,
+        },
+      ],
+    };
 
-    if (error) console.error("Erro ao carregar chats:", error);
-    return data;
+    setMessages([welcomeMessage]);
+    addMessage(newChatId, welcomeMessage);
   };
 
   if (!mounted) {
@@ -470,6 +461,7 @@ export default function Home() {
             currentChatId={currentChatId}
             setCurrentChatId={setCurrentChatId}
             deleteChat={deleteChat}
+            updateChatTitle={updateChatTitle}
           />
         </div>
         {/* Área de conteúdo principal */}
@@ -491,13 +483,10 @@ export default function Home() {
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-4 flex items-center justify-center gap-2">
                   <Sparkles className="text-primary" />
-                  Assistente IA - Escola Sabatina
+                  {t("ai_assistant_title")}
                 </h1>
                 <p className="text-muted-foreground max-w-2xl">
-                  Esta é a Inteligência Artificial oficial da Igreja Adventista
-                  do Sétimo Dia Em Cabo Verde, desenvolvida para apoiar nos
-                  estudos da lição da escola sabatina, inspirar e fortalecer sua
-                  jornada espiritual.
+                  {t("ai_assistant_description")}
                 </p>
               </div>
 
@@ -566,23 +555,23 @@ export default function Home() {
                     </div>
 
                     <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
-                      Acesso Bloqueado
+                      {t("access_blocked")}
                     </h3>
 
-                    <p className="text-lg">Inicie sessão para desbloquear:</p>
+                    <p className="text-lg">{t("login_to_unlock")}</p>
 
                     <ul className="space-y-2 text-left w-full pl-6">
                       <li className="flex items-center gap-2">
                         <Sparkles className="h-4 w-4 text-yellow-400" />
-                        Respostas inteligentes e personalizadas
+                        {t("intelligent_responses")}
                       </li>
                       <li className="flex items-center gap-2">
                         <History className="h-4 w-4 text-blue-400" />
-                        Histórico completo das suas conversas
+                        {t("complete_history")}
                       </li>
                       <li className="flex items-center gap-2">
                         <Zap className="h-4 w-4 text-purple-400" />
-                        Acesso prioritário a novos recursos
+                        {t("priority_access")}
                       </li>
                     </ul>
                   </div>
@@ -596,11 +585,11 @@ export default function Home() {
                         : "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-400 hover:to-blue-400 hover:shadow-purple-400/40"
                     }`}
                   >
-                    Iniciar Sessão Agora
+                    {t("login_now")}
                   </Link>
 
                   <p className="text-xs text-center mt-4 opacity-70">
-                    Leva menos de 30 segundos!
+                    {t("takes_less_than_30_seconds")}
                   </p>
                 </div>
               </div>
@@ -609,38 +598,40 @@ export default function Home() {
             <div className="sticky bottom-0 bg-background border-t p-4">
               <div className="mx-auto max-w-3xl w-full">
                 {/* Quick replies */}
-                {messages.length === 0 && (
-                  <div className="mb-4">
-                    <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                      {quickReplies.map((reply, index) => (
+                <div className="mb-4">
+                  <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    {quickReplies.map((reply, index) => (
+                      <QuickReply
+                        key={index}
+                        text={reply}
+                        onClick={() => {
+                          if (user?.user?.id) {
+                            handleSendMessage(undefined, reply);
+                          } else {
+                            setAlert(true);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="sm:hidden flex overflow-x-auto space-x-2 pb-2">
+                    {quickReplies.map((reply, index) => (
+                      <div key={index} className="flex-shrink-0">
                         <QuickReply
-                          key={index}
                           text={reply}
                           onClick={() => {
-                            if (user.user) {
+                            if (user?.user?.id) {
                               handleSendMessage(undefined, reply);
+                            } else {
+                              setAlert(true);
                             }
                           }}
                         />
-                      ))}
-                    </div>
-
-                    <div className="sm:hidden flex overflow-x-auto space-x-2 pb-2">
-                      {quickReplies.map((reply, index) => (
-                        <div key={index} className="flex-shrink-0">
-                          <QuickReply
-                            text={reply}
-                            onClick={() => {
-                              if (user.user) {
-                                handleSendMessage(undefined, reply);
-                              }
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
-                )}
+                </div>
 
                 {/* Input form */}
                 <form onSubmit={handleSendMessage} className="relative">
@@ -653,15 +644,13 @@ export default function Home() {
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
-                          if (user.user) {
+                          if (user?.user?.id) {
                             handleSendMessage(e);
                           }
                         }
                       }}
                       placeholder={
-                        user.user
-                          ? "Digite sua mensagem..."
-                          : "Faça login para enviar mensagens..."
+                        user?.user?.id ? t("type_message") : t("login_to_send")
                       }
                       rows={3}
                       className="w-full px-4 py-3 pr-16 text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-primary shadow-lg resize-none bg-card border border-border"
@@ -696,12 +685,9 @@ export default function Home() {
 
                 {/* Footer */}
                 <div className="hidden sm:flex flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
+                  <span>{t("ai_assistant_warning")}</span>
                   <span>
-                    O Assistente IA para estudos da lição pode cometer erros.
-                    Verifique informações importantes.
-                  </span>
-                  <span>
-                    Copyright © {currentYear} | desenvolvido por
+                    {t("copyright")} {currentYear} | {t("developed_by")}
                     <span className={`${textFooter} font-semibold`}>
                       {" "}
                       Leumas Andrade

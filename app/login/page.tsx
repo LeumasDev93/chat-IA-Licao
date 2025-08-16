@@ -2,6 +2,7 @@
 
 import { FaGoogle } from "react-icons/fa6";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 import { createComponentClient } from "@/models/supabase";
 import Image from "next/image";
@@ -12,6 +13,7 @@ import { AlertCircle, Mail, User, Lock } from "lucide-react";
 export default function Login() {
   const supabase = createComponentClient();
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const router = useRouter();
   const [typeAuth, setTypeAuth] = useState<"login" | "register">("login");
@@ -161,13 +163,13 @@ export default function Login() {
             </div>
           </div>
           <h1 className="text-2xl font-bold text-white">
-            Bem-Vindo(a) de volta ao
-            <span className="block">Assistente IA</span>
+            {t("welcome_back")}
+            <span className="block">{t("ai_assistant")}</span>
           </h1>
           <p className="text-white/90 mt-1">
             {typeAuth === "login"
-              ? "Faça login para continuar"
-              : "Crie sua conta gratuitamente"}
+              ? t("login_to_continue")
+              : t("create_free_account")}
           </p>
         </div>
 
@@ -185,7 +187,7 @@ export default function Login() {
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            Entrar
+            {t("sign_in")}
           </button>
           <button
             onClick={() => setTypeAuth("register")}
@@ -199,7 +201,7 @@ export default function Login() {
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            Criar Conta
+            {t("create_account")}
           </button>
         </div>
 
@@ -223,7 +225,7 @@ export default function Login() {
               <input
                 type="text"
                 name="name"
-                placeholder="Nome completo"
+                placeholder={t("full_name")}
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -241,7 +243,7 @@ export default function Login() {
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder={t("email")}
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -258,7 +260,7 @@ export default function Login() {
             <input
               type="password"
               name="password"
-              placeholder="Senha"
+              placeholder={t("password")}
               required
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -279,7 +281,9 @@ export default function Login() {
                 : "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-400 hover:to-blue-400 text-white"
             }`}
           >
-            {typeAuth === "login" ? "Entrar" : "Criar Conta"}
+            {typeAuth === "login"
+              ? t("sign_in_button")
+              : t("create_account_button")}
           </button>
 
           <div className="relative flex items-center py-4">
@@ -289,7 +293,7 @@ export default function Login() {
                 resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"
               }`}
             >
-              ou
+              {t("or")}
             </span>
             <div className="flex-grow border-t border-gray-300/50"></div>
           </div>
@@ -308,7 +312,7 @@ export default function Login() {
                 resolvedTheme === "dark" ? "text-red-400" : "text-red-500"
               }`}
             />
-            Continuar com Google
+            {t("continue_with_google")}
           </button>
         </form>
 
@@ -323,9 +327,7 @@ export default function Login() {
               resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"
             }`}
           >
-            {typeAuth === "login"
-              ? "Não tem uma conta? "
-              : "Já tem uma conta? "}
+            {typeAuth === "login" ? t("no_account") : t("already_have_account")}
             <button
               onClick={() =>
                 setTypeAuth(typeAuth === "login" ? "register" : "login")
@@ -336,7 +338,7 @@ export default function Login() {
                   : "text-purple-600 hover:text-purple-500"
               }`}
             >
-              {typeAuth === "login" ? "Crie agora" : "Faça login"}
+              {typeAuth === "login" ? t("create_now") : t("make_login")}
             </button>
           </p>
         </div>

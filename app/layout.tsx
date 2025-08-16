@@ -3,6 +3,7 @@
 
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { Suspense, useEffect } from "react";
@@ -85,10 +86,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionProvider>
           <ThemeProvider>
-            <Suspense>
-              <AnalyticsHandler />
-            </Suspense>
-            {children}
+            <LanguageProvider>
+              <Suspense>
+                <AnalyticsHandler />
+              </Suspense>
+              {children}
+            </LanguageProvider>
           </ThemeProvider>
         </SessionProvider>
       </body>

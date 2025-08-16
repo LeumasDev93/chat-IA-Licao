@@ -3,198 +3,184 @@
 // hooks/useChatHistory.ts
 import { useState, useEffect, useCallback } from "react";
 import { MessageType } from "@/types";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+interface ChatData {
+  messages: MessageType[];
+  title: string;
+}
+
+interface ChatHistoryState {
+  [chatId: string]: ChatData;
+}
 
 export const useChatHistory = () => {
-  const supabase = useSupabaseClient();
-  const user = useUser();
-  const [chatHistory, setChatHistory] = useState<Record<string, MessageType[]>>({});
+  const { t } = useLanguage();
+  const [chatHistory, setChatHistory] = useState<ChatHistoryState>({});
   const [currentChatId, setCurrentChatId] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Carrega o histórico e configura realtime
-  useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+  // Carrega o histórico do localStorage
+  const loadChatHistory = useCallback(() => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    let subscription: any;
-
-    const loadAndSubscribe = async () => {
-      try {
-        setLoading(true);
-        
-        // 1. Carrega chats existentes
-        const { data: chats, error: fetchError } = await supabase
-          .from('user_chats')
-          .select('chat_id, messages, created_at')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (fetchError) throw fetchError;
-
-        const history: Record<string, MessageType[]> = {};
-        chats?.forEach(chat => {
-          history[chat.chat_id] = chat.messages || [];
-        });
-
+      const savedHistory = localStorage.getItem("chat_history");
+      if (savedHistory) {
+        const history = JSON.parse(savedHistory);
         setChatHistory(history);
         
-        // Define o chat mais recente como ativo
-        if (chats?.length) {
-          setCurrentChatId(chats[0].chat_id);
-        } else {
-          const newChatId = await createNewChat();
-          setCurrentChatId(newChatId);
+        // Define o primeiro chat como ativo se não houver um selecionado
+        const chatIds = Object.keys(history);
+        if (chatIds.length > 0 && !currentChatId) {
+          setCurrentChatId(chatIds[0]);
         }
-
-        // 2. Configura subscription para atualizações em tempo real
-        subscription = supabase
-          .channel('user_chats_changes')
-          .on(
-            'postgres_changes',
-            {
-              event: '*',
-              schema: 'public',
-              table: 'user_chats',
-              filter: `user_id=eq.${user.id}`
-            },
-            (payload) => {
-              handleRealtimeUpdate(payload);
-            }
-          )
-          .subscribe();
-
-      } catch (err) {
-        setError(error);
-        console.error('Erro ao carregar chats:', err);
-      } finally {
-        setLoading(false);
       }
-    };
-
-    const handleRealtimeUpdate = (payload: any) => {
-      const { eventType, new: newData, old } = payload;
-      
-      switch (eventType) {
-        case 'INSERT':
-        case 'UPDATE':
-          setChatHistory(prev => ({
-            ...prev,
-            [newData.chat_id]: newData.messages
-          }));
-          break;
-        
-        case 'DELETE':
-          setChatHistory(prev => {
-            const newHistory = { ...prev };
-            delete newHistory[old.chat_id];
-            return newHistory;
-          });
-          break;
-      }
-    };
-
-    loadAndSubscribe();
-
-    return () => {
-      if (subscription) supabase.removeChannel(subscription);
-    };
-  }, [user, supabase]);
-
-  // Salva alterações no Supabase com debounce
-  useEffect(() => {
-    if (!user || loading) return;
-
-    const saveChanges = async () => {
-      try {
-        const updates = Object.entries(chatHistory).map(([chatId, messages]) => ({
-          user_id: user.id,
-          chat_id: chatId,
-          messages,
-          updated_at: new Date().toISOString()
-        }));
-
-        const { error } = await supabase
-          .from('user_chats')
-          .upsert(updates, { onConflict: 'user_id,chat_id' });
-
-        if (error) throw error;
-      } catch (err) {
-        console.error('Erro ao salvar chats:', err);
-      }
-    };
-
-    const debounceTimer = setTimeout(saveChanges, 1000);
-    return () => clearTimeout(debounceTimer);
-  }, [chatHistory, user, supabase, loading]);
-
-  const addMessage = useCallback(async (chatId: string, message: MessageType) => {
-    setChatHistory(prev => {
-      const currentChat = prev[chatId] || [];
-      return {
-        ...prev,
-        [chatId]: [...currentChat, message]
-      };
-    });
+    } catch (err: any) {
+      setError(err.message);
+      console.error('Erro ao carregar histórico:', err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const createNewChat = useCallback(async () => {
-    const newChatId = Date.now().toString();
-    
+  // Carrega histórico quando componente monta
+  useEffect(() => {
+    loadChatHistory();
+  }, []);
+
+  // Salva histórico no localStorage
+  const saveToLocalStorage = useCallback((history: ChatHistoryState) => {
     try {
-      const { error } = await supabase
-        .from('user_chats')
-        .insert({
-          user_id: user?.id,
-          chat_id: newChatId,
-          messages: [],
-          created_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
-
-      setChatHistory(prev => ({
-        ...prev,
-        [newChatId]: []
-      }));
-
-      return newChatId;
-    } catch (err) {
-      console.error('Erro ao criar chat:', err);
-      throw err;
+      localStorage.setItem("chat_history", JSON.stringify(history));
+    } catch (err: any) {
+      console.error('Erro ao salvar no localStorage:', err);
     }
-  }, [user, supabase]);
+  }, []);
 
-  const deleteChat = useCallback(async (chatId: string) => {
-    if (!user) return;
+  // Adiciona mensagem ao chat atual
+  const addMessage = useCallback((chatId: string, message: MessageType) => {
+    setChatHistory(prev => {
+      const currentChat = prev[chatId];
+      if (!currentChat) return prev;
 
-    try {
-      const { error } = await supabase
-        .from('user_chats')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('chat_id', chatId);
+      // Define título baseado na primeira mensagem do usuário
+      let title = currentChat.title;
+      if (message.sender === 'user' && (!title || title === t('new_conversation') || title === 'Nova conversa')) {
+        // Gera um título mais inteligente baseado na mensagem
+        const text = message.text.trim();
+        if (text.length > 0) {
+          // Se a mensagem for muito longa, pega apenas as primeiras palavras
+          if (text.length > 30) {
+            const words = text.split(' ').slice(0, 6).join(' ');
+            title = words + (words.length < text.length ? '...' : '');
+          } else {
+            title = text;
+          }
+        } else {
+          title = t('new_conversation');
+        }
+      }
 
-      if (error) throw error;
+      const updatedHistory = {
+        ...prev,
+        [chatId]: {
+          ...currentChat,
+          messages: [...currentChat.messages, message],
+          title: title
+        }
+      };
 
-      setChatHistory(prev => {
-        const newHistory = { ...prev };
-        delete newHistory[chatId];
-        return newHistory;
-      });
+      // Salva no localStorage
+      saveToLocalStorage(updatedHistory);
+      return updatedHistory;
+    });
+  }, [saveToLocalStorage]);
 
+  // Cria novo chat
+  const createNewChat = useCallback((): string => {
+    const newChatId = `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const newChat: ChatData = {
+      messages: [],
+      title: t('new_conversation')
+    };
+
+    setChatHistory(prev => {
+      const updatedHistory = {
+        [newChatId]: newChat,
+        ...prev
+      };
+      
+      // Salva no localStorage
+      saveToLocalStorage(updatedHistory);
+      return updatedHistory;
+    });
+
+    setCurrentChatId(newChatId);
+    return newChatId;
+  }, [saveToLocalStorage]);
+
+  // Atualiza título do chat
+  const updateChatTitle = useCallback((chatId: string, title: string) => {
+    setChatHistory(prev => {
+      const currentChat = prev[chatId];
+      if (!currentChat) return prev;
+
+      const updatedHistory = {
+        ...prev,
+        [chatId]: {
+          ...currentChat,
+          title
+        }
+      };
+
+      // Salva no localStorage
+      saveToLocalStorage(updatedHistory);
+      return updatedHistory;
+    });
+  }, [saveToLocalStorage]);
+
+  // Deleta chat
+  const deleteChat = useCallback((chatId: string) => {
+    setChatHistory(prev => {
+      const newHistory = { ...prev };
+      delete newHistory[chatId];
+      
+      // Salva no localStorage
+      saveToLocalStorage(newHistory);
+      
       // Se deletar o chat atual, define um novo chat ativo
       if (currentChatId === chatId) {
-        const remainingChats = Object.keys(chatHistory).filter(id => id !== chatId);
+        const remainingChats = Object.keys(newHistory);
         setCurrentChatId(remainingChats[0] || '');
       }
-    } catch (err) {
-      console.error('Erro ao deletar chat:', err);
-    }
-  }, [user, supabase, currentChatId, chatHistory]);
+      
+      return newHistory;
+    });
+  }, [currentChatId, saveToLocalStorage]);
+
+  // Limpa mensagens do chat
+  const clearChatMessages = useCallback((chatId: string) => {
+    setChatHistory(prev => {
+      const currentChat = prev[chatId];
+      if (!currentChat) return prev;
+
+      const updatedHistory = {
+        ...prev,
+        [chatId]: {
+          ...currentChat,
+          messages: []
+        }
+      };
+
+      // Salva no localStorage
+      saveToLocalStorage(updatedHistory);
+      return updatedHistory;
+    });
+  }, [saveToLocalStorage]);
 
   return {
     chatHistory,
@@ -202,10 +188,14 @@ export const useChatHistory = () => {
     addMessage,
     createNewChat,
     deleteChat,
+    updateChatTitle,
+    clearChatMessages,
     setCurrentChatId,
+    loadChatHistory,
     loading,
     error,
-    currentMessages: chatHistory[currentChatId] || []
+    currentMessages: chatHistory[currentChatId]?.messages || [],
+    currentChat: chatHistory[currentChatId]
   };
 };
 
