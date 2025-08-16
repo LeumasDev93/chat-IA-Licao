@@ -129,72 +129,85 @@ ${language === 'krioulu' ? `
 }
 
 export async function POST(req: NextRequest) {
+  console.log('API Chat: Iniciando requisição...');
+  
   if (!GEMINI_API_KEY) {
+    console.error('API Chat: Erro - GEMINI_API_KEY não configurada');
     return NextResponse.json(
       { message: "Erro de configuração do servidor" },
       { status: 500 }
     );
   }
 
-  const { userMessage, language = 'pt', isNewConversation = false } = await req.json();
-  if (!userMessage?.trim()) {
-    const validationMessages = {
-      pt: "Por favor, envie uma mensagem válida",
-      en: "Please send a valid message",
-      es: "Por favor, envía un mensaje válido",
-      fr: "Veuillez envoyer un message valide",
-      krioulu: "Por favor, manda un mensajen validu"
-    };
-
-    return NextResponse.json(
-      { message: validationMessages[language as keyof typeof validationMessages] || validationMessages.pt },
-      { status: 400 }
-    );
-  }
-
-  // Verifica se é uma saudação E se é uma nova conversa
-  if (isNewConversation && /^(ola|oi|olá|hello|bom dia|boa tarde|boa noite)/i.test(userMessage.toLowerCase())) {
-    const greetings = {
-      pt: [
-        "🌟 Olá! Que alegria ter você aqui! Como posso iluminar seu estudo da Lição da Escola Sabatina hoje?",
-        "💝 Bom dia/tarde/noite! Seja bem-vindo(a) ao seu assistente espiritual! Que tema da lição você gostaria de explorar?",
-        "🙏 Shalom! Que Deus abençoe seu estudo! Como posso ajudá-lo(a) a mergulhar mais fundo na Palavra de Deus?",
-        "✨ Olá! Que privilégio estudar a Bíblia juntos! Que lição da semana você gostaria de descobrir hoje?"
-      ],
-      en: [
-        "🌟 Hello! What a joy to have you here! How can I illuminate your Sabbath School lesson study today?",
-        "💝 Good morning/afternoon/evening! Welcome to your spiritual assistant! What lesson theme would you like to explore?",
-        "🙏 Shalom! May God bless your study! How can I help you dive deeper into God's Word?",
-        "✨ Hello! What a privilege to study the Bible together! What lesson of the week would you like to discover today?"
-      ],
-      es: [
-        "🌟 ¡Hola! ¡Qué alegría tenerte aquí! ¿Cómo puedo iluminar tu estudio de la Lección de la Escuela Sabática hoy?",
-        "💝 ¡Buenos días/tardes/noches! ¡Bienvenido(a) a tu asistente espiritual! ¿Qué tema de la lección te gustaría explorar?",
-        "🙏 ¡Shalom! ¡Que Dios bendiga tu estudio! ¿Cómo puedo ayudarte a sumergirte más profundo en la Palabra de Dios?",
-        "✨ ¡Hola! ¡Qué privilegio estudiar la Biblia juntos! ¿Qué lección de la semana te gustaría descubrir hoy?"
-      ],
-      fr: [
-        "🌟 Bonjour! Quelle joie de vous avoir ici! Comment puis-je éclairer votre étude de la Leçon de l'École du Sabbat aujourd'hui?",
-        "💝 Bonjour/après-midi/soir! Bienvenue à votre assistant spirituel! Quel thème de leçon aimeriez-vous explorer?",
-        "🙏 Shalom! Que Dieu bénisse votre étude! Comment puis-je vous aider à plonger plus profondément dans la Parole de Dieu?",
-        "✨ Bonjour! Quel privilège d'étudier la Bible ensemble! Quelle leçon de la semaine aimeriez-vous découvrir aujourd'hui?"
-      ],
-      krioulu: [
-        "🌟 Olá, nha fidju/fidja! Que alegria ter bu li! Como posso iluminar bu estudo da Lição da Escola Sabatina hoje?",
-        "💝 Bom dia/tarde/noite, nha irmon! Seja bem-vindo(a) ao bu assistente espiritual! Que tema da lição bu ka gosta di explorar?",
-        "🙏 Shalom, nha amor! Que Deus abençoe bu estudo! Como posso ajudá-lo(a) a mergulhar mais fundo na Palavra de Deus?",
-        "✨ Olá, nha corason! Que privilégio estudar a Bíblia juntos! Que lição da semana bu ka gosta di descobrir hoje?"
-      ]
-    };
-    
-    const languageGreetings = greetings[language as keyof typeof greetings] || greetings.pt;
-    const randomGreeting = languageGreetings[Math.floor(Math.random() * languageGreetings.length)];
-    return NextResponse.json({
-      message: randomGreeting
-    });
-  }
+  let language = 'pt';
+  let userMessage = '';
+  let isNewConversation = false;
 
   try {
+    const requestData = await req.json();
+    userMessage = requestData.userMessage;
+    language = requestData.language || 'pt';
+    isNewConversation = requestData.isNewConversation || false;
+    
+    console.log('API Chat: Dados recebidos:', { userMessage: userMessage?.substring(0, 50) + '...', language, isNewConversation });
+    
+    if (!userMessage?.trim()) {
+      const validationMessages = {
+        pt: "Por favor, envie uma mensagem válida",
+        en: "Please send a valid message",
+        es: "Por favor, envía un mensaje válido",
+        fr: "Veuillez envoyer un message valide",
+        krioulu: "Por favor, manda un mensajen validu"
+      };
+
+      return NextResponse.json(
+        { message: validationMessages[language as keyof typeof validationMessages] || validationMessages.pt },
+        { status: 400 }
+      );
+    }
+
+    // Verifica se é uma saudação E se é uma nova conversa
+    if (isNewConversation && /^(ola|oi|olá|hello|bom dia|boa tarde|boa noite)/i.test(userMessage.toLowerCase())) {
+      const greetings = {
+        pt: [
+          "🌟 Olá! Que alegria ter você aqui! Como posso iluminar seu estudo da Lição da Escola Sabatina hoje?",
+          "💝 Bom dia/tarde/noite! Seja bem-vindo(a) ao seu assistente espiritual! Que tema da lição você gostaria de explorar?",
+          "🙏 Shalom! Que Deus abençoe seu estudo! Como posso ajudá-lo(a) a mergulhar mais fundo na Palavra de Deus?",
+          "✨ Olá! Que privilégio estudar a Bíblia juntos! Que lição da semana você gostaria de descobrir hoje?"
+        ],
+        en: [
+          "🌟 Hello! What a joy to have you here! How can I illuminate your Sabbath School lesson study today?",
+          "💝 Good morning/afternoon/evening! Welcome to your spiritual assistant! What lesson theme would you like to explore?",
+          "🙏 Shalom! May God bless your study! How can I help you dive deeper into God's Word?",
+          "✨ Hello! What a privilege to study the Bible together! What lesson of the week would you like to discover today?"
+        ],
+        es: [
+          "🌟 ¡Hola! ¡Qué alegría tenerte aquí! ¿Cómo puedo iluminar tu estudio de la Lección de la Escuela Sabática hoy?",
+          "💝 ¡Buenos días/tardes/noches! ¡Bienvenido(a) a tu asistente espiritual! ¿Qué tema de la lección te gustaría explorar?",
+          "🙏 ¡Shalom! ¡Que Dios bendiga tu estudio! ¿Cómo puedo ayudarte a sumergirte más profundo en la Palabra de Dios?",
+          "✨ ¡Hola! ¡Qué privilegio estudiar la Biblia juntos! ¿Qué lección de la semana te gustaría descubrir hoy?"
+        ],
+        fr: [
+          "🌟 Bonjour! Quelle joie de vous avoir ici! Comment puis-je éclairer votre étude de la Leçon de l'École du Sabbat aujourd'hui?",
+          "💝 Bonjour/après-midi/soir! Bienvenue à votre assistant spirituel! Quel thème de leçon aimeriez-vous explorer?",
+          "🙏 Shalom! Que Dieu bénisse votre étude! Comment puis-je vous aider à plonger plus profondément dans la Parole de Dieu?",
+          "✨ Bonjour! Quel privilège d'étudier la Bible ensemble! Quelle leçon de la semaine aimeriez-vous découvrir aujourd'hui?"
+        ],
+        krioulu: [
+          "🌟 Olá, nha fidju/fidja! Que alegria ter bu li! Como posso iluminar bu estudo da Lição da Escola Sabatina hoje?",
+          "💝 Bom dia/tarde/noite, nha irmon! Seja bem-vindo(a) ao bu assistente espiritual! Que tema da lição bu ka gosta di explorar?",
+          "🙏 Shalom, nha amor! Que Deus abençoe bu estudo! Como posso ajudá-lo(a) a mergulhar mais fundo na Palavra de Deus?",
+          "✨ Olá, nha corason! Que privilégio estudar a Bíblia juntos! Que lição da semana bu ka gosta di descobrir hoje?"
+        ]
+      };
+      
+      const languageGreetings = greetings[language as keyof typeof greetings] || greetings.pt;
+      const randomGreeting = languageGreetings[Math.floor(Math.random() * languageGreetings.length)];
+      return NextResponse.json({
+        message: randomGreeting
+      });
+    }
+
     const lesson = await getCachedLesson();
     const systemPrompt = buildSystemPrompt(lesson, language);
     
