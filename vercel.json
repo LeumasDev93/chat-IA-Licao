@@ -1,16 +1,10 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron",
-      "schedule": "0 12 * * 6"
-    }
-  ],
   "functions": {
-    "app/api/chat/scrape-lesson.ts": {
-      "maxDuration": 60
-    },
     "app/api/cron/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/chat/route.ts": {
+      "maxDuration": 30
     }
   },
   "build": {
