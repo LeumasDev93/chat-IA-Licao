@@ -44,13 +44,13 @@ ${lesson.days.map((content, index) => {
   const dayEmojis = ['🌅', '☀️', '🌱', '🌿', '🌳', '🌺', '🌟'];
   
   if (index < 7) {
-    return `
+        return `
 ${dayEmojis[index]} **${dayNames[index]}**:
 ${content.substring(0, 300)}${content.length > 300 ? '...' : ''}
 `;
   }
   return '';
-}).join('\n')}
+      }).join('\n')}
 
 📜 **VERSÍCULOS PRINCIPAIS**:
 ${lesson.verses.slice(0, 5).map(verse => `• ${verse}`).join('\n')}
