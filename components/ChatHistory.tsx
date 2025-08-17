@@ -16,17 +16,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-interface ChatData {
-  id: string;
-  chat_id: string;
-  title: string;
-  messages: any[];
-  lesson_context?: any;
-  created_at: string;
-  updated_at: string;
-  is_active: boolean;
-}
+import { ChatData } from "@/types";
 
 interface ChatHistoryProps {
   chatHistory: Record<string, ChatData>;
@@ -59,16 +49,17 @@ export default function ChatHistory({
     return (
       chat.title.toLowerCase().includes(searchLower) ||
       chat.messages.some((msg: any) =>
-        msg.content?.toLowerCase().includes(searchLower)
+        (msg.text || msg.content)?.toLowerCase().includes(searchLower)
       )
     );
   });
 
   // Ordena por data de atualização (mais recente primeiro)
-  const sortedChats = filteredChats.sort(
-    ([, a], [, b]) =>
-      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-  );
+  const sortedChats = filteredChats.sort(([, a], [, b]) => {
+    const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+    const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+    return dateB - dateA;
+  });
 
   const handleEditTitle = (chatId: string, currentTitle: string) => {
     setEditingTitle(chatId);
@@ -88,7 +79,8 @@ export default function ChatHistory({
     setEditTitle("");
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "";
     try {
       const date = new Date(dateString);
       const now = new Date();
@@ -111,7 +103,7 @@ export default function ChatHistory({
     const lastMessage = messages[messages.length - 1];
     if (!lastMessage) return t("no_messages");
 
-    const content = lastMessage.content || "";
+    const content = lastMessage.text || lastMessage.content || "";
     return content.length > 50 ? `${content.substring(0, 50)}...` : content;
   };
 
@@ -255,7 +247,7 @@ export default function ChatHistory({
                         </span>
                         <span className="flex items-center">
                           <Clock className="w-3 h-3 mr-1" />
-                          {formatDate(chat.updated_at)}
+                          {formatDate(chat.updatedAt)}
                         </span>
                       </div>
                     </div>

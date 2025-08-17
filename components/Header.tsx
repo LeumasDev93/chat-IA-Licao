@@ -17,9 +17,11 @@ import { createComponentClient } from "@/models/supabase";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
 
+import { ChatData } from "@/types";
+
 interface ChatSidebarProps {
   onNewChat: () => void;
-  chatHistory: Record<string, { messages: any[]; title: string }>;
+  chatHistory: Record<string, ChatData>;
   currentChatId: string;
   setCurrentChatId: (id: string) => void;
   deleteChat: (id: string) => void;

@@ -1,74 +1,90 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // hooks/useChatHistory.ts
 import { useState, useEffect, useCallback } from "react";
-import { MessageType } from "@/types";
+import { MessageType, ChatData } from "@/types";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-interface ChatData {
-  messages: MessageType[];
-  title: string;
-}
+import { chatHistoryService } from "@/lib/chatHistory";
+import { generateUniqueId } from "@/lib/utils";
 
 interface ChatHistoryState {
   [chatId: string]: ChatData;
 }
 
-export const useChatHistory = () => {
+export const useChatHistory = (userId?: string) => {
   const { t } = useLanguage();
   const [chatHistory, setChatHistory] = useState<ChatHistoryState>({});
   const [currentChatId, setCurrentChatId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Carrega o histórico do localStorage
-  const loadChatHistory = useCallback(() => {
+  // Carrega o histórico do usuário
+  const loadChatHistory = useCallback(async () => {
+    if (!userId) {
+      setChatHistory({});
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
-      const savedHistory = localStorage.getItem("chat_history");
-      if (savedHistory) {
-        const history = JSON.parse(savedHistory);
-        setChatHistory(history);
-        
-        // Define o primeiro chat como ativo se não houver um selecionado
-        const chatIds = Object.keys(history);
-        if (chatIds.length > 0 && !currentChatId) {
-          setCurrentChatId(chatIds[0]);
+      const userHistory = await chatHistoryService.loadUserHistory(userId);
+      
+      // Converter array para objeto
+      const historyObj: ChatHistoryState = {};
+      userHistory.forEach(chat => {
+        if (chat.chatId) {
+          historyObj[chat.chatId] = chat;
         }
-      }
+      });
+      
+      setChatHistory(historyObj);
     } catch (err: any) {
       setError(err.message);
       console.error('Erro ao carregar histórico:', err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]); // Removido currentChatId para evitar loop
 
-  // Carrega histórico quando componente monta
+  // Carrega histórico quando componente monta ou userId muda
   useEffect(() => {
     loadChatHistory();
-  }, []);
+  }, [loadChatHistory]);
 
-  // Salva histórico no localStorage
-  const saveToLocalStorage = useCallback((history: ChatHistoryState) => {
-    try {
-      localStorage.setItem("chat_history", JSON.stringify(history));
-    } catch (err: any) {
-      console.error('Erro ao salvar no localStorage:', err);
+  // Define o primeiro chat como ativo quando o histórico for carregado
+  useEffect(() => {
+    const chatIds = Object.keys(chatHistory);
+    if (chatIds.length > 0 && !currentChatId) {
+      setCurrentChatId(chatIds[0]);
     }
-  }, []);
+  }, [chatHistory]); // Removido currentChatId para evitar loop
 
   // Adiciona mensagem ao chat atual
-  const addMessage = useCallback((chatId: string, message: MessageType) => {
+  const addMessage = useCallback(async (chatId: string, message: MessageType) => {
+    if (!userId) return;
+
     setChatHistory(prev => {
-      const currentChat = prev[chatId];
-      if (!currentChat) return prev;
+      let currentChat = prev[chatId];
+      
+      // Se o chat não existe, cria um novo
+      if (!currentChat) {
+        currentChat = {
+          messages: [],
+          title: t('new_conversation'),
+          chatId: chatId
+        };
+      }
+
+      // Verifica se a mensagem já existe para evitar duplicação
+      const messageExists = currentChat.messages.some(msg => msg.id === message.id);
+      if (messageExists) {
+        return prev;
+      }
 
       // Define título baseado na primeira mensagem do usuário
       let title = currentChat.title;
-      if (message.sender === 'user' && (!title || title === t('new_conversation') || title === 'Nova conversa')) {
+      if (message.sender === 'user' && (!title || title === t('new_conversation') || title === 'Nova conversa' || title === 'New conversation')) {
         // Gera um título mais inteligente baseado na mensagem
         const text = message.text.trim();
         if (text.length > 0) {
@@ -93,64 +109,74 @@ export const useChatHistory = () => {
         }
       };
 
-      // Salva no localStorage
-      saveToLocalStorage(updatedHistory);
+      // Salva usando o service (sem aguardar para não bloquear a UI)
+      chatHistoryService.addMessage(userId, chatId, message).catch(console.error);
+      
+      // Se o título mudou, atualiza também
+      if (title !== currentChat.title) {
+        chatHistoryService.updateChatTitle(userId, chatId, title).catch(console.error);
+      }
+      
       return updatedHistory;
     });
-  }, [saveToLocalStorage]);
+  }, [userId, t]);
 
   // Cria novo chat
-  const createNewChat = useCallback((): string => {
-    const newChatId = `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const createNewChat = useCallback(async (): Promise<string> => {
+    if (!userId) return "";
+
+    const newChatId = generateUniqueId("chat");
     
     const newChat: ChatData = {
       messages: [],
-      title: t('new_conversation')
+      title: t('new_conversation'),
+      chatId: newChatId
     };
 
-    setChatHistory(prev => {
-      const updatedHistory = {
-        [newChatId]: newChat,
-        ...prev
-      };
-      
-      // Salva no localStorage
-      saveToLocalStorage(updatedHistory);
-      return updatedHistory;
-    });
+    // Salva usando o service
+    await chatHistoryService.saveChat(userId, newChat);
+
+    setChatHistory(prev => ({
+      [newChatId]: newChat,
+      ...prev
+    }));
 
     setCurrentChatId(newChatId);
+    console.log('Novo chat criado com ID:', newChatId, 'e título:', newChat.title);
     return newChatId;
-  }, [saveToLocalStorage]);
+  }, [userId, t]);
 
   // Atualiza título do chat
-  const updateChatTitle = useCallback((chatId: string, title: string) => {
+  const updateChatTitle = useCallback(async (chatId: string, title: string) => {
+    if (!userId) return;
+
+    // Salva usando o service
+    await chatHistoryService.updateChatTitle(userId, chatId, title);
+
     setChatHistory(prev => {
       const currentChat = prev[chatId];
       if (!currentChat) return prev;
 
-      const updatedHistory = {
+      return {
         ...prev,
         [chatId]: {
           ...currentChat,
           title
         }
       };
-
-      // Salva no localStorage
-      saveToLocalStorage(updatedHistory);
-      return updatedHistory;
     });
-  }, [saveToLocalStorage]);
+  }, [userId]);
 
   // Deleta chat
-  const deleteChat = useCallback((chatId: string) => {
+  const deleteChat = useCallback(async (chatId: string) => {
+    if (!userId) return;
+
+    // Deleta usando o service
+    await chatHistoryService.deleteChat(userId, chatId);
+
     setChatHistory(prev => {
       const newHistory = { ...prev };
       delete newHistory[chatId];
-      
-      // Salva no localStorage
-      saveToLocalStorage(newHistory);
       
       // Se deletar o chat atual, define um novo chat ativo
       if (currentChatId === chatId) {
@@ -160,27 +186,25 @@ export const useChatHistory = () => {
       
       return newHistory;
     });
-  }, [currentChatId, saveToLocalStorage]);
+  }, [userId, currentChatId]);
 
   // Limpa mensagens do chat
-  const clearChatMessages = useCallback((chatId: string) => {
+  const clearChatMessages = useCallback(async (chatId: string) => {
+    if (!userId) return;
+
     setChatHistory(prev => {
       const currentChat = prev[chatId];
       if (!currentChat) return prev;
 
-      const updatedHistory = {
+      return {
         ...prev,
         [chatId]: {
           ...currentChat,
           messages: []
         }
       };
-
-      // Salva no localStorage
-      saveToLocalStorage(updatedHistory);
-      return updatedHistory;
     });
-  }, [saveToLocalStorage]);
+  }, [userId]);
 
   return {
     chatHistory,

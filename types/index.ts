@@ -9,6 +9,10 @@ export type MessageType = {
 export interface ChatData {
   title: string;
   messages: MessageType[];
+  chatId?: string;
+  userId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ChatHistoryState {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -32,6 +33,7 @@ import { FaSpinner } from "react-icons/fa6";
 import Link from "next/link";
 
 import { useNotifications } from "@/hooks/useNotifications";
+import { generateUniqueId } from "@/lib/utils";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
@@ -122,6 +124,8 @@ export default function Home() {
     };
   }, [theme]);
 
+  const user = useSupabaseUser();
+
   const {
     chatHistory,
     currentChatId,
@@ -133,33 +137,25 @@ export default function Home() {
     loading: historyLoading,
     currentMessages,
     currentChat,
-  } = useChatHistory();
+  } = useChatHistory(user?.user?.id);
 
   const [messages, setMessages] = useState<MessageType[]>([]);
 
+  // Carrega mensagens quando o chat atual mudar
   useEffect(() => {
-    if (currentMessages.length > 0) {
+    if (currentChatId) {
+      setMessages(currentMessages);
+    } else {
+      setMessages([]);
+    }
+  }, [currentChatId]); // Removido currentMessages para evitar loop
+
+  // Sincroniza mensagens quando currentMessages mudar
+  useEffect(() => {
+    if (currentChatId && currentMessages.length > 0) {
       setMessages(currentMessages);
     }
-  }, [currentMessages]);
-
-  const user = useSupabaseUser();
-
-  // Carrega mensagens do localStorage quando o chat atual mudar
-  useEffect(() => {
-    if (currentChatId && currentMessages.length === 0) {
-      try {
-        const savedHistory = localStorage.getItem("chat_history") || "{}";
-        const history = JSON.parse(savedHistory);
-        const currentChat = history[currentChatId];
-        if (currentChat && currentChat.messages) {
-          setMessages(currentChat.messages);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar mensagens do localStorage:", error);
-      }
-    }
-  }, [currentChatId, currentMessages.length]);
+  }, [currentMessages, currentChatId]);
 
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -307,22 +303,23 @@ export default function Home() {
 
     // Se ainda não houver chat atual, cria um novo
     if (!chatId) {
-      const newChatId = createNewChat();
+      const newChatId = await createNewChat();
       chatId = newChatId;
       setCurrentChatId(newChatId);
       setMessages([]);
     }
 
     const userMessage: MessageType = {
-      id: Date.now().toString(),
+      id: generateUniqueId("user"),
       text: content,
       sender: "user",
       timestamp: new Date(),
       parts: [{ text: content }],
     };
 
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    // Adiciona mensagem ao estado local imediatamente
+    setMessages((prev) => [...prev, userMessage]);
+    // Também salva via hook
     addMessage(chatId, userMessage);
 
     if (!messageContent) {
@@ -340,20 +337,21 @@ export default function Home() {
         isNewConversation
       );
       const botMessage: MessageType = {
-        id: (Date.now() + 1).toString(),
+        id: generateUniqueId("bot"),
         text: botResponse.text,
         sender: "bot",
         timestamp: new Date(),
         parts: [{ text: botResponse.text }],
       };
 
-      const finalMessages = [...updatedMessages, botMessage];
-      setMessages(finalMessages);
+      // Adiciona mensagem ao estado local imediatamente
+      setMessages((prev) => [...prev, botMessage]);
+      // Também salva via hook
       addMessage(chatId, botMessage);
     } catch (error) {
       console.error("Erro ao processar mensagem:", error);
       const errorMessage: MessageType = {
-        id: (Date.now() + 2).toString(),
+        id: generateUniqueId("error"),
         text: "Desculpe, estou tendo dificuldades técnicas. Poderia tentar novamente?",
         sender: "bot",
         timestamp: new Date(),
@@ -364,7 +362,9 @@ export default function Home() {
         ],
       };
 
-      setMessages([...updatedMessages, errorMessage]);
+      // Adiciona mensagem ao estado local imediatamente
+      setMessages((prev) => [...prev, errorMessage]);
+      // Também salva via hook
       addMessage(chatId, errorMessage);
     } finally {
       setIsTyping(false);
@@ -405,8 +405,7 @@ export default function Home() {
     }
   };
   const handleNewChat = async () => {
-    const newChatId = createNewChat();
-    setMessages([]);
+    const newChatId = await createNewChat();
 
     // Adiciona uma saudação automática para nova conversa
     const welcomeMessages = {
@@ -419,7 +418,7 @@ export default function Home() {
     };
 
     const welcomeMessage: MessageType = {
-      id: Date.now().toString(),
+      id: generateUniqueId("welcome"),
       text:
         welcomeMessages[language as keyof typeof welcomeMessages] ||
         welcomeMessages.pt,
@@ -434,7 +433,9 @@ export default function Home() {
       ],
     };
 
+    // Adiciona mensagem ao estado local imediatamente
     setMessages([welcomeMessage]);
+    // Também salva via hook
     addMessage(newChatId, welcomeMessage);
   };
 
