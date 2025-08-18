@@ -2,23 +2,23 @@ import { supabaseAdmin, isSupabaseConfigured } from '../../../lib/supabase';
 import { LessonData } from '../cron/route';
 
 // Função para obter dados da lição do Supabase
-async function getLessonFromSupabase(): Promise<LessonData | null> {
+async function getLessonFromSupabase(): Promise<{ title: string; lessonLink: string; lastUpdated: string; expiresAt: string } | null> {
   if (!isSupabaseConfigured()) {
     console.log('Supabase não configurado, pulando busca no banco...');
     return null;
   }
 
   try {
-    console.log('Buscando dados da lição no Supabase...');
+    console.log('Buscando link da lição no Supabase...');
     
     // Calcular semana atual
     const currentDate = new Date();
     const weekNumber = Math.ceil((currentDate.getTime() - new Date(currentDate.getFullYear(), 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
     
-    // Buscar lição atual no Supabase
+    // Buscar apenas o link da lição atual no Supabase
     const { data, error } = await supabaseAdmin
       .from('lesson_cache')
-      .select('*')
+      .select('title, lesson_link, last_updated, expires_at')
       .eq('week_number', weekNumber)
       .gt('expires_at', new Date().toISOString())
       .order('created_at', { ascending: false })
@@ -31,11 +31,9 @@ async function getLessonFromSupabase(): Promise<LessonData | null> {
     }
 
     if (data) {
-      console.log('Lição encontrada no Supabase:', data.title);
+      console.log('Link da lição encontrado no Supabase:', data.lesson_link);
       return {
         title: data.title,
-        days: data.days,
-        verses: data.verses,
         lessonLink: data.lesson_link,
         lastUpdated: data.last_updated,
         expiresAt: data.expires_at
@@ -49,8 +47,8 @@ async function getLessonFromSupabase(): Promise<LessonData | null> {
   }
 }
 
-// Função para salvar dados da lição no Supabase
-async function saveLessonToSupabase(lessonData: Omit<LessonData, 'expiresAt'>): Promise<boolean> {
+// Função para salvar apenas o link da lição no Supabase
+async function saveLessonLinkToSupabase(title: string, lessonLink: string): Promise<boolean> {
   if (!isSupabaseConfigured()) {
     console.log('Supabase não configurado, pulando salvamento...');
     return false;
@@ -68,49 +66,45 @@ async function saveLessonToSupabase(lessonData: Omit<LessonData, 'expiresAt'>): 
       .single();
 
     if (existingLesson) {
-      // Atualizar lição existente
+      // Atualizar apenas o link da lição existente
       const { error } = await supabaseAdmin
         .from('lesson_cache')
         .update({
-          title: lessonData.title,
-          days: lessonData.days,
-          verses: lessonData.verses,
-          lesson_link: lessonData.lessonLink,
+          title: title,
+          lesson_link: lessonLink,
           last_updated: new Date().toISOString(),
           expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
         })
         .eq('week_number', weekNumber);
 
       if (error) {
-        console.error('Erro ao atualizar lição no Supabase:', error);
+        console.error('Erro ao atualizar link da lição no Supabase:', error);
         return false;
       }
 
-      console.log('Lição atualizada no Supabase com sucesso');
+      console.log('Link da lição atualizado no Supabase com sucesso');
     } else {
-      // Inserir nova lição
+      // Inserir nova entrada apenas com o link
       const { error } = await supabaseAdmin
         .from('lesson_cache')
         .insert({
-          title: lessonData.title,
-          days: lessonData.days,
-          verses: lessonData.verses,
-          lesson_link: lessonData.lessonLink,
+          title: title,
+          lesson_link: lessonLink,
           week_number: weekNumber,
           expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
         });
 
       if (error) {
-        console.error('Erro ao salvar lição no Supabase:', error);
+        console.error('Erro ao salvar link da lição no Supabase:', error);
         return false;
       }
 
-      console.log('Nova lição salva no Supabase com sucesso');
+      console.log('Novo link da lição salvo no Supabase com sucesso');
     }
 
     return true;
   } catch (error) {
-    console.error('Erro ao salvar lição no Supabase:', error);
+    console.error('Erro ao salvar link da lição no Supabase:', error);
     return false;
   }
 }
@@ -138,17 +132,17 @@ async function detectCurrentLesson(): Promise<{ title: string; link: string; ver
     const html = await response.text();
     console.log('HTML da página principal obtido, tamanho:', html.length);
 
-         // Procurar pelo JSON das lições no HTML
-     const jsonMatch = html.match(/\[{.*"img":.*"title":.*"verso":.*"periodo":.*"link":.*}\]/);
+    // Procurar pelo JSON das lições no HTML
+    const jsonMatch = html.match(/\[{.*"img":.*"title":.*"verso":.*"periodo":.*"link":.*}\]/);
     
     if (jsonMatch) {
       try {
         const lessonsData = JSON.parse(jsonMatch[0]);
         console.log(`Encontradas ${lessonsData.length} lições no JSON`);
         
-                 // Encontrar a lição atual baseada na data
-         const currentDate = new Date();
-         const currentLesson = lessonsData.find((lesson: { periodo?: string; title: string; link: string; verso: string }) => {
+        // Encontrar a lição atual baseada na data
+        const currentDate = new Date();
+        const currentLesson = lessonsData.find((lesson: { periodo?: string; title: string; link: string; verso: string }) => {
           if (!lesson.periodo) return false;
           
           // Extrair datas do período (ex: "16 a 22 de agosto")
@@ -204,23 +198,12 @@ async function detectCurrentLesson(): Promise<{ title: string; link: string; ver
   }
 }
 
-// Função para fazer scraping completo da lição específica
-async function scrapeCompleteLessonData(): Promise<Omit<LessonData, 'expiresAt'> | null> {
+// Função para fazer scraping em tempo real de uma lição específica
+export async function scrapeLessonInRealTime(lessonLink: string): Promise<Omit<LessonData, 'expiresAt'> | null> {
   try {
-    console.log('Iniciando scraping completo da lição específica...');
+    console.log('Fazendo scraping em tempo real da lição:', lessonLink);
     
-    // 1. Detectar a lição atual
-    const currentLesson = await detectCurrentLesson();
-    if (!currentLesson) {
-      console.log('Não foi possível detectar a lição atual');
-      return null;
-    }
-    
-    console.log(`Acessando lição: ${currentLesson.title}`);
-    console.log(`Link: ${currentLesson.link}`);
-    
-    // 2. Acessar a página específica da lição
-    const lessonResponse = await fetch(currentLesson.link, {
+    const lessonResponse = await fetch(lessonLink, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -232,25 +215,24 @@ async function scrapeCompleteLessonData(): Promise<Omit<LessonData, 'expiresAt'>
     });
 
     if (!lessonResponse.ok) {
-      throw new Error(`Erro ao acessar lição específica: ${lessonResponse.status} ${lessonResponse.statusText}`);
+      throw new Error(`Erro ao acessar lição: ${lessonResponse.status} ${lessonResponse.statusText}`);
     }
 
     const lessonHtml = await lessonResponse.text();
-    console.log('HTML da lição específica obtido, tamanho:', lessonHtml.length);
+    console.log('HTML da lição obtido em tempo real, tamanho:', lessonHtml.length);
 
-    // 3. Extrair título da lição
-    const title = currentLesson.title;
+    // Extrair título da lição
+    const titleMatch = lessonHtml.match(/<title[^>]*>([^<]+)<\/title>/i);
+    const title = titleMatch ? titleMatch[1].trim() : 'Lição da Escola Sabatina';
 
-    // 4. Extrair versículos (usar o versículo principal + buscar outros na página)
-    const verses = [currentLesson.verse];
+    // Extrair versículos
+    const verses: string[] = [];
+    const verseMatches = lessonHtml.match(/<[^>]*class="[^"]*versiculo[^"]*"[^>]*>([^<]+)<\/[^>]*>/gi) ||
+                        lessonHtml.match(/<strong[^>]*>([^<]*versículo[^<]*)<\/strong>/gi) ||
+                        lessonHtml.match(/<b[^>]*>([^<]*versículo[^<]*)<\/b>/gi);
     
-    // Buscar versículos adicionais na página da lição
-    const additionalVerses = lessonHtml.match(/<[^>]*class="[^"]*versiculo[^"]*"[^>]*>([^<]+)<\/[^>]*>/gi) ||
-                            lessonHtml.match(/<strong[^>]*>([^<]*versículo[^<]*)<\/strong>/gi) ||
-                            lessonHtml.match(/<b[^>]*>([^<]*versículo[^<]*)<\/b>/gi);
-    
-    if (additionalVerses) {
-      additionalVerses.slice(0, 5).forEach(verse => {
+    if (verseMatches) {
+      verseMatches.slice(0, 10).forEach(verse => {
         const cleanVerse = verse.replace(/<[^>]*>/g, '').trim();
         if (cleanVerse.length > 20 && !verses.includes(cleanVerse)) {
           verses.push(cleanVerse);
@@ -258,120 +240,233 @@ async function scrapeCompleteLessonData(): Promise<Omit<LessonData, 'expiresAt'>
       });
     }
 
-    // 5. Extrair conteúdo completo de todos os dias da semana
-    const dayNames = ['🌅 Sábado à Tarde', '☀️ Domingo', '🌱 Segunda-feira', 
-                     '🌿 Terça-feira', '🌳 Quarta-feira', '🌺 Quinta-feira', '🌟 Sexta-feira'];
+    // Extrair conteúdo dos dias - NOVA LÓGICA BASEADA NA ESTRUTURA DO SITE
+    const dayNames = ['Sábado à Tarde', 'Domingo', 'Segunda-feira', 
+                     'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira'];
     
     const days: string[] = [];
     
-    // Buscar conteúdo por diferentes seletores
-    const contentSelectors = [
-      /<div[^>]*class="[^"]*content[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
-      /<div[^>]*class="[^"]*lesson[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
-      /<div[^>]*class="[^"]*day[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
-      /<article[^>]*>([\s\S]*?)<\/article>/gi,
-      /<section[^>]*>([\s\S]*?)<\/section>/gi
+    // Primeiro, limpar o HTML removendo scripts, styles e tags desnecessárias
+    const cleanHtml = lessonHtml
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<link[^>]*>/gi, '')
+      .replace(/<meta[^>]*>/gi, '')
+      .replace(/<noscript[^>]*>[\s\S]*?<\/noscript>/gi, '')
+      .replace(/<!--[\s\S]*?-->/gi, '')
+      .replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, '')
+      .replace(/<object[^>]*>[\s\S]*?<\/object>/gi, '')
+      .replace(/<embed[^>]*>/gi, '')
+      .replace(/<form[^>]*>[\s\S]*?<\/form>/gi, '')
+      .replace(/<input[^>]*>/gi, '')
+      .replace(/<button[^>]*>[\s\S]*?<\/button>/gi, '')
+      .replace(/<select[^>]*>[\s\S]*?<\/select>/gi, '')
+      .replace(/<textarea[^>]*>[\s\S]*?<\/textarea>/gi, '');
+    
+    console.log('🔍 Iniciando extração específica por dias...');
+    
+    // NOVA ESTRATÉGIA: Buscar por seções específicas de cada dia baseado na estrutura do site
+    const daySections = [
+      {
+        name: 'Sábado à Tarde',
+        patterns: [
+          /sábado\s*à\s*tarde[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|domingo|$)/gi,
+          /sábado\s*à\s*tarde[^<]*<\/[^>]*>([\s\S]*?)(?=domingo|$)/gi,
+          /<[^>]*>sábado\s*à\s*tarde[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|domingo|$)/gi
+        ]
+      },
+      {
+        name: 'Domingo',
+        patterns: [
+          /domingo[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|segunda-feira|$)/gi,
+          /domingo[^<]*<\/[^>]*>([\s\S]*?)(?=segunda-feira|$)/gi,
+          /<[^>]*>domingo[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|segunda-feira|$)/gi
+        ]
+      },
+      {
+        name: 'Segunda-feira',
+        patterns: [
+          /segunda-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|terça-feira|$)/gi,
+          /segunda-feira[^<]*<\/[^>]*>([\s\S]*?)(?=terça-feira|$)/gi,
+          /<[^>]*>segunda-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|terça-feira|$)/gi
+        ]
+      },
+      {
+        name: 'Terça-feira',
+        patterns: [
+          /terça-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|quarta-feira|$)/gi,
+          /terça-feira[^<]*<\/[^>]*>([\s\S]*?)(?=quarta-feira|$)/gi,
+          /<[^>]*>terça-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|quarta-feira|$)/gi
+        ]
+      },
+      {
+        name: 'Quarta-feira',
+        patterns: [
+          /quarta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|quinta-feira|$)/gi,
+          /quarta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=quinta-feira|$)/gi,
+          /<[^>]*>quarta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|quinta-feira|$)/gi
+        ]
+      },
+      {
+        name: 'Quinta-feira',
+        patterns: [
+          /quinta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|sexta-feira|$)/gi,
+          /quinta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=sexta-feira|$)/gi,
+          /<[^>]*>quinta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|sexta-feira|$)/gi
+        ]
+      },
+      {
+        name: 'Sexta-feira',
+        patterns: [
+          /sexta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|auxiliar|comentário|$)/gi,
+          /sexta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=auxiliar|comentário|$)/gi,
+          /<[^>]*>sexta-feira[^<]*<\/[^>]*>([\s\S]*?)(?=<h[1-6]|auxiliar|comentário|$)/gi
+        ]
+      }
     ];
     
-    let allContent = '';
+         // Tentar extrair conteúdo específico de cada dia
+     for (const daySection of daySections) {
+       let dayContent = '';
+       
+       for (const pattern of daySection.patterns) {
+         const matches = cleanHtml.match(pattern);
+         if (matches && matches.length > 0) {
+           dayContent = matches[0]
+             .replace(/<[^>]*>/g, ' ')
+             .replace(/\s+/g, ' ')
+             .trim();
+           
+           if (dayContent.length > 100) {
+             // Remover partes introdutórias e capturar apenas o conteúdo específico
+             let cleanContent = dayContent;
+             
+             // Remover introduções comuns
+             cleanContent = cleanContent
+               .replace(/^(.*?)(leia|leia\s+.*?\.|para onde|talvez você|mesmo que|deus respondeu|quando nos afastamos|o melhor exemplo|deus chama|nosso destino)/gi, '')
+               .replace(/^(.*?)(ano bíblico|verso para memorizar|leituras da semana)/gi, '')
+               .replace(/^(.*?)(garanta o conteúdo|esse tipo de conteúdo|download|assine a lição)/gi, '')
+               .trim();
+             
+             // Se ainda tem conteúdo significativo após limpeza
+             if (cleanContent.length > 150) {
+               console.log(`✅ ${daySection.name}: Conteúdo limpo encontrado (${cleanContent.length} chars)`);
+               days.push(`${daySection.name}: ${cleanContent.substring(0, 800)}`);
+             } else {
+               console.log(`⚠️ ${daySection.name}: Conteúdo muito pequeno após limpeza (${cleanContent.length} chars)`);
+             }
+             break;
+           }
+         }
+       }
+       
+       if (!dayContent || dayContent.length < 100) {
+         console.log(`❌ ${daySection.name}: Conteúdo não encontrado ou muito pequeno`);
+       }
+     }
     
-    for (const selector of contentSelectors) {
-      const matches = lessonHtml.match(selector);
-      if (matches && matches.length > 0) {
-        allContent = matches.join(' ');
-        break;
-      }
-    }
+         // Se não conseguiu extrair por padrões específicos, tentar método alternativo
+     if (days.length < 5) {
+       console.log('🔄 Tentando método alternativo de extração...');
+       
+       // Dividir o conteúdo por títulos de dias
+       const sections = cleanHtml.split(/<h[1-6][^>]*>/gi);
+       
+       for (const daySection of daySections) {
+         for (let i = 0; i < sections.length; i++) {
+           const section = sections[i];
+           const dayPattern = new RegExp(daySection.name.replace(/[à-]/g, '[à-]'), 'gi');
+           
+           if (dayPattern.test(section)) {
+             let cleanContent = section
+               .replace(/<[^>]*>/g, ' ')
+               .replace(/\s+/g, ' ')
+               .trim();
+             
+             // Aplicar a mesma limpeza para remover introduções
+             cleanContent = cleanContent
+               .replace(/^(.*?)(leia|leia\s+.*?\.|para onde|talvez você|mesmo que|deus respondeu|quando nos afastamos|o melhor exemplo|deus chama|nosso destino)/gi, '')
+               .replace(/^(.*?)(ano bíblico|verso para memorizar|leituras da semana)/gi, '')
+               .replace(/^(.*?)(garanta o conteúdo|esse tipo de conteúdo|download|assine a lição)/gi, '')
+               .trim();
+             
+             if (cleanContent.length > 200) {
+               console.log(`✅ ${daySection.name}: Conteúdo limpo encontrado por seções (${cleanContent.length} chars)`);
+               days.push(`${daySection.name}: ${cleanContent.substring(0, 800)}`);
+               break;
+             }
+           }
+         }
+       }
+     }
     
-    if (allContent) {
-      // Limpar HTML e dividir em 7 partes para os dias
-      const cleanContent = allContent
+    // Se ainda não conseguiu, tentar extrair conteúdo real da lição
+    if (days.length < 5) {
+      console.log('🔄 Tentando extração de conteúdo geral...');
+      
+      // Buscar por conteúdo de texto real
+      const textContent = cleanHtml
         .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .replace(/[^\w\s\.\,\!\?\:\;\(\)\[\]\-\–\—]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
       
-      const contentLength = cleanContent.length;
-      const partLength = Math.floor(contentLength / 7);
+      console.log('📝 Conteúdo de texto extraído (primeiros 500 chars):', textContent.substring(0, 500));
       
-      for (let i = 0; i < 7; i++) {
-        const start = i * partLength;
-        const end = start + partLength;
-        const dayContent = cleanContent.substring(start, end);
+      // Se temos conteúdo real, dividir em dias
+      if (textContent.length > 1000) {
+        const contentLength = textContent.length;
+        const partLength = Math.floor(contentLength / 7);
         
-        if (dayContent.length > 50) {
-          days.push(`${dayNames[i]}: ${dayContent.substring(0, 400)}...`);
+        for (let i = 0; i < 7; i++) {
+          const start = i * partLength;
+          const end = start + partLength;
+          const dayContent = textContent.substring(start, end);
+          
+          if (dayContent.length > 100) {
+            days.push(`${dayNames[i]}: ${dayContent.substring(0, 800)}`);
+          }
         }
       }
-    }
-    
-    // Se não conseguiu extrair dias suficientes, usar dados baseados no título
-    if (days.length < 5) {
-      const baseContent = [
-        'Introdução ao tema da semana e preparação para o estudo da Palavra de Deus',
-        'Estudo bíblico sobre os princípios fundamentais da fé cristã',
-        'Aplicação prática dos ensinamentos na vida diária e relacionamentos',
-        'Reflexão sobre a vontade de Deus e nosso papel como discípulos',
-        'Meditação sobre a graça e o amor de Deus em nossas vidas',
-        'Compartilhamento dos ensinamentos com outros e testemunho',
-        'Preparação para o sábado e resumo da semana de estudo espiritual'
-      ];
-      
-      dayNames.forEach((dayName, index) => {
-        days.push(`${dayName}: ${baseContent[index]}`);
-      });
     }
 
     const lessonData = {
       title,
       days,
       verses,
-      lessonLink: currentLesson.link,
+      lessonLink,
       lastUpdated: new Date().toISOString()
     };
 
-    console.log('Dados completos extraídos com sucesso:', {
+    console.log('📊 Dados extraídos em tempo real:', {
       title: lessonData.title,
       daysCount: lessonData.days.length,
       versesCount: lessonData.verses.length,
       link: lessonData.lessonLink
     });
 
+    // Log detalhado dos dias extraídos
+    lessonData.days.forEach((day, index) => {
+      console.log(`📅 Dia ${index + 1}: ${day.substring(0, 100)}...`);
+    });
+
     return lessonData;
 
   } catch (error) {
-    console.error('Erro no scraping completo:', error);
+    console.error('Erro no scraping em tempo real:', error);
     return null;
   }
 }
 
 // Função para gerar dados de fallback
 function generateFallbackData(): LessonData {
-  console.log('Usando dados de fallback...');
-  
-  const currentDate = new Date();
-  const weekNumber = Math.ceil((currentDate.getTime() - new Date(currentDate.getFullYear(), 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
-  
+  console.log('Não foi possível obter dados da lição. Retornando dados vazios.');
   return {
-    title: `Lição da Escola Sabatina - Semana ${weekNumber}`,
-    days: [
-      '🌅 Sábado à Tarde: Introdução ao tema da semana e preparação para o estudo da Palavra de Deus',
-      '☀️ Domingo: Estudo bíblico sobre os princípios fundamentais da fé cristã',
-      '🌱 Segunda-feira: Aplicação prática dos ensinamentos na vida diária e relacionamentos',
-      '🌿 Terça-feira: Reflexão sobre a vontade de Deus e nosso papel como discípulos',
-      '🌳 Quarta-feira: Meditação sobre a graça e o amor de Deus em nossas vidas',
-      '🌺 Quinta-feira: Compartilhamento dos ensinamentos com outros e testemunho',
-      '🌟 Sexta-feira: Preparação para o sábado e resumo da semana de estudo espiritual'
-    ],
-    verses: [
-      'João 3:16 - "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."',
-      'Salmo 119:105 - "Lâmpada para os meus pés é a tua palavra e luz para o meu caminho."',
-      '2 Timóteo 3:16 - "Toda a Escritura é inspirada por Deus e útil para o ensino, para a repreensão, para a correção, para a educação na justiça."',
-      'Mateus 28:19-20 - "Portanto, ide, ensinai todas as nações, batizando-as em nome do Pai, e do Filho, e do Espírito Santo; ensinando-as a guardar todas as coisas que eu vos tenho mandado."',
-      'Romanos 12:2 - "E não vos conformeis com este século, mas transformai-vos pela renovação da vossa mente, para que experimenteis qual seja a boa, agradável e perfeita vontade de Deus."',
-      'Filipenses 4:13 - "Posso todas as coisas naquele que me fortalece."',
-      'Isaías 40:31 - "Mas os que esperam no Senhor renovarão as suas forças; subirão com asas como águias; correrão, e não se cansarão; andarão, e não se fatigarão."'
-    ],
-    lessonLink: 'https://mais.cpb.com.br/licao-adultos/',
+    title: 'Lição não disponível',
+    days: [],
+    verses: [],
+    lessonLink: '',
     lastUpdated: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
   };
@@ -381,28 +476,46 @@ export async function getCachedLesson(): Promise<LessonData> {
   console.log('Iniciando busca de dados da lição...');
   
   try {
-    // 1. Tentar buscar dados existentes no Supabase
-    const existingLesson = await getLessonFromSupabase();
-    if (existingLesson) {
-      console.log('Retornando lição existente do Supabase');
-      return existingLesson;
+    // 1. Tentar buscar link da lição no Supabase
+    const existingLessonLink = await getLessonFromSupabase();
+    
+    if (existingLessonLink && existingLessonLink.lessonLink) {
+      console.log('Link da lição encontrado no Supabase, fazendo scraping em tempo real...');
+      
+      // Fazer scraping em tempo real usando o link
+      const realTimeData = await scrapeLessonInRealTime(existingLessonLink.lessonLink);
+      
+      if (realTimeData) {
+        const lessonWithExpiry: LessonData = {
+          ...realTimeData,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        
+        console.log('Retornando dados extraídos em tempo real');
+        return lessonWithExpiry;
+      }
     }
 
-    // 2. Se não existir, tentar fazer scraping completo
-    console.log('Lição não encontrada, tentando scraping completo...');
-    const scrapedData = await scrapeCompleteLessonData();
+    // 2. Se não existir link ou falhar scraping, tentar detectar nova lição
+    console.log('Link não encontrado, detectando nova lição...');
+    const currentLesson = await detectCurrentLesson();
     
-    if (scrapedData) {
-      // Salvar no Supabase
-      await saveLessonToSupabase(scrapedData);
+    if (currentLesson) {
+      // Salvar apenas o link no Supabase
+      await saveLessonLinkToSupabase(currentLesson.title, currentLesson.link);
       
-      const lessonWithExpiry: LessonData = {
-        ...scrapedData,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      };
+      // Fazer scraping em tempo real
+      const realTimeData = await scrapeLessonInRealTime(currentLesson.link);
       
-      console.log('Retornando lição completa extraída do site');
-      return lessonWithExpiry;
+      if (realTimeData) {
+        const lessonWithExpiry: LessonData = {
+          ...realTimeData,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        
+        console.log('Retornando nova lição detectada');
+        return lessonWithExpiry;
+      }
     }
 
     // 3. Se tudo falhar, usar dados de fallback
@@ -420,18 +533,22 @@ export async function forceUpdateLesson(): Promise<LessonData> {
   console.log('Forçando atualização da lição...');
   
   try {
-    const scrapedData = await scrapeCompleteLessonData();
+    const currentLesson = await detectCurrentLesson();
     
-    if (scrapedData) {
-      await saveLessonToSupabase(scrapedData);
+    if (currentLesson) {
+      await saveLessonLinkToSupabase(currentLesson.title, currentLesson.link);
       
-      const lessonWithExpiry: LessonData = {
-        ...scrapedData,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      };
+      const realTimeData = await scrapeLessonInRealTime(currentLesson.link);
       
-      console.log('Lição atualizada com sucesso');
-      return lessonWithExpiry;
+      if (realTimeData) {
+        const lessonWithExpiry: LessonData = {
+          ...realTimeData,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        
+        console.log('Lição atualizada com sucesso');
+        return lessonWithExpiry;
+      }
     }
     
     return generateFallbackData();
