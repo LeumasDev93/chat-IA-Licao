@@ -265,3 +265,42 @@ export async function getCachedLesson(): Promise<LessonData> {
     return generateFallbackData();
   }
 }
+
+// Função para forçar atualização da lição (exportada para uso externo)
+export async function forceUpdateLesson(): Promise<LessonData> {
+  console.log('🔄 Forçando atualização da lição...');
+  
+  try {
+    // Detectar nova lição
+    const currentLesson = await detectCurrentLesson();
+    
+    if (currentLesson) {
+      console.log('🔄 Nova lição detectada:', currentLesson.title);
+      
+      // Salvar link no Supabase
+      const saved = await saveLessonLinkToSupabase(currentLesson.title, currentLesson.link);
+      
+      if (saved) {
+        console.log('🔄 Link da lição salvo com sucesso no Supabase');
+        return {
+          title: currentLesson.title,
+          days: [], // Empty - AI should explore the site
+          verses: [], // Empty - AI should explore the site
+          lessonLink: currentLesson.link,
+          lastUpdated: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        };
+      } else {
+        console.error('🔄 Erro ao salvar link da lição');
+        throw new Error('Erro ao salvar link da lição no Supabase');
+      }
+    } else {
+      console.log('🔄 Nenhuma nova lição detectada');
+      throw new Error('Nenhuma nova lição detectada');
+    }
+    
+  } catch (error) {
+    console.error('🔄 Erro durante atualização forçada:', error);
+    throw error;
+  }
+}
