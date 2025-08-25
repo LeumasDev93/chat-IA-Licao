@@ -11,6 +11,7 @@ interface LessonData {
   title: string;
   lastUpdated: string;
   expiresAt: string;
+  lessonContent?: string; // Conteúdo real da lição para a IA usar
 }
 
 export default function LessonStatus({ className = "" }: LessonStatusProps) {

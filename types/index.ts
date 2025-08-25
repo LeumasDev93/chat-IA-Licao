@@ -24,6 +24,7 @@ export interface LessonData {
   days: string[];
   verses: string[];
   lessonLink: string;
+  lessonContent?: string; // Conteúdo real da lição para a IA usar
   lastUpdated: string;
   expiresAt: string;
 }

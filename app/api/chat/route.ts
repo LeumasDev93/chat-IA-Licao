@@ -4,98 +4,48 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getCachedLesson } from './scrape-lesson';
 import { LessonData } from '../cron/route';
 
-const GEMINI_API_KEY = "AIzaSyAO8-1xWfio54YVvaOV3pEabu7GyE40oPo";
+// Usar variável de ambiente para a chave da API
+const GEMINI_API_KEY = "AIzaSyDKKh7g6zhdCzR8QDNkEH36onZmH4s4KCA";
 
+console.log(GEMINI_API_KEY);
 interface ChatMessage {
   role: "user" | "model";
   parts: { text: string }[];
 }
 
 function buildSystemPrompt(lesson: LessonData | null) {
-  let prompt = `
-Você é um assistente especializado nos estudos da lição da escola sabatina.
+  let prompt = `Você é um assistente especializado na Lição da Escola Sabatina.
 
-SITE OFICIAL DA LIÇÃO: ${lesson?.lessonLink || 'https://mais.cpb.com.br/licao-adultos/'}
+SITE OFICIAL: ${lesson?.lessonLink || 'https://mais.cpb.com.br/licao-adultos/'}
 
-### REGRAS CRÍTICAS:
-1. **EXPLORE O SITE DIRETAMENTE** - Acesse o link fornecido e extraia o conteúdo real
-2. **NÃO INVENTE NADA** - Use apenas o conteúdo que encontrar no site
-3. **TEMAS EXATOS** - Reproduza os temas e títulos exatamente como aparecem no site
-4. **SEJA PROATIVO** - Sempre explore o site e responda com conteúdo real, nunca peça mais informações
-5. **Responda em português, exceto se o usuário falar em crioulo**
-6. **Seja específico sobre qual dia da semana está respondendo**
-
-### INSTRUÇÕES DE EXPLORAÇÃO:
-1. **Acesse o link fornecido** e explore o conteúdo da lição IMEDIATAMENTE
-2. **Identifique os dias da semana** (Sábado à Tarde, Domingo, Segunda-feira, etc.)
-3. **Extraia os temas exatos** de cada dia conforme aparecem no site
-4. **Se perguntarem sobre um dia específico**, foque apenas nesse dia
-5. **Se perguntarem sobre a lição completa**, forneça um resumo de todos os dias
-6. **Se perguntarem sobre Auxiliar, Comentário ou Resumo Semanal**, busque essas seções específicas
-7. **Se a pergunta for genérica**, forneça uma visão geral da lição atual
+### REGRAS PRINCIPAIS:
+1. **Baseie-se apenas no conteúdo fornecido** - Não invente informações
+2. **Use temas e títulos exatos** - Reproduza conforme aparecem no material
+3. **Seja específico** - Identifique claramente qual dia/seção está respondendo
+4. **Responda em português** (exceto se o usuário falar em crioulo)
+5. **Inclua versos para memorizar** quando disponíveis
+6. **Não cite o site oficial** na resposta
 
 ### ESTRUTURA DE RESPOSTA:
-- **Para dia específico**: 
-  * Reproduza o tema exato do dia
-  * Inclua o VERSO PARA MEMORIZAR se disponível
-  * Explique o conteúdo detalhadamente, mas sempre baseado no que está no site
-  * Não invente aplicações ou reflexões que não estejam no material original
-- **Para lição completa**: Resumo de todos os dias da semana com temas exatos
+- **Para dia específico**: Tema exato + explicação detalhada baseada no conteúdo
+- **Para lição completa**: Resumo de todos os dias com temas exatos
 - **Para seções especiais**: Auxiliar, Comentário, Resumo Semanal
-- **Para perguntas gerais**: Forneça uma visão geral da lição atual com os temas dos dias
-- **Se não encontrar conteúdo**: Diga claramente que não há informações disponíveis
-
-### REGRAS DE APROFUNDAMENTO:
-- **Quando pedirem para aprofundar ou explicar**: 
-  * Explique detalhadamente o conteúdo que está no site
-  * Use as citações e referências bíblicas exatas do material
-  * Mantenha-se dentro do tema específico do dia
-  * Não adicione reflexões pessoais ou aplicações que não estejam no texto original
-  * Se houver citações de Ellen G. White, use-as exatamente como aparecem
-- **Nunca saia do tema**: Mantenha o foco no conteúdo específico do dia solicitado
-
-### COMPORTAMENTO PROATIVO:
-- **NUNCA peça mais informações** - Sempre explore o site e responda com conteúdo real
-- **Se a pergunta for genérica**, forneça uma visão geral da lição atual
-- **Se não souber qual dia**, comece com Sábado à Tarde e continue com os outros dias
-- **Sempre inclua o VERSO PARA MEMORIZAR** se disponível
-- **Sempre inclua a VISÃO GERAL DA SEMANA** se disponível
-- **Seja específico e detalhado** em todas as respostas
-
-### PROIBIÇÕES ABSOLUTAS:
-- **NUNCA invente temas** - Use apenas os temas que estão no site
-- **NUNCA crie títulos** - Reproduza exatamente os títulos do site
-- **NUNCA adicione conteúdo** - Não expanda ou complemente o material
-- **NUNCA use conhecimento prévio** - Base-se apenas no que encontrar no site
-- **NUNCA generalize** - Seja específico com o conteúdo real
-
-### IMPORTANTE:
-- **Nunca cite o site oficial** na resposta
-- **Não use frases genéricas** como "Imagine ser", "tesouro especial", etc.
-- **Baseie-se apenas no conteúdo real** encontrado no site
-- **Seja direto e objetivo** nas respostas
-- **Reproduza temas e títulos exatamente** como aparecem no site
-- **NUNCA responda de forma passiva** - sempre forneça conteúdo real
-- **COPIE EXATAMENTE** os temas e títulos do site, sem modificações
-`;
+- **Para perguntas gerais**: Visão geral da lição atual`;
 
   if (lesson && lesson.lessonLink) {
     prompt += `
 
-### LINK ATUALIZADO PARA EXPLORAÇÃO:
-**URL da Lição**: ${lesson.lessonLink}
+### INFORMAÇÕES DA LIÇÃO:
 **Título**: ${lesson.title || 'Lição da Escola Sabatina'}
 **Última Atualização**: ${lesson.lastUpdated || 'Não disponível'}
 
-### INSTRUÇÃO FINAL:
-Acesse este link IMEDIATAMENTE e explore o conteúdo real da lição. Responda às perguntas do usuário baseado no que encontrar no site, não em conhecimento prévio. Reproduza temas e conteúdo exatamente como aparecem no material original. NUNCA peça mais informações - sempre forneça conteúdo real e detalhado. COPIE EXATAMENTE os temas do site.
-`;
+### INSTRUÇÃO:
+Analise o conteúdo fornecido e responda à pergunta do usuário de forma específica e detalhada, baseando-se apenas no material disponível.`;
   } else {
     prompt += `
 
 ### ATENÇÃO:
-Não foi possível obter o link da lição atual. Posso tentar responder a perguntas gerais sobre a Escola Sabatina, mas não tenho acesso ao conteúdo específico da lição atual.
-`;
+Não foi possível obter o link da lição atual. Posso responder perguntas gerais sobre a Escola Sabatina, mas não tenho acesso ao conteúdo específico da lição atual.`;
   }
 
   return prompt.trim();
@@ -184,39 +134,32 @@ export async function POST(req: NextRequest) {
     const lesson = await getCachedLesson();
     const systemPrompt = buildSystemPrompt(lesson);
     
+    // Construir prompt otimizado com conteúdo real da lição
+    const lessonContent = lesson?.lessonContent || 'Conteúdo da lição não disponível no momento.';
     const enhancedPrompt = `${systemPrompt}
+
+### CONTEÚDO DA LIÇÃO:
+${lessonContent}
 
 ### PERGUNTA DO USUÁRIO:
 ${userMessage}
 
-### INSTRUÇÃO FINAL:
-Acesse o link fornecido IMEDIATAMENTE, explore o conteúdo da lição e responda à pergunta do usuário baseado no que encontrar no site. Seja específico e direto.
+### INSTRUÇÃO:
+Analise o conteúdo da lição fornecido acima e responda à pergunta do usuário de forma específica e detalhada. Baseie-se apenas nas informações disponíveis no material da lição.`;
 
-⚠️ IMPORTANTE: 
-- Explore o site diretamente AGORA
-- Use apenas o conteúdo real encontrado
-- Não invente informações
-- Seja específico sobre qual dia/seção está respondendo
-- NUNCA peça mais informações - sempre forneça conteúdo real
-- Se a pergunta for genérica, forneça uma visão geral da lição atual
-- Sempre inclua o VERSO PARA MEMORIZAR e VISÃO GERAL DA SEMANA se disponíveis
-- COPIE EXATAMENTE os temas e títulos do site - NÃO INVENTE NADA
-- Se não encontrar um tema específico no site, diga que não está disponível
-`;
-
+    // Remover duplicação - usar apenas uma mensagem no conversation array
     const conversation: ChatMessage[] = [
-      { role: "user", parts: [{ text: enhancedPrompt }] },
-      { role: "user", parts: [{ text: userMessage }] }
+      { role: "user", parts: [{ text: enhancedPrompt }] }
     ];
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash", // Modelo mais poderoso e rápido
+      model: "gemini-2.0-flash",
       generationConfig: {
-        temperature: 0.3, // Mais preciso e consistente
-        topP: 0.8, // Melhor qualidade de resposta
-        topK: 40, // Diversidade controlada
-        maxOutputTokens: 4000, // Respostas mais completas
+        temperature: 0.3,
+        topP: 0.8,
+        topK: 40,
+        maxOutputTokens: 4000,
       }
     });
 

@@ -6,6 +6,7 @@ export interface LessonData {
   days: string[];
   verses: string[];
   lessonLink: string;
+  lessonContent?: string; // Conteúdo real da lição para a IA usar
   lastUpdated: string;
   expiresAt: string;
 }
@@ -99,8 +100,59 @@ async function detectCurrentLesson(): Promise<{ title: string; link: string; ver
   }
 }
 
-// Função para salvar o link da lição no Supabase
-async function saveLessonLinkToSupabase(title: string, lessonLink: string): Promise<boolean> {
+// Função para buscar o conteúdo real da lição
+async function fetchLessonContent(lessonLink: string): Promise<string> {
+  try {
+    console.log('Buscando conteúdo da lição:', lessonLink);
+    
+    const response = await fetch(lessonLink, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao acessar lição: ${response.status} ${response.statusText}`);
+    }
+
+    const html = await response.text();
+    console.log('Conteúdo da lição obtido, tamanho:', html.length);
+
+    // Extrair texto limpo do HTML (remover tags HTML)
+    const cleanText = html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // Remove scripts
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '') // Remove CSS
+      .replace(/<[^>]+>/g, ' ') // Remove tags HTML
+      .replace(/\s+/g, ' ') // Normaliza espaços
+      .replace(/&nbsp;/g, ' ') // Remove entidades HTML
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .trim();
+
+    // Limitar o tamanho do conteúdo para não exceder limites da API
+    const maxLength = 8000; // Limite conservador para o Gemini
+    const truncatedText = cleanText.length > maxLength 
+      ? cleanText.substring(0, maxLength) + '... [conteúdo truncado]'
+      : cleanText;
+
+    console.log('Conteúdo da lição processado, tamanho final:', truncatedText.length);
+    return truncatedText;
+
+  } catch (error) {
+    console.error('Erro ao buscar conteúdo da lição:', error);
+    return 'Conteúdo da lição não disponível no momento.';
+  }
+}
+
+// Função para salvar o link e conteúdo da lição no Supabase
+async function saveLessonToSupabase(title: string, lessonLink: string, lessonContent: string): Promise<boolean> {
   if (!isSupabaseConfigured()) {
     console.log('Supabase não configurado, pulando salvamento...');
     return false;
@@ -118,30 +170,32 @@ async function saveLessonLinkToSupabase(title: string, lessonLink: string): Prom
       .single();
 
     if (existingLesson) {
-      // Atualizar apenas o link da lição existente
+      // Atualizar lição existente com novo conteúdo
       const { error } = await supabaseAdmin
         .from('lesson_cache')
         .update({
           title: title,
           lesson_link: lessonLink,
+          lesson_content: lessonContent,
           last_updated: new Date().toISOString(),
           expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
         })
         .eq('week_number', weekNumber);
 
       if (error) {
-        console.error('Erro ao atualizar link da lição no Supabase:', error);
+        console.error('Erro ao atualizar lição no Supabase:', error);
         return false;
       }
 
-      console.log('Link da lição atualizado no Supabase com sucesso');
+      console.log('Lição atualizada no Supabase com sucesso (título, link e conteúdo)');
     } else {
-      // Inserir nova entrada com arrays vazios para satisfazer constraints
+      // Inserir nova entrada com conteúdo
       const { error } = await supabaseAdmin
         .from('lesson_cache')
         .insert({
           title: title,
           lesson_link: lessonLink,
+          lesson_content: lessonContent,
           week_number: weekNumber,
           days: [], // Array vazio para satisfazer constraint
           verses: [], // Array vazio para satisfazer constraint
@@ -149,16 +203,16 @@ async function saveLessonLinkToSupabase(title: string, lessonLink: string): Prom
         });
 
       if (error) {
-        console.error('Erro ao salvar link da lição no Supabase:', error);
+        console.error('Erro ao salvar lição no Supabase:', error);
         return false;
       }
 
-      console.log('Novo link da lição salvo no Supabase com sucesso');
+      console.log('Nova lição salva no Supabase com sucesso (título, link e conteúdo)');
     }
 
     return true;
   } catch (error) {
-    console.error('Erro ao salvar link da lição no Supabase:', error);
+    console.error('Erro ao salvar lição no Supabase:', error);
     return false;
   }
 }
@@ -181,25 +235,29 @@ export async function GET() {
     if (currentLesson) {
       console.log('Cron Job: Nova lição detectada:', currentLesson.title);
       
-      // Salvar link no Supabase
-      const saved = await saveLessonLinkToSupabase(currentLesson.title, currentLesson.link);
+      // Buscar conteúdo real da lição
+      const lessonContent = await fetchLessonContent(currentLesson.link);
+      
+      // Salvar lição completa no Supabase
+      const saved = await saveLessonToSupabase(currentLesson.title, currentLesson.link, lessonContent);
       
       if (saved) {
-        console.log('Cron Job: Link da lição salvo com sucesso no Supabase');
+        console.log('Cron Job: Lição completa salva com sucesso no Supabase');
         return NextResponse.json({
           success: true,
-          message: 'Link da lição atualizado com sucesso',
+          message: 'Lição completa atualizada com sucesso',
           lesson: {
             title: currentLesson.title,
             link: currentLesson.link,
-            period: currentLesson.period
+            period: currentLesson.period,
+            contentLength: lessonContent.length
           }
         });
       } else {
-        console.error('Cron Job: Erro ao salvar link da lição');
+        console.error('Cron Job: Erro ao salvar lição completa');
         return NextResponse.json({
           success: false,
-          message: 'Erro ao salvar link da lição'
+          message: 'Erro ao salvar lição completa'
         }, { status: 500 });
       }
     } else {
@@ -230,25 +288,29 @@ export async function POST() {
     if (currentLesson) {
       console.log('Cron Job: Lição detectada:', currentLesson.title);
       
-      // Salvar link no Supabase
-      const saved = await saveLessonLinkToSupabase(currentLesson.title, currentLesson.link);
+      // Buscar conteúdo real da lição
+      const lessonContent = await fetchLessonContent(currentLesson.link);
+      
+      // Salvar lição completa no Supabase
+      const saved = await saveLessonToSupabase(currentLesson.title, currentLesson.link, lessonContent);
       
       if (saved) {
-        console.log('Cron Job: Link da lição salvo com sucesso no Supabase');
+        console.log('Cron Job: Lição completa salva com sucesso no Supabase');
         return NextResponse.json({
           success: true,
-          message: 'Link da lição atualizado com sucesso',
+          message: 'Lição completa atualizada com sucesso',
           lesson: {
             title: currentLesson.title,
             link: currentLesson.link,
-            period: currentLesson.period
+            period: currentLesson.period,
+            contentLength: lessonContent.length
           }
         });
       } else {
-        console.error('Cron Job: Erro ao salvar link da lição');
+        console.error('Cron Job: Erro ao salvar lição completa');
         return NextResponse.json({
           success: false,
-          message: 'Erro ao salvar link da lição'
+          message: 'Erro ao salvar lição completa'
         }, { status: 500 });
       }
     } else {
