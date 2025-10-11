@@ -5,7 +5,7 @@ import { getCachedLesson } from './scrape-lesson';
 import { LessonData } from '../cron/route';
 
 // Usar variável de ambiente para a chave da API
-const GEMINI_API_KEY = "AIzaSyDKKh7g6zhdCzR8QDNkEH36onZmH4s4KCA";
+const GEMINI_API_KEY = "AIzaSyD8f4_0yajQDw71rYKk6BWhQd5gTqrcE8U";
 
 console.log(GEMINI_API_KEY);
 interface ChatMessage {
@@ -181,24 +181,64 @@ Analise profundamente o conteúdo da lição fornecido acima e responda à pergu
       { role: "user", parts: [{ text: enhancedPrompt }] }
     ];
 
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash",
-      generationConfig: {
-        temperature: 0.3,
-        topP: 0.8,
-        topK: 40,
-        maxOutputTokens: 8000, // Aumentado para permitir respostas mais detalhadas
-      }
-    });
+    // Lista de modelos do Gemini em ordem de preferência (fallback)
+    const modelNames = [
+      "gemini-2.5-flash",
+      "gemini-2.0-flash",
+      "gemini-2.0-flash-exp",
+      "gemini-1.5-flash",
+      "gemini-1.5-flash-8b",
+      "gemini-1.5-pro",
+      "gemini-pro"
+    ];
 
-    const result = await model.generateContent({ contents: conversation });
-    const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text 
-      || (language === 'pt' ? "Pode reformular sua pergunta sobre a lição de forma mais específica?" :
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    let responseText = '';
+    let lastError: any = null;
+
+    // Tentar cada modelo em sequência até obter sucesso
+    for (let i = 0; i < modelNames.length; i++) {
+      try {
+        console.log(`Tentando modelo: ${modelNames[i]} (tentativa ${i + 1}/${modelNames.length})`);
+        
+        const model = genAI.getGenerativeModel({ 
+          model: modelNames[i],
+          generationConfig: {
+            temperature: 0.3,
+            topP: 0.8,
+            topK: 40,
+            maxOutputTokens: 8000,
+          }
+        });
+
+        const result = await model.generateContent({ contents: conversation });
+        responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        
+        if (responseText) {
+          console.log(`✅ Sucesso com modelo: ${modelNames[i]}`);
+          break; // Sucesso! Sair do loop
+        }
+      } catch (modelError: any) {
+        lastError = modelError;
+        console.warn(`⚠️ Falha com modelo ${modelNames[i]}:`, modelError.message);
+        
+        // Se não for o último modelo, continuar tentando
+        if (i < modelNames.length - 1) {
+          console.log(`Tentando próximo modelo...`);
+          continue;
+        }
+      }
+    }
+
+    // Se nenhum modelo funcionou, usar mensagem padrão
+    if (!responseText) {
+      console.error('❌ Todos os modelos falharam. Último erro:', lastError);
+      responseText = language === 'pt' ? "Pode reformular sua pergunta sobre a lição de forma mais específica?" :
           language === 'en' ? "Can you rephrase your question about the lesson more specifically?" :
           language === 'es' ? "¿Puedes reformular tu pregunta sobre la lección más específicamente?" :
           language === 'fr' ? "Pouvez-vous reformuler votre question sur la leçon plus spécifiquement?" :
-          "Pode reformular bu pergunta sobre a lição de forma mais específica?");
+          "Pode reformular bu pergunta sobre a lição de forma mais específica?";
+    }
 
     return NextResponse.json({ message: responseText });
 
