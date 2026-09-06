@@ -301,7 +301,7 @@ const Message: React.FC<MessageProps> = ({ message, onActionClick }) => {
   return (
     <div className="group/msg flex animate-slideUp gap-3">
       <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand ring-1 ring-border">
-        <Image src={logo2} alt="" width={20} height={20} className="h-full w-full object-cover" />
+        <Image src={logo2} alt="" width={20} height={20} className="h-4 w-4 object-contain brightness-0 invert" />
       </div>
 
       <div className="min-w-0 flex-1">
