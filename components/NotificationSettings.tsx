@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Bell, BellOff, Check, X, Settings } from 'lucide-react';
-import { notificationManager, NotificationPayload } from '@/lib/notifications';
+import { Bell, BellOff, X, Settings } from 'lucide-react';
+import { notificationManager } from '@/lib/notifications';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface NotificationSettingsProps {
