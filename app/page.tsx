@@ -492,7 +492,7 @@ export default function Home() {
               {isEmpty ? (
                 <div className="flex min-h-[calc(100dvh-13rem)] flex-col items-center justify-center py-4 text-center animate-fadeIn">
                   <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand shadow-lg shadow-primary/20 sm:h-16 sm:w-16">
-                    <Image src={logo1} alt="" width={64} height={64} className="h-9 w-9 object-contain sm:h-10 sm:w-10" />
+                    <Image src={logo1} alt="" width={64} height={64} className="h-9 w-9 object-contain brightness-0 invert sm:h-10 sm:w-10" />
                   </div>
                   <h1 className="font-display text-xl font-semibold leading-tight tracking-tight sm:text-4xl">
                     <span className="text-gradient">{t("ai_assistant_title")}</span>
