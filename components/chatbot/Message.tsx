@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import { User, Bot, Copy, FileText, Volume2, Play, Pause } from "lucide-react";
+import { createPortal } from "react-dom";
+import { User, Copy, FileText, Volume2, Play, Pause, Check, Download, Maximize2, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { MessageType } from "@/types";
-import { useTheme } from "@/contexts/ThemeContext";
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
 import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
 
 interface MessageProps {
@@ -16,16 +15,10 @@ interface MessageProps {
   onActionClick?: (action: "copy" | "pdf" | "speak") => void;
 }
 
-const Message: React.FC<MessageProps> = ({
-  message,
-  isLastMessage = false,
-  onActionClick,
-}) => {
-  const { theme } = useTheme();
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
-  const [showActions, setShowActions] = useState(false);
+const Message: React.FC<MessageProps> = ({ message, onActionClick }) => {
   const [copied, setCopied] = useState(false);
   const [pdfSalve, setPdfSalve] = useState(false);
+  const [zoomSrc, setZoomSrc] = useState<string | null>(null);
   const user = useSupabaseUser();
 
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -33,30 +26,27 @@ const Message: React.FC<MessageProps> = ({
   const [isPaused, setIsPaused] = useState(false);
 
   const prepareForSpeech = (text: string) => {
-    // Limpeza de formatação com preservação de pontuação
     let cleanText = text
-      .replace(/#+\s*/g, "") // Remove títulos
-      .replace(/\*\*(.*?)\*\*/g, "$1") // Mantém conteúdo do negrito
-      .replace(/\*(.*?)\*/g, "$1") // Mantém conteúdo do itálico
-      .replace(/_(.*?)_/g, "$1") // Mantém conteúdo sublinhado
-      .replace(/`(.*?)`/g, "$1") // Mantém conteúdo de código
-      .replace(/~~(.*?)~~/g, "$1") // Mantém conteúdo riscado
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Remove links
-      .replace(/!\[.*?\]\(.*?\)/g, "") // Remove imagens
-      .replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML
+      .replace(/#+\s*/g, "")
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/_(.*?)_/g, "$1")
+      .replace(/`(.*?)`/g, "$1")
+      .replace(/~~(.*?)~~/g, "$1")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/!\[.*?\]\(.*?\)/g, "")
+      .replace(/<\/?[^>]+(>|$)/g, "");
 
-    // Adiciona pausas naturais para leitura fluida
     cleanText = cleanText
-      .replace(/([.!?:;])\s*/g, "$1\n") // Pausa após pontuação
-      .replace(/(\n)+/g, "\n\n") // Pausa maior entre parágrafos
-      .replace(/\s+/g, " ") // Normaliza espaços
-      .replace(/\*/g, "") // Remove asteriscos residuais
+      .replace(/([.!?:;])\s*/g, "$1\n")
+      .replace(/(\n)+/g, "\n\n")
+      .replace(/\s+/g, " ")
+      .replace(/\*/g, "")
       .trim();
 
     return cleanText;
   };
 
-  // Função para ler o texto
   const handleSpeak = () => {
     if (isSpeaking && !isPaused) {
       window.speechSynthesis.pause();
@@ -99,6 +89,7 @@ const Message: React.FC<MessageProps> = ({
       setIsPaused(false);
     };
 
+    speechRef.current = utterance;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   };
@@ -109,107 +100,70 @@ const Message: React.FC<MessageProps> = ({
     };
   }, []);
 
+  // Lightbox: tecla Esc fecha e trava o scroll do fundo
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
-
-    const handleThemeChange = () => {
-      if (theme === "system") setResolvedTheme(getSystemTheme());
+    if (!zoomSrc) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setZoomSrc(null);
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
     };
-
-    if (theme === "system") {
-      setResolvedTheme(getSystemTheme());
-      mediaQuery.addEventListener("change", handleThemeChange);
-    } else {
-      setResolvedTheme(theme === "dark" ? "dark" : "light");
-    }
-
-    return () => mediaQuery.removeEventListener("change", handleThemeChange);
-  }, [theme]);
+  }, [zoomSrc]);
 
   const isBot = message.sender === "bot";
-  const isDark = resolvedTheme === "dark";
+
+  // Mensagem que é SÓ uma imagem (infográfico): renderiza sem "bolha".
+  const singleImg = message.text?.trim().match(/^!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)$/);
+  const imageUrl = message.image || singleImg?.[1] || null;
+  const extraText = singleImg ? "" : message.text;
 
   const formattedTime = new Date(message.timestamp).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
   });
 
-  // Classes para estilos
-  const userBubbleClass = isDark
-    ? "bg-blue-600 text-white"
-    : "bg-blue-100 text-gray-900";
-
-  const userAvatarClass = isDark
-    ? "bg-blue-700 text-white"
-    : "bg-blue-200 text-blue-800";
-
-  const botBubbleClass = isDark
-    ? "bg-gray-800 text-white"
-    : "bg-gray-100 text-gray-900";
-
-  const botAvatarClass = isDark
-    ? "bg-gray-100 text-white"
-    : "bg-white text-gray-800";
-
   const handleCopy = () => {
+    const done = () => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      onActionClick?.("copy");
+    };
     try {
-      // Método moderno (funciona na maioria dos navegadores)
       if (navigator.clipboard) {
-        navigator.clipboard
-          .writeText(message.text)
-          .then(() => showCopySuccess())
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          .catch(() => useFallbackCopyMethod());
+        navigator.clipboard.writeText(message.text).then(done).catch(fallbackCopy);
       } else {
-        // Fallback para dispositivos mobile e navegadores antigos
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useFallbackCopyMethod();
+        fallbackCopy();
       }
-    } catch (error) {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useFallbackCopyMethod();
+    } catch {
+      fallbackCopy();
+    }
+
+    function fallbackCopy() {
+      const textarea = document.createElement("textarea");
+      textarea.value = message.text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        done();
+      } catch (err) {
+        console.error("Falha ao copiar texto", err);
+      }
+      document.body.removeChild(textarea);
     }
   };
 
-  const useFallbackCopyMethod = () => {
-    // Criar um elemento textarea temporário
-    const textarea = document.createElement("textarea");
-    textarea.value = message.text;
-    textarea.style.position = "fixed"; // Evitar rolagem
-    textarea.style.opacity = "0";
-
-    document.body.appendChild(textarea);
-
-    // Selecionar e copiar o texto
-    textarea.select();
-    try {
-      document.execCommand("copy");
-      showCopySuccess();
-    } catch (err) {
-      console.error("Falha ao copiar texto", err);
-      alert("Não foi possível copiar o texto. Tente manualmente.");
-    }
-
-    // Remover o textarea
-    document.body.removeChild(textarea);
-  };
-
-  const showCopySuccess = () => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    onActionClick?.("copy");
-  };
 
   const handleGeneratePDF = async (lessonTitle: string) => {
     onActionClick?.("pdf");
     try {
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-      });
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm" });
 
-      // Configurações de estilo
       const mainFont = "times";
       const titleSize = 14;
       const textSize = 12;
@@ -217,7 +171,6 @@ const Message: React.FC<MessageProps> = ({
       const lineHeight = 6;
       let yPosition = margin;
 
-      // Função para adicionar texto formatado
       const addText = (
         text: string,
         size = textSize,
@@ -226,39 +179,29 @@ const Message: React.FC<MessageProps> = ({
       ) => {
         pdf.setFont(mainFont, style);
         pdf.setFontSize(size);
-
         const lines = pdf.splitTextToSize(
           text,
           pdf.internal.pageSize.getWidth() - 2 * margin
         );
-
         for (const line of lines) {
           if (yPosition > pdf.internal.pageSize.getHeight() - margin) {
             pdf.addPage();
             yPosition = margin;
           }
-
           pdf.text(line, x, yPosition);
           yPosition += lineHeight;
         }
       };
 
-      // Título principal (Lições da Semana)
       addText(lessonTitle, titleSize, "bold");
       yPosition += lineHeight;
-
-      // Data/hora
       addText(
-        `Data: ${new Date(
-          message.timestamp
-        ).toLocaleDateString()} - Hora: ${formattedTime}`
+        `Data: ${new Date(message.timestamp).toLocaleDateString()} - Hora: ${formattedTime}`
       );
       yPosition += lineHeight * 1.5;
 
-      // Processar Markdown completo
       const processMarkdown = (content: string) => {
         const blocks = content.split(/\n\s*\n/);
-
         for (const block of blocks) {
           if (block.startsWith("# ")) {
             addText(block.substring(2), titleSize, "bold");
@@ -266,52 +209,24 @@ const Message: React.FC<MessageProps> = ({
             addText(block.substring(3), textSize, "bold");
           } else if (block.startsWith("### ")) {
             addText(block.substring(4), textSize, "bolditalic");
-          } else if (block.startsWith("* ")) {
-            const items = block.split("\n* ");
+          } else if (block.startsWith("* ") || block.startsWith("- ")) {
+            const items = block.split(/\n[*-] /);
             for (const item of items.filter((i) => i)) {
-              addText(
-                `• ${item.replace("* ", "").trim()}`,
-                textSize,
-                "normal",
-                margin + 5
-              );
+              addText(`• ${item.replace(/^[*-] /, "").trim()}`, textSize, "normal", margin + 5);
             }
           } else if (block.startsWith("> ")) {
             addText(block.substring(2), textSize, "italic", margin + 5);
-          } else if (block.startsWith("```")) {
-            // Bloco de código
-            const code = block.split("\n").slice(1, -1).join("\n");
-            addText(code, textSize - 1, "normal", margin + 10);
-            yPosition += lineHeight;
-          } else if (block.match(/\[.*\]\(.*\)/)) {
-            // Links
-            const linkText = block.replace(/\[(.*?)\]\(.*?\)/g, "$1");
-            addText(linkText, textSize, "normal");
           } else if (block.match(/\*\*.*\*\*/)) {
-            // Negrito
-            const boldText = block.replace(/\*\*(.*?)\*\*/g, "$1");
-            addText(boldText, textSize, "bold");
-          } else if (block.match(/_.*_/)) {
-            // Itálico
-            const italicText = block.replace(/_(.*?)_/g, "$1");
-            addText(italicText, textSize, "italic");
-          } else if (block.match(/`.*`/)) {
-            // Código inline
-            const codeText = block.replace(/`(.*?)`/g, "$1");
-            addText(codeText, textSize - 1, "normal");
+            addText(block.replace(/\*\*(.*?)\*\*/g, "$1"), textSize, "bold");
           } else {
-            // Texto normal
-            addText(block);
+            addText(block.replace(/[*_`#]/g, ""));
           }
-
           yPosition += lineHeight / 2;
         }
       };
 
-      // Processar o conteúdo da mensagem
       processMarkdown(message.text);
 
-      // Rodapé
       pdf.setFontSize(10);
       pdf.text(
         `Gerado em: ${new Date().toLocaleString()}`,
@@ -325,145 +240,187 @@ const Message: React.FC<MessageProps> = ({
       setTimeout(() => setPdfSalve(false), 2000);
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      alert("Erro ao gerar PDF. Uma versão simplificada será criada.");
-
-      // Fallback simples
-      const mainFont = "times";
-      const titleSize = 14;
-      const textSize = 12;
-      const margin = 20;
       const pdf = new jsPDF();
-      pdf.setFont(mainFont);
-      pdf.setFontSize(titleSize);
-      pdf.text(lessonTitle, margin, margin);
-      pdf.setFontSize(textSize);
-      pdf.text(message.text, margin, margin + 10);
+      pdf.setFont("times");
+      pdf.setFontSize(14);
+      pdf.text(lessonTitle, 20, 20);
+      pdf.setFontSize(12);
+      pdf.text(pdf.splitTextToSize(message.text, 170), 20, 32);
       pdf.save(`${lessonTitle}_simplificado.pdf`);
     }
   };
 
-  return (
-    <div
-      className={`flex ${
-        isBot ? "justify-start" : "justify-end"
-      } animate-fadeIn relative mb-6`}
-      onMouseEnter={() => setShowActions(true)}
-      onMouseLeave={() => setShowActions(false)}
+  /* ----------------------------- USER ----------------------------- */
+  if (!isBot) {
+    return (
+      <div className="flex animate-slideUp justify-end gap-2.5">
+        <div className="max-w-[82%] rounded-2xl rounded-tr-sm bg-brand px-4 py-2.5 text-[0.95rem] leading-relaxed text-white shadow-sm">
+          <p className="whitespace-pre-wrap break-words">{message.text}</p>
+          <div className="mt-1 text-right text-[10px] text-white/70">{formattedTime}</div>
+        </div>
+        <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-2 ring-1 ring-border">
+          {user?.user?.user_metadata?.avatar_url ? (
+            <Image
+              src={user.user.user_metadata.avatar_url}
+              alt=""
+              width={32}
+              height={32}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <User size={16} className="text-muted-foreground" />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  /* ------------------------------ BOT ----------------------------- */
+  const ActionButton = ({
+    onClick,
+    title,
+    active,
+    children,
+  }: {
+    onClick: () => void;
+    title: string;
+    active?: boolean;
+    children: React.ReactNode;
+  }) => (
+    <button
+      onClick={onClick}
+      title={title}
+      className={`flex h-7 w-7 items-center justify-center rounded-lg border border-transparent text-muted-foreground transition-colors
+        hover:border-border hover:bg-accent hover:text-foreground
+        ${active ? "border-border bg-accent text-primary" : ""}`}
     >
-      {/* Avatar */}
-      <div
-        className={`flex items-center justify-center rounded-full w-10 h-10 flex-shrink-0 mr-3 ${
-          isBot ? botAvatarClass : userAvatarClass
-        }`}
-        aria-label={isBot ? "Bot" : "Usuário"}
-      >
-        {isBot ? (
-          <Image
-            src={logo2}
-            alt="User profile"
-            width={20}
-            height={20}
-            className="w-full h-full rounded-full"
-          />
-        ) : user?.user?.user_metadata.avatar_url ? (
-          <Image
-            src={user.user?.user_metadata?.avatar_url}
-            alt="User profile"
-            width={20}
-            height={20}
-            className="w-full h-full rounded-full"
-          />
+      {children}
+    </button>
+  );
+
+  return (
+    <div className="group/msg flex animate-slideUp gap-3">
+      <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand ring-1 ring-border">
+        <Image src={logo2} alt="" width={20} height={20} className="h-4 w-4 object-contain brightness-0 invert" />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        {imageUrl ? (
+          <button
+            type="button"
+            onClick={() => setZoomSrc(imageUrl)}
+            className="group/img relative block w-fit max-w-full cursor-zoom-in overflow-hidden rounded-xl"
+            aria-label="Ampliar imagem"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              alt={extraText || "Imagem gerada pela IA"}
+              loading="lazy"
+              className="block max-h-[360px] w-auto max-w-[min(78vw,320px)] object-contain sm:max-h-[420px] sm:max-w-[360px]"
+            />
+            <span className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover/img:opacity-100 max-sm:opacity-100">
+              <Maximize2 size={13} />
+            </span>
+          </button>
         ) : (
-          <User size={20} />
+          <div className="rounded-2xl rounded-tl-sm border border-border bg-surface px-4 py-3.5 shadow-sm sm:px-5">
+            <div className="prose-chat">
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => (
+                    <a {...props} target="_blank" rel="noopener noreferrer" />
+                  ),
+                  img: ({ node, src }) =>
+                    src ? (
+                      <button
+                        type="button"
+                        onClick={() => setZoomSrc(String(src))}
+                        className="my-3 block w-fit max-w-full cursor-zoom-in overflow-hidden rounded-xl"
+                        aria-label="Ampliar imagem"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={String(src)}
+                          alt=""
+                          loading="lazy"
+                          className="block max-h-[360px] w-auto max-w-[min(78vw,320px)] object-contain sm:max-h-[420px] sm:max-w-[360px]"
+                        />
+                      </button>
+                    ) : null,
+                }}
+              >
+                {message.text}
+              </ReactMarkdown>
+            </div>
+          </div>
         )}
-      </div>
 
-      {/* Bubble da mensagem */}
-      <div
-        className={`max-w-[75%] rounded-lg p-4 whitespace-pre-wrap break-words ${
-          isBot ? botBubbleClass : userBubbleClass
-        } shadow-md`}
-      >
-        <ReactMarkdown>{message.text}</ReactMarkdown>
-
-        {/* Hora da mensagem */}
-        <div
-          className={`text-xs mt-2 ${
-            isDark ? "text-gray-400" : "text-gray-600"
-          } text-right`}
-        >
-          {formattedTime}
-        </div>
-
-        <div className="flex justify-end space-x-3 mt-2">
-          <button
-            onClick={handleCopy}
-            className={`p-1 rounded-full ${
-              isDark
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
-            } transition-colors`}
-            title="Copiar mensagem"
-          >
-            <Copy
-              size={14}
-              className={isDark ? "text-white" : "text-gray-700"}
-            />
-            {copied && (
-              <span className="absolute bottom-6 right-4 -translate-x-1/2 text-xs whitespace-nowrap">
-                Copiado!
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => handleGeneratePDF("Resumo")}
-            className={`p-1 rounded-full ${
-              isDark
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
-            } transition-colors`}
-            title="Gerar PDF"
-          >
-            <FileText
-              size={14}
-              className={isDark ? "text-white" : "text-gray-700"}
-            />
-            {pdfSalve && (
-              <span className="absolute bottom-6 -right-4 -translate-x-1/2 text-xs whitespace-nowrap">
-                Pdf gerado!
-              </span>
-            )}
-          </button>
-          <button
-            onClick={handleSpeak}
-            className={`p-1 rounded-full ${
-              isDark
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
-            } transition-colors`}
-            title={
-              isSpeaking
-                ? isPaused
-                  ? "Retomar leitura"
-                  : "Pausar leitura"
-                : "Ler em voz alta"
-            }
-          >
-            {isSpeaking ? (
-              isPaused ? (
-                <Play size={14} className="text-yellow-500" />
-              ) : (
-                <Pause size={14} className="text-green-500 animate-pulse" />
-              )
-            ) : (
-              <Volume2
-                size={14}
-                className={isDark ? "text-white" : "text-gray-700"}
-              />
-            )}
-          </button>
+        <div className="mt-1.5 flex items-center gap-1 pl-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover/msg:opacity-100 max-sm:opacity-100">
+          {imageUrl ? (
+            <ActionButton onClick={() => setZoomSrc(imageUrl)} title="Ampliar">
+              <Maximize2 size={14} />
+            </ActionButton>
+          ) : (
+            <>
+              <ActionButton onClick={handleCopy} title="Copiar" active={copied}>
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </ActionButton>
+              <ActionButton
+                onClick={() => handleGeneratePDF("Resumo da Licao")}
+                title="Baixar PDF"
+                active={pdfSalve}
+              >
+                <FileText size={14} />
+              </ActionButton>
+              <ActionButton
+                onClick={handleSpeak}
+                title={isSpeaking ? (isPaused ? "Retomar" : "Pausar") : "Ouvir"}
+                active={isSpeaking}
+              >
+                {isSpeaking ? (
+                  isPaused ? <Play size={14} /> : <Pause size={14} />
+                ) : (
+                  <Volume2 size={14} />
+                )}
+              </ActionButton>
+            </>
+          )}
+          <span className="ml-1 text-[10px] text-muted-foreground">{formattedTime}</span>
         </div>
       </div>
+
+      {zoomSrc && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="fixed inset-0 top-16 z-[200] flex items-center justify-center overflow-auto bg-black/95 p-3 animate-fadeIn sm:p-5 lg:left-48 lg:top-[46px] xl:left-64"
+            onClick={() => setZoomSrc(null)}
+          >
+            <button
+              onClick={() => setZoomSrc(null)}
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm hover:bg-white/25"
+              aria-label="Fechar"
+            >
+              <X size={18} />
+            </button>
+            <a
+              href={zoomSrc}
+              download={`infografico-${Date.now()}.png`}
+              onClick={(e) => e.stopPropagation()}
+              className="absolute left-3 top-3 z-10 flex h-9 items-center gap-2 rounded-full bg-white/15 px-3.5 text-sm text-white backdrop-blur-sm hover:bg-white/25"
+            >
+              <Download size={15} /> Baixar
+            </a>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={zoomSrc}
+              alt=""
+              className="m-auto max-w-full rounded-lg object-contain shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>,
+          document.body
+        )}
     </div>
   );
 };

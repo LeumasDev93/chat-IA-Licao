@@ -1,9 +1,7 @@
 import { type GetServerSidePropsContext } from "next";
 import { createBrowserClient, createServerClient, serializeCookieHeader } from "@supabase/ssr";
 
-
-export const createSupabaseServerClient = (context: GetServerSidePropsContext | { req: any, res: any }) => {
-  const { req, res } = context;
+export const createSupabaseServerClient = ({req, res}: GetServerSidePropsContext) => {
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

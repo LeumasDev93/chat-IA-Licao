@@ -1,36 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BotResponse {
   text: string;
+  image?: string;
 }
 
-export const generateBotResponse = async (userMessage: string): Promise<BotResponse> => {
-  // const fallbackResponses: { [key: string]: string } = {
-  //   direitos:
-  //     "Os trabalhadores domésticos têm direito a: salário mínimo, 13º salário, férias remuneradas, FGTS, horas extras, adicional noturno e muito mais. Qual direito específico você gostaria de conhecer melhor?",
-  //   registro:
-  //     "Para registrar um trabalhador doméstico, são necessários: RG, CPF, carteira de trabalho, comprovante de residência e uma foto 3x4. Posso te explicar o passo a passo do registro.",
-  //   salário:
-  //     "O salário do trabalhador doméstico não pode ser inferior ao mínimo vigente. Além disso, têm direito a vale-transporte, férias remuneradas e 13º salário.",
-  //   inps:
-  //     "O pagamento das contribuições sociais é obrigatório em Cabo Verde. O empregador deve contribuir com 15% do salário para o INPS (parte patronal), enquanto o trabalhador contribui com 8%.",
-  // };
-
-  // Busca por palavras-chave para resposta hardcoded
-  // const lower = userMessage.toLowerCase();
-  // for (const key in fallbackResponses) {
-  //   if (lower.includes(key)) {
-  //     return { text: fallbackResponses[key] };
-  //   }
-  // }
-
+export const generateBotResponse = async (
+  userMessage: string,
+  language: string = 'pt',
+  isNewConversation: boolean = false,
+  mode: 'text' | 'image' = 'text'
+): Promise<BotResponse> => {
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userMessage }),
+      body: JSON.stringify({ userMessage, language, isNewConversation, mode }),
     });
 
     const data = await res.json();
+
+    if (data.image) {
+      return { text: typeof data.message === "string" ? data.message : "", image: data.image };
+    }
+
+    // Se é uma resposta de fallback, adiciona uma nota informativa
+    if (data.fallback) {
+      return { 
+        text: `${data.message}\n\n💡 *Nota: Esta é uma resposta temporária devido ao alto volume de solicitações. Tente novamente em alguns minutos para obter uma resposta mais detalhada.*` 
+      };
+    }
+
+    // Se é uma resposta do cache, adiciona uma nota sutil
+    if (data.cached) {
+      return { 
+        text: `${data.message}\n\n⚡ *Resposta rápida do cache*` 
+      };
+    }
 
     if (typeof data.message === "string") {
       return { text: data.message };
@@ -51,6 +56,8 @@ export const generateBotResponse = async (userMessage: string): Promise<BotRespo
     return { text: "Desculpe, não entendi sua pergunta." };
   } catch (error) {
     console.error("Erro:", error);
-    return { text: "Desculpe, houve um erro ao tentar responder." };
+    return { 
+      text: "Desculpe, estou enfrentando dificuldades técnicas no momento. Por favor, tente novamente em alguns minutos ou consulte diretamente o material da lição da Escola Sabatina." 
+    };
   }
 };

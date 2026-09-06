@@ -6,30 +6,46 @@ export function useSupabaseUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     const supabase = createComponentClient();
 
     async function fetchUser() {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) {
-        setUser(null);
-      } else {
-        setUser(data.user);
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (!mounted) return;
+        
+        if (error) {
+          setUser(null);
+        } else {
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar usuário:', error);
+        if (mounted) {
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     }
 
     fetchUser();
 
     // opcional: subscribe para mudanças na sessão (login/logout)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
+      if (mounted) {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
     });
 
     return () => {
+      mounted = false;
       listener.subscription.unsubscribe();
     };
-  }, []);
+  }, []); // Sem dependências para executar apenas uma vez
 
   return { user, loading };
 }

@@ -1,90 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
+import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
 
 const TypingIndicator: React.FC = () => {
-  const { theme } = useTheme();
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
-
-    const handleThemeChange = () => {
-      if (theme === "system") {
-        setResolvedTheme(getSystemTheme());
-      }
-    };
-
-    if (theme === "system") {
-      setResolvedTheme(getSystemTheme());
-      mediaQuery.addEventListener("change", handleThemeChange);
-    } else {
-      setResolvedTheme(theme === "dark" ? "dark" : "light");
-    }
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleThemeChange);
-    };
-  }, [theme]);
-
-  const isDark = resolvedTheme === "dark";
+  const { t } = useLanguage();
 
   return (
-    <div className="flex justify-start animate-fadeIn">
-      <div className="flex max-w-[80%] flex-row">
-        <div className="flex-shrink-0 mr-2 self-end">
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              isDark ? "bg-gray-200 text-white" : "bg-white text-gray-800"
-            }`}
-          >
-            <Image
-              src={logo2}
-              alt="User profile"
-              width={20}
-              height={20}
-              className="w-full h-full rounded-full"
-            />
-          </div>
-        </div>
+    <div className="flex animate-fadeIn gap-3">
+      <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand ring-1 ring-border">
+        <Image src={logo2} alt="" width={20} height={20} className="h-4 w-4 object-contain brightness-0 invert" />
+      </div>
 
-        <div>
-          <div
-            className={`px-4 py-3 rounded-2xl rounded-bl-none shadow-sm ${
-              isDark ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"
-            }`}
-          >
-            <div className="flex space-x-1">
-              <div
-                className={`w-2 h-2 rounded-full animate-bounce ${
-                  isDark ? "bg-gray-300" : "bg-gray-500"
-                }`}
-                style={{ animationDelay: "0ms" }}
-              />
-              <div
-                className={`w-2 h-2 rounded-full animate-bounce ${
-                  isDark ? "bg-gray-300" : "bg-gray-500"
-                }`}
-                style={{ animationDelay: "150ms" }}
-              />
-              <div
-                className={`w-2 h-2 rounded-full animate-bounce ${
-                  isDark ? "bg-gray-300" : "bg-gray-500"
-                }`}
-                style={{ animationDelay: "300ms" }}
-              />
-            </div>
-          </div>
-          <div
-            className={`text-xs mt-1 text-left ${
-              isDark ? "text-gray-400" : "text-gray-500"
-            }`}
-          >
-            respondendo...
-          </div>
+      <div className="flex flex-col gap-1">
+        <div className="flex w-fit items-center gap-1.5 rounded-2xl rounded-tl-sm border border-border bg-surface px-4 py-3 shadow-sm">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60"
+              style={{ animationDelay: `${i * 150}ms` }}
+            />
+          ))}
         </div>
+        <span className="pl-1 text-xs text-muted-foreground">{t("typing")}</span>
       </div>
     </div>
   );

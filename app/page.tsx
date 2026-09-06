@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -6,30 +7,36 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Send,
   Mic,
-  X,
   Sparkles,
+  X,
   LockKeyhole,
   Zap,
   History,
+  Image as ImageIcon,
 } from "lucide-react";
 import { MessageType } from "@/types";
 import { generateBotResponse } from "@/utils/botResponses";
 import Message from "@/components/chatbot/Message";
 import TypingIndicator from "@/components/chatbot/TypingIndicator";
-import QuickReply from "@/components/chatbot/QuickReply";
+import ImageLoading from "@/components/chatbot/ImageLoading";
+import AppLoader from "@/components/AppLoader";
 import Image from "next/image";
 import logo1 from "@/assets/Logo1.png";
 
-import MobileTopMenu from "@/components/MobileTopMenu";
 import ChatSidebar from "@/components/Header";
+import LanguageSelect from "@/components/LanguageSelect";
+import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { useChatHistory } from "@/hooks/useChatHistory";
 import { useTheme } from "@/contexts/ThemeContext";
-import MobileConversationMenu from "@/components/MobileTopMenu";
-import { createBrowserClient } from "@supabase/ssr";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
 import { createComponentClient } from "@/models/supabase";
+
 import { FaSpinner } from "react-icons/fa6";
 import Link from "next/link";
+
+import { useNotifications } from "@/hooks/useNotifications";
+import { generateUniqueId } from "@/lib/utils";
 // Tipagens globais para reconhecimento de voz
 declare global {
   interface Window {
@@ -81,8 +88,17 @@ interface SpeechRecognitionAlternative {
 export default function Home() {
   const currentYear = new Date().getFullYear();
   const { theme } = useTheme();
+  const { language, t } = useLanguage();
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
+
+  const {
+    isSubscribed,
+    error,
+    subscribe,
+    showNotification,
+    requestPermission,
+  } = useNotifications();
 
   useEffect(() => {
     // Garante que o tema já foi resolvido no cliente
@@ -111,38 +127,82 @@ export default function Home() {
     };
   }, [theme]);
 
+  const user = useSupabaseUser();
+
   const {
     chatHistory,
     currentChatId,
     addMessage,
     createNewChat,
     deleteChat,
+    updateChatTitle,
     setCurrentChatId,
-  } = useChatHistory();
+    loading: historyLoading,
+    currentMessages,
+    currentChat,
+  } = useChatHistory(user?.user?.id);
 
-  const [messages, setMessages] = useState<MessageType[]>(() => {
-    // Carrega mensagens da conversa atual se existir
-    return chatHistory[currentChatId] || [];
-  });
+  const [messages, setMessages] = useState<MessageType[]>([]);
 
+  // Carrega mensagens quando o chat atual mudar
   useEffect(() => {
-    if (chatHistory[currentChatId]) {
-      setMessages(chatHistory[currentChatId]);
+    if (currentChatId) {
+      setMessages(currentMessages);
     } else {
       setMessages([]);
     }
-  }, [currentChatId, chatHistory]);
+  }, [currentChatId]); // Removido currentMessages para evitar loop
 
-  const user = useSupabaseUser();
+  // Sincroniza mensagens quando currentMessages mudar
+  useEffect(() => {
+    if (currentChatId && currentMessages.length > 0) {
+      setMessages(currentMessages);
+    }
+  }, [currentMessages, currentChatId]);
 
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [imageMode, setImageMode] = useState(false);
+  const [pendingImage, setPendingImage] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
+  const [alertMessage, setAlert] = useState(false);
   const isMobile = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const [alertMessage, setAlert] = useState(false);
+
+  useEffect(() => {
+    const INTERVALO_MS = 6 * 60 * 60 * 1000; // 6 horas
+
+    const solicitarPermissaoENotificar = async () => {
+      if (Notification.permission === "default") {
+        await Notification.requestPermission();
+      }
+
+      if (Notification.permission === "granted") {
+        new Notification("Olá!", {
+          body: "Vamos Estudar Lição Juntos?!",
+        });
+      }
+    };
+
+    // Garantir que só comece após uma interação do usuário
+    const onUserInteraction = () => {
+      solicitarPermissaoENotificar(); // Primeira notificação imediata
+      const interval = setInterval(solicitarPermissaoENotificar, INTERVALO_MS);
+
+      window.removeEventListener("click", onUserInteraction);
+      window.removeEventListener("touchstart", onUserInteraction);
+
+      // Opcional: limpar ao desmontar
+      return () => clearInterval(interval);
+    };
+
+    // Aguarda interação do usuário (obrigatório no Chrome)
+    window.addEventListener("click", onUserInteraction);
+    window.addEventListener("touchstart", onUserInteraction);
+  }, []);
+
   const textFooter =
     resolvedTheme === "dark" ? "text-blue-400" : "text-blue-700";
 
@@ -154,16 +214,16 @@ export default function Home() {
   }, []);
 
   const quickReplies = [
-    "Sábado à tarde",
-    "Domingo",
-    "Segunda-feira",
-    "Terça-feira",
-    "Quarta-feira",
-    "Quinta-feira",
-    "Sexta-feira",
-    "Auxiliar",
-    "Comentário",
-    "Resumo Semanal",
+    t("saturday_afternoon"),
+    t("sunday"),
+    t("monday"),
+    t("tuesday"),
+    t("wednesday"),
+    t("thursday"),
+    t("friday"),
+    t("auxiliary"),
+    t("commentary"),
+    t("weekly_summary"),
   ];
 
   useEffect(() => {
@@ -246,95 +306,65 @@ export default function Home() {
 
     let chatId = currentChatId;
 
-    // Se ainda não houver chat atual, gera um novo automaticamente
+    // Se ainda não houver chat atual, cria um novo
     if (!chatId) {
-      chatId = Date.now().toString();
-      setCurrentChatId(chatId);
-      setMessages([]); // zera mensagens anteriores
+      const newChatId = await createNewChat();
+      chatId = newChatId;
+      setCurrentChatId(newChatId);
+      setMessages([]);
     }
 
     const userMessage: MessageType = {
-      id: Date.now().toString(),
+      id: generateUniqueId("user"),
       text: content,
       sender: "user",
       timestamp: new Date(),
       parts: [{ text: content }],
     };
 
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    // Adiciona mensagem ao estado local imediatamente
+    setMessages((prev) => [...prev, userMessage]);
+    // Também salva via hook
     addMessage(chatId, userMessage);
 
     if (!messageContent) {
       setInputValue("");
+      const ta = document.getElementById("message-input");
+      if (ta) ta.style.height = "auto";
     }
 
+    const wantsImage =
+      imageMode ||
+      /\b(ger[ae]|cri[ae]|desenh[ae]|ilustra)\w*\s+(uma?\s+)?(imagem|ilustra|desenho|figura|arte)/i.test(content);
+    setPendingImage(wantsImage);
     setIsTyping(true);
 
     try {
-      // Verifica se o chat já está salvo no Supabase
-      const { data: existingChat, error: fetchError } = await supabase
-        .from("user_chats")
-        .select("chat_id")
-        .eq("chat_id", chatId)
-        .single();
-
-      if (fetchError && fetchError.code !== "PGRST116") {
-        throw fetchError;
-      }
-
-      if (!existingChat) {
-        // Criar novo chat
-        const { error: insertError } = await supabase
-          .from("user_chats")
-          .insert({
-            user_id: user.user.id,
-            chat_id: chatId,
-            messages: [userMessage],
-            title: content.slice(0, 100),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
-
-        if (insertError) throw insertError;
-      } else {
-        // Atualizar chat existente
-        const { error: updateError } = await supabase
-          .from("user_chats")
-          .update({
-            messages: updatedMessages,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("chat_id", chatId);
-
-        if (updateError) throw updateError;
-      }
-
       // Resposta do bot
-      const botResponse = await generateBotResponse(content);
+      const isNewConversation = messages.length === 0; // Se não há mensagens, é uma nova conversa
+      const botResponse = await generateBotResponse(
+        content,
+        language,
+        isNewConversation,
+        imageMode ? "image" : "text"
+      );
       const botMessage: MessageType = {
-        id: (Date.now() + 1).toString(),
+        id: generateUniqueId("bot"),
         text: botResponse.text,
         sender: "bot",
         timestamp: new Date(),
         parts: [{ text: botResponse.text }],
+        image: botResponse.image,
       };
 
-      const finalMessages = [...updatedMessages, botMessage];
-      setMessages(finalMessages);
+      // Adiciona ao estado local + histórico (a imagem fica em memória; o
+      // localStorage descarta o base64 — ver lib/chatHistory.ts).
+      setMessages((prev) => [...prev, botMessage]);
       addMessage(chatId, botMessage);
-
-      await supabase
-        .from("user_chats")
-        .update({
-          messages: finalMessages,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("chat_id", chatId);
     } catch (error) {
       console.error("Erro ao processar mensagem:", error);
       const errorMessage: MessageType = {
-        id: (Date.now() + 2).toString(),
+        id: generateUniqueId("error"),
         text: "Desculpe, estou tendo dificuldades técnicas. Poderia tentar novamente?",
         sender: "bot",
         timestamp: new Date(),
@@ -345,10 +375,13 @@ export default function Home() {
         ],
       };
 
-      setMessages([...updatedMessages, errorMessage]);
+      // Adiciona mensagem ao estado local imediatamente
+      setMessages((prev) => [...prev, errorMessage]);
+      // Também salva via hook
       addMessage(chatId, errorMessage);
     } finally {
       setIsTyping(false);
+      setPendingImage(false);
     }
   };
 
@@ -385,295 +418,261 @@ export default function Home() {
       handleSendMessage();
     }
   };
-  const handleNewChat = () => {
-    if (!user?.user?.id) return;
+  const handleNewChat = async () => {
+    const newChatId = await createNewChat();
 
-    const newChatId = Date.now().toString();
-    setMessages([]);
-    setCurrentChatId(newChatId);
-  };
+    // Adiciona uma saudação automática para nova conversa
+    const welcomeMessages = {
+      pt: "🌟 Olá! Que alegria ter você aqui! Como posso iluminar seu estudo da Lição da Escola Sabatina hoje?",
+      en: "🌟 Hello! What a joy to have you here! How can I illuminate your Sabbath School lesson study today?",
+      es: "🌟 ¡Hola! ¡Qué alegría tenerte aquí! ¿Cómo puedo iluminar tu estudio de la Lección de la Escuela Sabática hoy?",
+      fr: "🌟 Bonjour! Quelle joie de vous avoir ici! Comment puis-je éclairer votre étude de la Leçon de l'École du Sabbat aujourd'hui?",
+      krioulu:
+        "🌟 Olá, nha fidju/fidja! Que alegria ter bu li! Como posso iluminar bu estudo da Lição da Escola Sabatina hoje?",
+    };
 
-  const supabase = createComponentClient();
-  // Função para carregar os chats do usuário
-  const loadUserChats = async () => {
-    if (!user) return;
+    const welcomeMessage: MessageType = {
+      id: generateUniqueId("welcome"),
+      text:
+        welcomeMessages[language as keyof typeof welcomeMessages] ||
+        welcomeMessages.pt,
+      sender: "bot",
+      timestamp: new Date(),
+      parts: [
+        {
+          text:
+            welcomeMessages[language as keyof typeof welcomeMessages] ||
+            welcomeMessages.pt,
+        },
+      ],
+    };
 
-    const { data, error } = await supabase
-      .from("user_chats")
-      .select("chat_id")
-      .eq("user_id", user?.user?.id)
-      .order("created_at", { ascending: false });
-
-    if (error) console.error("Erro ao carregar chats:", error);
-    return data;
+    // Adiciona mensagem ao estado local imediatamente
+    setMessages([welcomeMessage]);
+    // Também salva via hook
+    addMessage(newChatId, welcomeMessage);
   };
 
   if (!mounted) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <FaSpinner className="animate-spin" />
-      </div>
-    );
+    return <AppLoader />;
   }
 
+  const isEmpty = messages.length === 0;
+  const isLoggedIn = !!user?.user?.id;
+
+  const runPrompt = (text: string) => {
+    if (isLoggedIn) handleSendMessage(undefined, text);
+    else setAlert(true);
+  };
+
   return (
-    <main
-      className={`flex flex-col h-screen   ${
-        resolvedTheme === "dark" ? "dark" : "bg-gray-300"
-      }`}
-    >
-      <div className="flex-grow flex overflow-hidden">
-        {/* Menu Lateral */}
-        <div>
-          <ChatSidebar
-            onNewChat={handleNewChat}
-            chatHistory={chatHistory}
-            currentChatId={currentChatId}
-            setCurrentChatId={setCurrentChatId}
-            deleteChat={deleteChat}
-          />
-        </div>
-        {/* Área de conteúdo principal */}
-        <div className="flex-1 flex flex-col mt-16 lg:mt-0 min-w-0">
-          {/* Área de mensagens com scroll */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="flex flex-col items-center mx-auto w-full max-w-3xl px-4 py-4">
-              {/* Logo e introdução */}
-              <div className="hidden lg:flex items-center justify-center w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20  bg-gray-50 border-b border-gray-200 rounded-full">
-                <Image
-                  src={logo1}
-                  alt="Logo"
-                  width={200}
-                  height={200}
-                  className="w-full h-full"
-                />
-              </div>
+    <main className="flex h-[100dvh] flex-col bg-background text-foreground">
+      <div className="flex flex-grow overflow-hidden">
+        {/* Menu lateral / topo mobile */}
+        <ChatSidebar
+          onNewChat={handleNewChat}
+          chatHistory={chatHistory}
+          currentChatId={currentChatId}
+          setCurrentChatId={setCurrentChatId}
+          deleteChat={deleteChat}
+          updateChatTitle={updateChatTitle}
+        />
 
-              <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold mb-4 flex items-center justify-center gap-2">
-                  <Sparkles className="text-primary" />
-                  Assistente IA - Escola Sabatina
-                </h1>
-                <p className="text-muted-foreground max-w-2xl">
-                  Esta é a Inteligência Artificial oficial da Igreja Adventista
-                  do Sétimo Dia Em Cabo Verde, desenvolvida para apoiar nos
-                  estudos da lição da escola sabatina, inspirar e fortalecer sua
-                  jornada espiritual.
-                </p>
-              </div>
+        {/* Coluna principal */}
+        <div className="mt-16 flex min-w-0 flex-1 flex-col lg:mt-0">
+          {/* Barra superior — só no desktop */}
+          <div className="hidden items-center justify-end gap-2 border-b border-border bg-background/70 px-6 py-2.5 backdrop-blur-md lg:flex">
+            <LanguageSelect variant="bar" />
+            <ThemeSwitch compact />
+          </div>
 
-              {/* Mensagens */}
-              <div className="w-full space-y-3 sm:space-y-4 pb-24">
-                {messages.map((msg) => (
-                  <Message
-                    key={msg.id}
-                    message={{
-                      ...msg,
-                      text: (msg.parts ?? [{ text: msg.text }])
-                        .map((p) => p.text)
-                        .join(" "),
-                    }}
-                  />
-                ))}
-                {isTyping && <TypingIndicator />}
-                <div ref={messagesEndRef} />
-              </div>
+          {/* Mensagens */}
+          <div className="flex-1 overflow-y-auto scroll-smooth">
+            <div className="mx-auto w-full max-w-3xl px-4 pb-6 pt-5 sm:px-6 sm:pt-8">
+              {isEmpty ? (
+                <div className="flex min-h-[calc(100dvh-13rem)] flex-col items-center justify-center py-4 text-center animate-fadeIn">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand shadow-lg shadow-primary/20 sm:h-16 sm:w-16">
+                    <Image src={logo1} alt="" width={64} height={64} className="h-9 w-9 object-contain brightness-0 invert sm:h-10 sm:w-10" />
+                  </div>
+                  <h1 className="font-display text-xl font-semibold leading-tight tracking-tight sm:text-4xl">
+                    <span className="text-gradient">{t("ai_assistant_title")}</span>
+                  </h1>
+                  <p className="mt-2.5 max-w-xs text-[13px] leading-relaxed text-muted-foreground sm:mt-3 sm:max-w-md sm:text-sm">
+                    Estudo da Lição da Escola Sabatina — resumos, explicações e infográficos da semana.
+                  </p>
+
+                  <div className="mt-6 grid w-full max-w-xl grid-cols-2 gap-2 sm:mt-8 sm:gap-2.5">
+                    {quickReplies.slice(0, 6).map((reply, i) => (
+                      <button
+                        key={i}
+                        onClick={() => runPrompt(reply)}
+                        className="group flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-[13px] shadow-sm transition-all hover:border-primary/40 hover:bg-accent active:scale-[0.98] sm:gap-3 sm:px-4 sm:py-3 sm:text-sm"
+                      >
+                        <Sparkles size={14} className="flex-shrink-0 text-primary transition-transform group-hover:scale-110 sm:h-4 sm:w-4" />
+                        <span className="truncate text-foreground">{reply}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6 pb-4">
+                  {messages.map((msg) => (
+                    <Message
+                      key={msg.id}
+                      message={{
+                        ...msg,
+                        text: (msg.parts ?? [{ text: msg.text }]).map((p) => p.text).join(" "),
+                      }}
+                    />
+                  ))}
+                  {isTyping && (pendingImage ? <ImageLoading /> : <TypingIndicator />)}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
             </div>
           </div>
 
-          <div
-            className={`
-    sticky bottom-0
-    ${
-      resolvedTheme === "dark"
-        ? "bg-gray-900 text-gray-400"
-        : "bg-gray-300 text-gray-700"
-    }
-  `}
-          >
-            {alertMessage && (
-              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-fadeIn">
+          {/* Composer */}
+          <div className="border-t border-border bg-background">
+            <div className="mx-auto w-full max-w-3xl px-4 pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-2.5 sm:px-6">
+              <form onSubmit={handleSendMessage}>
                 <div
-                  className={`relative flex flex-col max-w-md w-full p-6 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-[1.01] ${
-                    resolvedTheme === "dark"
-                      ? "bg-gradient-to-br from-gray-800 to-gray-900 border border-purple-500/30 text-white"
-                      : "bg-gradient-to-br from-white to-gray-100 border border-purple-300 text-gray-800"
-                  }`}
+                  className={`flex items-end gap-1.5 rounded-2xl border bg-surface p-2 shadow-lg transition-colors
+                    ${imageMode ? "border-primary/60 ring-1 ring-primary/20" : "border-border focus-within:border-primary/50"}`}
                 >
-                  {/* Botão de fechar */}
                   <button
-                    onClick={() => setAlert(false)}
-                    className={`absolute top-3 right-3 p-1 rounded-full ${
-                      resolvedTheme === "dark"
-                        ? "hover:bg-gray-700"
-                        : "hover:bg-gray-200"
-                    }`}
+                    type="button"
+                    disabled={isTyping}
+                    onClick={() => setImageMode((v) => !v)}
+                    aria-pressed={imageMode}
+                    title={imageMode ? "Modo infográfico ativo" : "Gerar infográfico da lição"}
+                    className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl transition-colors
+                      ${imageMode ? "bg-brand text-white" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}
                   >
-                    <X size={20} />
+                    <ImageIcon size={18} />
                   </button>
 
-                  {/* Conteúdo principal */}
-                  <div className="flex flex-col items-center text-center space-y-4 mt-4">
-                    {/* Ícone animado */}
-                    <div className="relative">
-                      <div
-                        className={`absolute inset-0 rounded-full ${
-                          resolvedTheme === "dark"
-                            ? "bg-purple-500/20 animate-ping"
-                            : "bg-purple-300/40 animate-ping"
-                        }`}
-                      ></div>
-                      <LockKeyhole className="h-12 w-12 text-purple-500" />
-                    </div>
-
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
-                      Acesso Bloqueado
-                    </h3>
-
-                    <p className="text-lg">Inicie sessão para desbloquear:</p>
-
-                    <ul className="space-y-2 text-left w-full pl-6">
-                      <li className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-yellow-400" />
-                        Respostas inteligentes e personalizadas
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <History className="h-4 w-4 text-blue-400" />
-                        Histórico completo das suas conversas
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Zap className="h-4 w-4 text-purple-400" />
-                        Acesso prioritário a novos recursos
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Botão de ação */}
-                  <Link
-                    href="/login"
-                    className={`mt-6 py-3 px-6 rounded-xl font-bold text-center transition-all duration-200 shadow-lg ${
-                      resolvedTheme === "dark"
-                        ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 hover:shadow-purple-500/30"
-                        : "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-400 hover:to-blue-400 hover:shadow-purple-400/40"
-                    }`}
-                  >
-                    Iniciar Sessão Agora
-                  </Link>
-
-                  <p className="text-xs text-center mt-4 opacity-70">
-                    Leva menos de 30 segundos!
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="sticky bottom-0 bg-background border-t p-4">
-              <div className="mx-auto max-w-3xl w-full">
-                {/* Quick replies */}
-                {messages.length === 0 && (
-                  <div className="mb-4">
-                    <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                      {quickReplies.map((reply, index) => (
-                        <QuickReply
-                          key={index}
-                          text={reply}
-                          onClick={() => {
-                            if (user.user) {
-                              handleSendMessage(undefined, reply);
-                            }
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="sm:hidden flex overflow-x-auto space-x-2 pb-2">
-                      {quickReplies.map((reply, index) => (
-                        <div key={index} className="flex-shrink-0">
-                          <QuickReply
-                            text={reply}
-                            onClick={() => {
-                              if (user.user) {
-                                handleSendMessage(undefined, reply);
-                              }
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Input form */}
-                <form onSubmit={handleSendMessage} className="relative">
-                  <div className="relative">
-                    <textarea
-                      id="message-input"
-                      disabled={isTyping}
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          if (user.user) {
-                            handleSendMessage(e);
-                          }
-                        }
-                      }}
-                      placeholder={
-                        user.user
-                          ? "Digite sua mensagem..."
-                          : "Faça login para enviar mensagens..."
+                  <textarea
+                    id="message-input"
+                    disabled={isTyping}
+                    value={inputValue}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                      e.target.style.height = "auto";
+                      e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        if (isLoggedIn) handleSendMessage(e);
+                        else setAlert(true);
                       }
-                      rows={3}
-                      className="w-full px-4 py-3 pr-16 text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-primary shadow-lg resize-none bg-card border border-border"
-                      style={{
-                        minHeight: "50px",
-                        maxHeight: "150px",
-                      }}
-                    />
+                    }}
+                    placeholder={
+                      !isLoggedIn
+                        ? t("login_to_send")
+                        : imageMode
+                        ? "Ex.: infográficos da lição desta semana, ou de quarta-feira…"
+                        : t("type_message")
+                    }
+                    rows={1}
+                    className="max-h-40 min-h-[2.5rem] flex-1 resize-none bg-transparent px-2 py-2 text-[0.95rem] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none"
+                  />
 
-                    {/* Botões */}
-                    <div className="absolute right-2 bottom-2 flex gap-1">
-                      <button
-                        type="button"
-                        disabled={isTyping}
-                        className="p-2 rounded-full hover:bg-muted transition-colors"
-                        aria-label="Gravação de voz"
-                      >
-                        <Mic size={18} />
-                      </button>
+                  {!imageMode && (
+                    <button
+                      type="button"
+                      disabled={isTyping}
+                      onMouseDown={startRecording}
+                      onMouseUp={stopRecording}
+                      onMouseLeave={stopRecording}
+                      onTouchStart={startRecording}
+                      onTouchEnd={stopRecording}
+                      aria-label="Gravar voz"
+                      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl transition-colors
+                        ${isRecording ? "bg-red-500 text-white" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}
+                    >
+                      <Mic size={18} className={isRecording ? "animate-pulse" : ""} />
+                    </button>
+                  )}
 
-                      <button
-                        type="submit"
-                        disabled={inputValue.trim() === "" || isTyping}
-                        className="p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Enviar mensagem"
-                      >
-                        <Send size={18} />
-                      </button>
-                    </div>
-                  </div>
-                </form>
-
-                {/* Footer */}
-                <div className="hidden sm:flex flex-col w-full pb-5 text-center text-[10px] xl:text-xs space-y-2">
-                  <span>
-                    O Assistente IA para estudos da lição pode cometer erros.
-                    Verifique informações importantes.
-                  </span>
-                  <span>
-                    Copyright © {currentYear} | desenvolvido por
-                    <span className={`${textFooter} font-semibold`}>
-                      {" "}
-                      Leumas Andrade
-                    </span>
-                  </span>
+                  <button
+                    type="submit"
+                    disabled={inputValue.trim() === "" || isTyping}
+                    aria-label="Enviar"
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand text-white shadow-sm transition-all hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:active:scale-100"
+                  >
+                    {isTyping ? (
+                      <FaSpinner size={15} className="animate-spin" />
+                    ) : imageMode ? (
+                      <Sparkles size={16} />
+                    ) : (
+                      <Send size={16} />
+                    )}
+                  </button>
                 </div>
-              </div>
+              </form>
+
+              <p className="mt-1.5 text-center text-[10px] text-muted-foreground">
+                {imageMode
+                  ? "Modo infográfico ativo — gera um infográfico completo da lição."
+                  : t("ai_assistant_warning")}
+              </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modal: login necessário */}
+      {alertMessage && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-fadeIn"
+          onClick={() => setAlert(false)}
+        >
+          <div
+            className="relative w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-2xl animate-slideUp"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setAlert(false)}
+              className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand shadow-lg shadow-primary/25">
+                <LockKeyhole className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="mt-4 text-lg font-bold">{t("access_blocked")}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{t("login_to_unlock")}</p>
+
+              <ul className="mt-5 w-full space-y-2.5 text-left text-sm">
+                <li className="flex items-center gap-2.5">
+                  <Sparkles className="h-4 w-4 flex-shrink-0 text-primary" />
+                  <span className="text-muted-foreground">{t("intelligent_responses")}</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <History className="h-4 w-4 flex-shrink-0 text-primary" />
+                  <span className="text-muted-foreground">{t("complete_history")}</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Zap className="h-4 w-4 flex-shrink-0 text-primary" />
+                  <span className="text-muted-foreground">{t("priority_access")}</span>
+                </li>
+              </ul>
+
+              <Link
+                href="/login"
+                className="mt-6 w-full rounded-xl bg-brand py-3 text-center text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-opacity hover:opacity-90"
+              >
+                {t("login_now")}
+              </Link>
+              <p className="mt-3 text-xs text-muted-foreground">{t("takes_less_than_30_seconds")}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

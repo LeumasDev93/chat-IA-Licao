@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Service Worker para gerenciar push notifications
-const CACHE_NAME = 'notifications-cache-v1';
 
 // Instalar service worker
 self.addEventListener('install', (event) => {
