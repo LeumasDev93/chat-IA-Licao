@@ -6,9 +6,10 @@ import type { LessonData } from '@/types';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
 import { persistImage } from '@/lib/imageStorage';
 
-// O roteiro visual gera várias imagens — precisa de mais tempo que o padrão.
+// Geração de infográfico demora (plano + imagem). 60s é o máximo do plano
+// Hobby da Vercel — acima disso o DEPLOY falha (mesmo com o build a passar).
 export const runtime = 'nodejs';
-export const maxDuration = 120;
+export const maxDuration = 60;
 
 // Limite de requisições por IP para o endpoint de chat.
 const CHAT_RATE_LIMIT = Number(process.env.CHAT_RATE_LIMIT ?? 15);
