@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MdOutlineSettings } from "react-icons/md";
 import { IoIosLogIn, IoIosLogOut } from "react-icons/io";
 import { BsSend } from "react-icons/bs";
+import { Bell } from "lucide-react";
 
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
@@ -15,6 +16,8 @@ import LanguageSelect from "./LanguageSelect";
 import { createComponentClient } from "@/models/supabase";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
+import NotificationSettings from "./NotificationSettings";
+import { useNotifications } from "@/hooks/useNotifications";
 
 import { ChatData } from "@/types";
 
@@ -41,6 +44,8 @@ const ChatSidebar = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const notifications = useNotifications();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -453,6 +458,19 @@ const ChatSidebar = ({
               <span className="text-xs xl:text-sm">{t("settings")}</span>
             </button>
             <button
+              onClick={() => {
+                setOpenProfile(false);
+                setShowNotificationSettings(true);
+              }}
+              className={`w-full p-2 rounded flex items-center justify-between gap-2 text-sm ${hoverBg} `}
+            >
+              <Bell className="size-4 xl:size-6" />
+              <span className="text-xs xl:text-sm">Notificações</span>
+              {notifications.isSubscribed && (
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              )}
+            </button>
+            <button
               type="submit"
               className={`w-full p-2 rounded flex items-center justify-between ${hoverBg} gap-2 text-sm`}
             >
@@ -558,6 +576,11 @@ const ChatSidebar = ({
           </div>
         </div>
       )}
+      
+      <NotificationSettings
+        isOpen={showNotificationSettings}
+        onClose={() => setShowNotificationSettings(false)}
+      />
     </>
   );
 };

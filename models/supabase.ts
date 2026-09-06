@@ -8,14 +8,16 @@ export const createSupabaseServerClient = ({req, res}: GetServerSidePropsContext
     {
         cookies: {
             getAll() {
-             return Object.keys(req.cookies).map((name) => ({ name, value: req.cookies[name] || "" }));
+             return Object.keys(req.cookies || {}).map((name) => ({ name, value: req.cookies[name] || "" }));
              },
             setAll(cookiesToSet) {
-               res.setHeader(
+               if (res.setHeader) {
+                 res.setHeader(
                   "Set-Cookie",
                     cookiesToSet.map(({ name, value, options}) => serializeCookieHeader(name, value, options)
                     )
-               );
+                 );
+               }
             }     
         }
     }
