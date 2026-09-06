@@ -4,6 +4,8 @@ export type MessageType = {
   sender: 'user' | 'bot';
   timestamp: Date | string;
   parts: Array<{ text: string }>;
+  /** Data URL (base64) de uma imagem gerada pela IA. */
+  image?: string;
 };
 
 export interface ChatData {

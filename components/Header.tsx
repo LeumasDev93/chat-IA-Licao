@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import { Menu, Plus, Trash, X, Edit } from "lucide-react";
 import { ThemeSwitch } from "./ThemeSwitch";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MdOutlineSettings } from "react-icons/md";
 import { IoIosLogIn, IoIosLogOut } from "react-icons/io";
@@ -13,6 +11,7 @@ import { BsSend } from "react-icons/bs";
 import Image from "next/image";
 import logo2 from "@/assets/Logo2.png";
 import Link from "next/link";
+import LanguageSelect from "./LanguageSelect";
 import { createComponentClient } from "@/models/supabase";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useComponentClient";
@@ -45,33 +44,8 @@ const ChatSidebar = ({
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { theme } = useTheme();
-  const { language, setLanguage, t } = useLanguage();
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+  const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
-
-  // Detecta tema do sistema
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
-
-    const handleThemeChange = () => {
-      if (theme === "system") {
-        setResolvedTheme(getSystemTheme());
-      }
-    };
-
-    if (theme === "system") {
-      setResolvedTheme(getSystemTheme());
-      mediaQuery.addEventListener("change", handleThemeChange);
-    } else {
-      setResolvedTheme(theme === "dark" ? "dark" : "light");
-    }
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleThemeChange);
-    };
-  }, [theme]);
 
   // Detecta tamanho da tela
   useEffect(() => {
@@ -102,17 +76,10 @@ const ChatSidebar = ({
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  const sidebarBg = resolvedTheme === "dark" ? "bg-slate-800" : "bg-gray-200";
-  const hederMobileBg =
-    resolvedTheme === "dark" ? "bg-slate-800 shadow-md" : "bg-white shadow-md";
-  const textColor = resolvedTheme === "dark" ? "text-white" : "text-black";
-  const borderColor =
-    resolvedTheme === "dark" ? "border-gray-700" : "border-gray-300";
-  const hoverBg =
-    resolvedTheme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-400";
-  const activeBg = resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-400";
-  const textFooter =
-    resolvedTheme === "dark" ? "text-blue-400" : "text-blue-700";
+  const sidebarBg = "bg-surface";
+  const textColor = "text-foreground";
+  const borderColor = "border-border";
+  const hoverBg = "hover:bg-accent";
 
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -143,36 +110,19 @@ const ChatSidebar = ({
       >
         <div className="flex flex-col h-full p-2 space-y-4">
           {/* Cabeçalho */}
-          <div className="p-4 flex items-center justify-between">
-            <div className="flex items-center justify-center bg-white rounded-lg">
+          <div className="p-4 flex items-center gap-3">
+            <div className="flex items-center justify-center bg-white rounded-xl p-1 shadow-sm">
               <Image
                 src={logo2}
                 alt="Logo"
                 width={100}
                 height={100}
-                className="w-16 h-16"
+                className="w-11 h-11"
               />
             </div>
-
-            {/* Botão de Trocar Idioma */}
-            <div className="flex items-center gap-2">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as any)}
-                className={`p-2 rounded-lg border transition-all duration-200 text-xs font-medium ${
-                  resolvedTheme === "dark"
-                    ? "bg-gray-700 border-gray-600 hover:bg-gray-600 text-white"
-                    : "bg-white border-gray-300 hover:bg-gray-50 text-gray-700"
-                }`}
-                title={t("language")}
-              >
-                <option value="pt">&#x1F1F5;&#x1F1F9; PT</option>
-                <option value="en">&#x1F1FA;&#x1F1F8; EN</option>
-                <option value="es">&#x1F1EA;&#x1F1F8; ES</option>
-                <option value="fr">&#x1F1EB;&#x1F1F7; FR</option>
-                <option value="krioulu">&#x1F1E8;&#x1F1FB; KR</option>
-              </select>
-            </div>
+            <span className="font-display text-base font-semibold leading-tight text-foreground">
+              Escola Sabatina
+            </span>
           </div>
 
           {/* Botão Nova Conversa */}
@@ -181,134 +131,142 @@ const ChatSidebar = ({
               onNewChat();
               if (isMobile) setSidebarOpen(false);
             }}
-            className={`p-2 rounded-xl border flex items-center gap-2 shadow-xl cursor-pointer
-          ${
-            resolvedTheme === "dark"
-              ? "bg-gray-600"
-              : "bg-gray-100 border-gray-300 hover:bg-gray-600 hover:text-white"
-          }`}
+            className="flex w-full items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:border-primary/40 hover:bg-accent active:scale-[0.99]"
           >
-            <Plus size={18} />
-            <span className="text-sm">{t("new_conversation")}</span>
+            <Plus size={17} className="text-primary" />
+            <span>{t("new_conversation")}</span>
           </button>
 
-          {user?.user?.id && Object.keys(chatHistory).length > 0 ? (
-            <div className="flex-1 overflow-y-auto px-2">
-              <h2 className="font-bold mb-2 text-sm">{t("history")}</h2>
-              <ul className="space-y-2">
-                {Object.entries(chatHistory).map(([chatId, chatData]) => (
-                  <li
-                    key={chatId}
-                    onClick={() => handleChatSelect(chatId)}
-                    className={`p-2 rounded cursor-pointer flex items-center justify-between transition-colors ${
-                      currentChatId === chatId
-                        ? "bg-gray-500"
-                        : "hover:bg-gray-600 hover:text-white rounded-xl"
-                    }`}
-                  >
-                    <span className="truncate text-sm flex-1">
-                      {chatData.title || t("new_conversation")}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const newTitle = prompt(
-                            `${t("edit_title")}:`,
-                            chatData.title || t("new_conversation")
-                          );
-                          if (newTitle !== null && newTitle.trim() !== "") {
-                            updateChatTitle(chatId, newTitle.trim());
-                          }
-                        }}
-                        className="text-blue-500 hover:text-blue-400"
-                        title={t("edit_title")}
-                      >
-                        <Edit size={14} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteChat(e, chatId);
-                        }}
-                        className="text-red-500 hover:text-red-400"
-                        title={t("delete_conversation")}
-                      >
-                        <Trash size={16} />
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+          {user?.user?.id ? (
+            <div className="flex flex-1 flex-col overflow-hidden">
+              <div className="mb-1.5 flex items-center justify-between px-1">
+                <h2 className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t("history")}
+                </h2>
+                {Object.keys(chatHistory).length > 0 && (
+                  <span className="text-[11px] text-muted-foreground">
+                    {Object.keys(chatHistory).length}
+                  </span>
+                )}
+              </div>
+
+              {Object.keys(chatHistory).length === 0 ? (
+                <p className="px-1 py-4 text-xs leading-relaxed text-muted-foreground">
+                  {t("no_conversations") !== "no_conversations"
+                    ? t("no_conversations")
+                    : "As suas conversas aparecerão aqui."}
+                </p>
+              ) : (
+                <ul className="-mx-1 flex-1 space-y-0.5 overflow-y-auto px-1">
+                  {Object.entries(chatHistory)
+                    .sort((a, b) => {
+                      const ta = new Date(a[1].updatedAt || a[1].createdAt || 0).getTime();
+                      const tb = new Date(b[1].updatedAt || b[1].createdAt || 0).getTime();
+                      return tb - ta;
+                    })
+                    .map(([chatId, chatData]) => {
+                      const active = currentChatId === chatId;
+                      return (
+                        <li key={chatId}>
+                          <div
+                            onClick={() => handleChatSelect(chatId)}
+                            className={`group/item flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-colors ${
+                              active
+                                ? "bg-accent font-medium text-foreground"
+                                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                            }`}
+                          >
+                            <span className="flex-1 truncate">
+                              {chatData.title || t("new_conversation")}
+                            </span>
+                            <div
+                              className={`flex items-center gap-0.5 transition-opacity ${
+                                active ? "opacity-100" : "opacity-0 group-hover/item:opacity-100"
+                              }`}
+                            >
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const newTitle = prompt(
+                                    `${t("edit_title")}:`,
+                                    chatData.title || t("new_conversation")
+                                  );
+                                  if (newTitle !== null && newTitle.trim() !== "") {
+                                    updateChatTitle(chatId, newTitle.trim());
+                                  }
+                                }}
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface hover:text-foreground"
+                                title={t("edit_title")}
+                              >
+                                <Edit size={13} />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteChat(e, chatId);
+                                }}
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface hover:text-red-500"
+                                title={t("delete_conversation")}
+                              >
+                                <Trash size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
+                </ul>
+              )}
             </div>
           ) : (
-            <div className="flex-1 overflow-y-auto px-2"></div>
+            <div className="flex-1" />
           )}
 
           {/* Rodapé: Login (se não logado) + Configurações */}
-          <div className={`p-4 border-t ${borderColor}`}>
+          <div className="mt-auto border-t border-border pt-3">
             {!user?.user?.id && (
               <Link
                 href="/login"
-                className={`w-full p-2 rounded flex items-center border justify-center gap-2 text-sm ${hoverBg} ${textColor} ${borderColor}`}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent"
               >
-                <IoIosLogIn className="size-4 xl:size-6" />
-                <span className="text-sm xl:text-lg">{t("login")}</span>
+                <IoIosLogIn className="size-4" />
+                <span>{t("login")}</span>
               </Link>
             )}
             {user?.user?.id && (
               <div
-                className={`relative cursor-pointer flex items-center p-2 rounded-xl ${hoverBg} ${textColor}`}
+                className="relative flex cursor-pointer items-center gap-2.5 rounded-xl p-2 text-foreground transition-colors hover:bg-accent"
                 onClick={() => setOpenProfile(true)}
               >
                 {user?.user?.user_metadata?.avatar_url ? (
-                  <div
-                    className={`w-10 h-10 rounded-full overflow-hidden border-2 ${borderColor} `}
-                  >
+                  <div className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full ring-1 ring-border">
                     <Image
                       src={user.user.user_metadata.avatar_url}
-                      alt={`Avatar de ${
-                        user.user.user_metadata.full_name || "usuário"
-                      }`}
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
+                      alt={`Avatar de ${user.user.user_metadata.full_name || "usuário"}`}
+                      width={36}
+                      height={36}
+                      className="h-full w-full object-cover"
                       onError={(e) => {
-                        // Fallback em caso de erro no carregamento da imagem
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
                         target.nextElementSibling?.classList.remove("hidden");
                       }}
                     />
-                    {/* Fallback visual - só aparece se a imagem falhar */}
-                    <div
-                      className={`hidden w-full h-full  items-center justify-center font-bold text-xl ${
-                        resolvedTheme === "dark"
-                          ? "bg-gray-600 text-white"
-                          : "bg-gray-100 text-black"
-                      }`}
-                    >
-                      {user.user.user_metadata.full_name
-                        ?.charAt(0)
-                        .toUpperCase() || "U"}
+                    <div className="hidden h-full w-full items-center justify-center bg-brand text-sm font-bold text-white">
+                      {user.user.user_metadata.full_name?.charAt(0).toUpperCase() || "U"}
                     </div>
                   </div>
                 ) : (
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ${
-                      resolvedTheme === "dark"
-                        ? "bg-gray-600 text-white"
-                        : "bg-gray-100 text-black border-2 border-gray-300"
-                    }`}
-                  >
-                    {user.user.user_metadata.full_name
-                      ?.charAt(0)
-                      .toUpperCase() || "U"}
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+                    {user.user.user_metadata.full_name?.charAt(0).toUpperCase() || "U"}
                   </div>
                 )}
-                <span className="ml-2 text-xs xl:text-sm ">
-                  {t("my_account")}
-                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium leading-tight">
+                    {user.user.user_metadata.full_name || t("my_account")}
+                  </p>
+                  <p className="truncate text-[11px] text-muted-foreground">{t("my_account")}</p>
+                </div>
               </div>
             )}
           </div>
@@ -319,69 +277,45 @@ const ChatSidebar = ({
 
   // Componente MobileSidebar
   const MobileSidebar = () => (
-    <div className={`fixed top-0 left-0 w-full h-16 z-50 ${hederMobileBg}`}>
-      <div className="flex items-center justify-between h-full px-4">
+    <>
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-surface/90 px-3 backdrop-blur-md">
         <button
           onClick={toggleSidebar}
-          className={`p-2 rounded-lg border ${borderColor} ${sidebarBg} ${textColor} shadow-md`}
+          aria-label={sidebarOpen ? "Fechar menu" : "Abrir menu"}
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground shadow-sm active:scale-95"
         >
-          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-        <div className="flex items-center justify-end h-full">
-          <div className="flex items-center gap-2">
-            {/* Botão de Trocar Idioma */}
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as any)}
-              className={`p-2 rounded-lg border transition-all duration-200 text-xs font-medium ${
-                resolvedTheme === "dark"
-                  ? "bg-gray-700 border-gray-600 hover:bg-gray-600 text-white"
-                  : "bg-white border-gray-300 hover:bg-gray-50 text-gray-700"
-              }`}
-              title={t("language")}
-            >
-              <option value="pt">&#x1F1F5;&#x1F1F9; PT</option>
-              <option value="en">&#x1F1FA;&#x1F1F8; EN</option>
-              <option value="es">&#x1F1EA;&#x1F1F8; ES</option>
-              <option value="fr">&#x1F1EB;&#x1F1F7; FR</option>
-              <option value="krioulu">&#x1F1E8;&#x1F1FB; KR</option>
-            </select>
-
-            <div className="flex items-center justify-center bg-gray-200 shadow-md rounded-lg">
-              <Image
-                src={logo2}
-                alt="Logo"
-                width={100}
-                height={100}
-                className="w-10 h-10"
-              />
-            </div>
+        <div className="flex items-center gap-2">
+          <LanguageSelect variant="bar" />
+          <ThemeSwitch compact />
+          <div className="flex items-center justify-center rounded-xl bg-white p-0.5 shadow-sm">
+            <Image src={logo2} alt="Logo" width={100} height={100} className="h-8 w-8" />
           </div>
         </div>
+      </header>
 
-        {sidebarOpen && (
-          <>
-            <div
-              className="fixed inset-0 bg-black/50 z-40"
-              onClick={() => setSidebarOpen(false)}
-            />
-            <aside
-              className={`fixed top-0 left-0 h-screen w-64 z-50 shadow-lg flex flex-col ${sidebarBg} ${textColor} transform transition-transform duration-300 ${
-                sidebarOpen ? "translate-x-0" : "-translate-x-full"
-              }`}
-            >
-              <div className="flex flex-col h-full p-2">
+      {/* Backdrop */}
+      <div
+        onClick={() => setSidebarOpen(false)}
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${
+          sidebarOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      {/* Drawer */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-[82vw] max-w-xs flex-col bg-surface text-foreground shadow-2xl transition-transform duration-300 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+              <div className="flex flex-col h-full p-3 pt-4">
                 {/* Cabeçalho */}
-                <div className="p-4 flex items-center justify-between">
-                  <div className="flex items-center justify-center bg-white rounded-lg">
-                    <Image
-                      src={logo2}
-                      alt="Logo"
-                      width={100}
-                      height={100}
-                      className="w-10 h-10"
-                    />
+                <div className="mb-3 flex items-center gap-3">
+                  <div className="flex items-center justify-center rounded-xl bg-white p-1 shadow-sm">
+                    <Image src={logo2} alt="Logo" width={100} height={100} className="h-10 w-10" />
                   </div>
+                  <span className="font-display text-base font-semibold">Escola Sabatina</span>
                 </div>
 
                 {/* Botão Nova Conversa */}
@@ -390,110 +324,109 @@ const ChatSidebar = ({
                     onNewChat();
                     setSidebarOpen(false);
                   }}
-                  className={`p-2 rounded-xl cursor-pointer flex border items-center gap-2 shadow-xl mb-2 ${
-                    resolvedTheme === "dark"
-                      ? "bg-gray-600"
-                      : "bg-gray-200 border-gray-400 hover:bg-gray-400 hover:text-white"
-                  }`}
+                  className="mb-2 flex w-full items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent active:scale-[0.99]"
                 >
-                  <Plus size={18} />
-                  <span className="text-sm">{t("new_conversation")}</span>
+                  <Plus size={17} className="text-primary" />
+                  <span>{t("new_conversation")}</span>
                 </button>
 
                 {/* Histórico */}
-                {Object.keys(chatHistory).length > 0 ? (
-                  <div className="flex-1 overflow-y-auto px-2">
-                    <h2 className="font-bold mb-2 text-sm">{t("history")}</h2>
-                    <ul className="space-y-2">
-                      {Object.entries(chatHistory).map(([chatId, chatData]) => (
-                        <li
-                          key={chatId}
-                          onClick={() => handleChatSelect(chatId)}
-                          className={`p-2 rounded-xl cursor-pointer flex items-center justify-between transition-colors ${
-                            currentChatId === chatId ? activeBg : hoverBg
-                          }`}
-                        >
-                          <span className="truncate text-sm flex-1">
-                            {chatData.title || "Nova conversa"}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const newTitle = prompt(
-                                  "Editar título:",
-                                  chatData.title || "Nova conversa"
-                                );
-                                if (
-                                  newTitle !== null &&
-                                  newTitle.trim() !== ""
-                                ) {
-                                  updateChatTitle(chatId, newTitle.trim());
-                                }
-                              }}
-                              className="text-blue-500 hover:text-blue-400"
-                              title="Editar título"
-                            >
-                              <Edit size={14} />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteChat(e, chatId);
-                              }}
-                              className="text-red-400 hover:text-red-300"
-                              title="Excluir chat"
-                            >
-                              <Trash size={16} />
-                            </button>
-                          </div>
-                        </li>
-                      ))}
+                <div className="flex flex-1 flex-col overflow-hidden">
+                  <h2 className="mb-1.5 px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t("history")}
+                  </h2>
+                  {Object.keys(chatHistory).length === 0 ? (
+                    <p className="px-1 py-4 text-xs text-muted-foreground">
+                      As suas conversas aparecerão aqui.
+                    </p>
+                  ) : (
+                    <ul className="-mx-1 flex-1 space-y-0.5 overflow-y-auto px-1">
+                      {Object.entries(chatHistory)
+                        .sort((a, b) => {
+                          const ta = new Date(a[1].updatedAt || a[1].createdAt || 0).getTime();
+                          const tb = new Date(b[1].updatedAt || b[1].createdAt || 0).getTime();
+                          return tb - ta;
+                        })
+                        .map(([chatId, chatData]) => {
+                          const active = currentChatId === chatId;
+                          return (
+                            <li key={chatId}>
+                              <div
+                                onClick={() => handleChatSelect(chatId)}
+                                className={`group/item flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-colors ${
+                                  active
+                                    ? "bg-accent font-medium text-foreground"
+                                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                }`}
+                              >
+                                <span className="flex-1 truncate">
+                                  {chatData.title || t("new_conversation")}
+                                </span>
+                                <div className="flex items-center gap-0.5">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const newTitle = prompt(
+                                        `${t("edit_title")}:`,
+                                        chatData.title || t("new_conversation")
+                                      );
+                                      if (newTitle !== null && newTitle.trim() !== "") {
+                                        updateChatTitle(chatId, newTitle.trim());
+                                      }
+                                    }}
+                                    className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface hover:text-foreground"
+                                    title={t("edit_title")}
+                                  >
+                                    <Edit size={13} />
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteChat(e, chatId);
+                                    }}
+                                    className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-surface hover:text-red-500"
+                                    title={t("delete_conversation")}
+                                  >
+                                    <Trash size={13} />
+                                  </button>
+                                </div>
+                              </div>
+                            </li>
+                          );
+                        })}
                     </ul>
-                  </div>
-                ) : (
-                  <div className="flex-1 overflow-y-auto px-2"></div>
-                )}
+                  )}
+                </div>
 
                 {/* Rodapé fixo */}
-                <div className={`p-4 border-t ${borderColor}`}>
+                <div className="mt-auto border-t border-border pt-3">
                   <div
-                    className="relative cursor-pointer flex items-center p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-500"
+                    className="flex cursor-pointer items-center gap-2.5 rounded-xl p-2 text-foreground transition-colors hover:bg-accent"
                     onClick={() => setOpenProfile(true)}
                   >
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl bg-gray-600 text-white">
-                      <span>⚙️</span>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent">
+                      <MdOutlineSettings className="size-4 text-muted-foreground" />
                     </div>
-                    <span className="ml-2 text-xs xl:text-sm">
-                      Configurações
-                    </span>
+                    <span className="text-sm">{t("settings")}</span>
                   </div>
                 </div>
 
-                <div className="text-[10px] text-center xl:text-xs mt-2">
-                  <span>{t("ai_assistant_warning")}</span>
+                <p className="mt-2 text-center text-[10px] leading-relaxed text-muted-foreground">
+                  {t("ai_assistant_warning")}
                   <br />
-                  <span>
-                    {t("copyright")} {currentYear} | {t("developed_by")}
-                    <span className={`${textFooter} font-semibold`}>
-                      {" "}
-                      Leumas Andrade
-                    </span>
-                  </span>
-                </div>
+                  {t("copyright")} {currentYear} · Leumas Andrade
+                </p>
               </div>
-            </aside>
-          </>
-        )}
-      </div>
-    </div>
+      </aside>
+    </>
   );
 
   return (
     <>
       {isMobile ? <MobileSidebar /> : <DesktopSidebar />}
+      {/* Espaçador: reserva a largura do sidebar fixo (deve casar com md:w-48 xl:w-64) */}
       <div
-        className={isMobile ? "" : "ml-64 transition-all duration-300"}
+        className={isMobile ? "" : "flex-shrink-0 w-48 xl:w-64 transition-all duration-300"}
       ></div>
 
       {openProfile && (
@@ -592,17 +525,7 @@ const ChatSidebar = ({
                     </div>
                     <div>
                       <h4 className="font-medium mb-2">{t("language")}</h4>
-                      <select
-                        value={language}
-                        onChange={(e) => setLanguage(e.target.value as any)}
-                        className={`w-full p-2 border rounded ${sidebarBg} ${borderColor}`}
-                      >
-                        <option value="pt">{t("portuguese")}</option>
-                        <option value="en">{t("english")}</option>
-                        <option value="es">{t("spanish")}</option>
-                        <option value="fr">{t("french")}</option>
-                        <option value="krioulu">{t("krioulu")}</option>
-                      </select>
+                      <LanguageSelect variant="block" />
                     </div>
                   </div>
                 )}

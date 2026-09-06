@@ -104,12 +104,13 @@ export default function Login() {
   };
 
   const handleLoginWithGoogle = async () => {
-    const SITE_URL = "https://www.iasdlicao.cv"; // SEM barra no final
+    // Usa a origem atual (localhost em dev, domínio real em produção).
+    const redirectTo = `${window.location.origin}/auth/callback`;
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${SITE_URL}/auth/callback`,
+        redirectTo,
         queryParams: {
           prompt: "select_account", // Força a seleção de conta
         },

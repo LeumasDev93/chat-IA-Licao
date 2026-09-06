@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { Inter } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import "./globals.css";
@@ -10,7 +9,13 @@ import { Suspense, useEffect } from "react";
 import AnalyticsHandler from "@/components/AnalyticsHandler";
 import { urlBase64ToUint8Array } from "@/utils/push";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
@@ -19,39 +24,35 @@ export default function RootLayout({
 }) {
   useEffect(() => {
     async function initPush() {
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!vapidKey) return;
+
       try {
-        const permission = await Notification.requestPermission();
-        if (permission !== "granted") {
-          //console.warn("Permissão de notificação negada");
-          return;
+        // Service worker que trata os eventos `push` e `notificationclick`.
+        await navigator.serviceWorker.register("/sw-notifications.js");
+        const registration = await navigator.serviceWorker.ready;
+
+        if (Notification.permission === "denied") return;
+        if (Notification.permission === "default") {
+          const permission = await Notification.requestPermission();
+          if (permission !== "granted") return;
         }
 
-        const swReg = await navigator.serviceWorker.register("/sw.js");
-        const readyReg = await navigator.serviceWorker.ready;
+        const existing = await registration.pushManager.getSubscription();
+        const subscription =
+          existing ??
+          (await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidKey),
+          }));
 
-        console.log("SW pronto:", readyReg);
-
-        const subscription = await swReg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(
-            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-          ),
-        });
-
-        //console.log("Inscrição criada:", subscription);
-
-        const res = await fetch("/api/notifications/subscribe", {
+        await fetch("/api/notifications/subscribe", {
           method: "POST",
-          body: JSON.stringify(subscription),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(subscription.toJSON()),
         });
-
-        const json = await res.json();
-        console.log("Resposta do backend:", json);
-      } catch (error) {
-        // console.error("Erro no push:", error);
+      } catch {
+        // Silencioso: push é um recurso opcional.
       }
     }
 
@@ -61,7 +62,11 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${fraunces.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <meta charSet="utf-8" />
         <meta

@@ -1,48 +1,36 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { forceUpdateLesson } from '../scrape-lesson';
+import { isAuthorizedCronRequest } from '@/lib/cron-auth';
 
-export async function POST() {
+async function handle(req: NextRequest) {
+  if (!isAuthorizedCronRequest(req)) {
+    return NextResponse.json(
+      { success: false, message: 'Não autorizado' },
+      { status: 401 }
+    );
+  }
+
   try {
-    console.log('🔄 Iniciando atualização forçada da lição...');
-    
     const lessonData = await forceUpdateLesson();
-    
+
     return NextResponse.json({
       success: true,
       message: 'Lição atualizada com sucesso',
-      data: lessonData
+      data: lessonData,
     });
-    
   } catch (error) {
     console.error('Erro ao atualizar lição:', error);
-    
-    return NextResponse.json({
-      success: false,
-      message: 'Erro ao atualizar lição',
-      error: error instanceof Error ? error.message : 'Erro desconhecido'
-    }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Erro ao atualizar lição',
+        error: error instanceof Error ? error.message : 'Erro desconhecido',
+      },
+      { status: 500 }
+    );
   }
 }
 
-export async function GET() {
-  try {
-    console.log('🔄 Iniciando atualização forçada da lição via GET...');
-    
-    const lessonData = await forceUpdateLesson();
-    
-    return NextResponse.json({
-      success: true,
-      message: 'Lição atualizada com sucesso',
-      data: lessonData
-    });
-    
-  } catch (error) {
-    console.error('Erro ao atualizar lição:', error);
-    
-    return NextResponse.json({
-      success: false,
-      message: 'Erro ao atualizar lição',
-      error: error instanceof Error ? error.message : 'Erro desconhecido'
-    }, { status: 500 });
-  }
-}
+export const POST = handle;
+export const GET = handle;

@@ -99,8 +99,9 @@ class NotificationManager {
         try {
             const subscription = await this.swRegistration.pushManager.getSubscription();
             if (subscription) {
+                const endpoint = subscription.endpoint;
                 await subscription.unsubscribe();
-                await this.removeSubscriptionFromServer();
+                await this.removeSubscriptionFromServer(endpoint);
                 return true;
             }
             return false;
@@ -170,13 +171,14 @@ class NotificationManager {
         } catch { }
     }
 
-    private async removeSubscriptionFromServer(): Promise<void> {
+    private async removeSubscriptionFromServer(endpoint?: string): Promise<void> {
         try {
             await fetch('/api/notifications/unsubscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ endpoint }),
             });
         } catch { }
     }

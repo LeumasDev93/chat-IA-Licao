@@ -1,17 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BotResponse {
   text: string;
+  image?: string;
 }
 
-export const generateBotResponse = async (userMessage: string, language: string = 'pt', isNewConversation: boolean = false): Promise<BotResponse> => {
+export const generateBotResponse = async (
+  userMessage: string,
+  language: string = 'pt',
+  isNewConversation: boolean = false,
+  mode: 'text' | 'image' = 'text'
+): Promise<BotResponse> => {
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userMessage, language, isNewConversation }),
+      body: JSON.stringify({ userMessage, language, isNewConversation, mode }),
     });
 
     const data = await res.json();
+
+    if (data.image) {
+      return { text: typeof data.message === "string" ? data.message : "", image: data.image };
+    }
 
     // Se é uma resposta de fallback, adiciona uma nota informativa
     if (data.fallback) {

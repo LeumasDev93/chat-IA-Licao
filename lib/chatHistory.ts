@@ -173,7 +173,23 @@ export class ChatHistoryService {
         // Verifica se a mensagem já existe para evitar duplicação
         const messageExists = history[chatId].messages.some((msg: MessageType) => msg.id === message.id);
         if (!messageExists) {
-          history[chatId].messages.push(message);
+          // Não guardar base64 (~1-2 MB cada) no localStorage — estoura a quota.
+          // URLs http (Supabase Storage) podem ficar.
+          let toStore: MessageType = message;
+          if (message.image?.startsWith("data:")) {
+            toStore = {
+              ...toStore,
+              image: undefined,
+              text: message.text?.trim() || "🖼️ Imagem gerada (abra a conversa para ver)",
+            };
+          }
+          if (toStore.text?.includes("(data:image")) {
+            toStore = {
+              ...toStore,
+              text: toStore.text.replace(/!\[[^\]]*\]\(data:image[^)]+\)/g, "*(imagem não salva)*"),
+            };
+          }
+          history[chatId].messages.push(toStore);
           
           // Atualiza o título se for a primeira mensagem do usuário
           if (message.sender === 'user' && (!history[chatId].title || history[chatId].title === 'Nova conversa' || history[chatId].title === 'New conversation')) {

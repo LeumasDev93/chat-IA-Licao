@@ -1,109 +1,6 @@
 import { supabaseAdmin, isSupabaseConfigured } from '../../../lib/supabase';
-import { LessonData } from '../cron/route';
-
-// Função para buscar o conteúdo real da lição
-async function fetchLessonContent(lessonLink: string): Promise<string> {
-  try {
-    console.log('Buscando conteúdo da lição:', lessonLink);
-    
-    const response = await fetch(lessonLink, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao acessar lição: ${response.status} ${response.statusText}`);
-    }
-
-    const html = await response.text();
-    console.log('Conteúdo da lição obtido, tamanho:', html.length);
-
-    // Extrair texto limpo do HTML (remover tags HTML)
-    const cleanText = html
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // Remove scripts
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '') // Remove CSS
-      .replace(/<[^>]+>/g, ' ') // Remove tags HTML
-      .replace(/\s+/g, ' ') // Normaliza espaços
-      .replace(/&nbsp;/g, ' ') // Remove entidades HTML
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .trim();
-
-    // Limitar o tamanho do conteúdo para não exceder limites da API
-    const maxLength = 15000; // Aumentado para capturar mais conteúdo
-    const truncatedText = cleanText.length > maxLength 
-      ? cleanText.substring(0, maxLength) + '... [conteúdo truncado]'
-      : cleanText;
-
-    console.log('Conteúdo da lição processado, tamanho final:', truncatedText.length);
-    return truncatedText;
-
-  } catch (error) {
-    console.error('Erro ao buscar conteúdo da lição:', error);
-    return 'Conteúdo da lição não disponível no momento.';
-  }
-}
-
-// Função para detectar a lição atual da semana
-async function detectCurrentLesson(): Promise<{ title: string; link: string; verse: string; period: string } | null> {
-  try {
-    console.log('Detectando lição atual da semana...');
-    
-    // Usar o link específico fornecido pelo usuário
-    const specificLessonLink = 'https://mais.cpb.com.br/licao/vivendo-a-lei-3o-trimestre-2025/';
-    
-    // Buscar o conteúdo da página para extrair informações
-    const response = await fetch(specificLessonLink, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao acessar site: ${response.status} ${response.statusText}`);
-    }
-
-    const html = await response.text();
-    console.log('HTML da página da lição obtido, tamanho:', html.length);
-
-    // Extrair título da lição do HTML
-    const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-    const title = titleMatch ? titleMatch[1].trim() : 'Vivendo a Lei - 3º Trimestre 2025';
-
-    // Extrair período da lição (se disponível)
-    const periodMatch = html.match(/(\d+\s+a\s+\d+\s+de\s+\w+)/i);
-    const period = periodMatch ? periodMatch[1] : '23 a 29 de agosto';
-
-    // Extrair verso para memorizar (se disponível)
-    const verseMatch = html.match(/Verso para memorizar[^:]*:\s*"([^"]+)"/i);
-    const verse = verseMatch ? verseMatch[1] : 'Êxodo 20:22, 23';
-
-    console.log('Lição detectada:', title);
-    return {
-      title: title,
-      link: specificLessonLink,
-      verse: verse,
-      period: period
-    };
-    
-  } catch (error) {
-    console.error('Erro ao detectar lição atual:', error);
-    return null;
-  }
-}
+import type { LessonData } from '@/types';
+import { detectCurrentLesson, fetchLessonContent } from '@/lib/lessons';
 
 // Função para salvar o link e conteúdo da lição no Supabase
 async function saveLessonToSupabase(title: string, lessonLink: string, lessonContent: string): Promise<boolean> {
@@ -243,8 +140,13 @@ export async function getCachedLesson(): Promise<LessonData> {
     const lessonData = await getLessonFromSupabase();
     
     if (lessonData && lessonData.lessonLink) {
-      // Se já temos conteúdo no Supabase, usar ele
-      if (lessonData.lessonContent && lessonData.lessonContent.trim()) {
+      // Considera o conteúdo em cache "bom" só se tiver tamanho razoável.
+      // Conteúdo curto costuma ser de uma raspagem antiga/truncada — nesse caso
+      // buscamos de novo (a raspagem nova limpa o menu e pega a lição inteira).
+      const cached = lessonData.lessonContent?.trim() ?? '';
+      const cachedIsGood = cached.length >= 12000;
+
+      if (cachedIsGood) {
         console.log('Usando conteúdo da lição armazenado no Supabase');
         return {
           title: lessonData.title,

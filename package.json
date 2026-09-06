@@ -10,9 +10,11 @@
     "test-supabase": "node scripts/test-supabase-connection.js",
     "check-setup": "node scripts/check-setup.js",
     "test-update": "node scripts/test-update.js",
-    "test-new-scraping": "node scripts/test-new-scraping.js"
+    "test-new-scraping": "node scripts/test-new-scraping.js",
+    "db:migrate": "node scripts/db-migrate.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.124.0",
     "@google/generative-ai": "^0.24.1",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.0",
@@ -40,6 +42,7 @@
     "@types/web-push": "^3.6.4",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
+    "pg": "^8.23.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

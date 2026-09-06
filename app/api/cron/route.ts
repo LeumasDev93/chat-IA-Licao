@@ -1,155 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin, isSupabaseConfigured } from '../../../lib/supabase';
-
-export interface LessonData {
-  title: string;
-  days: string[];
-  verses: string[];
-  lessonLink: string;
-  lessonContent?: string; // Conteúdo real da lição para a IA usar
-  lastUpdated: string;
-  expiresAt: string;
-}
-
-// Função para detectar a lição atual da semana
-async function detectCurrentLesson(): Promise<{ title: string; link: string; verse: string; period: string } | null> {
-  try {
-    console.log('Detectando lição atual da semana...');
-    
-    const response = await fetch('https://mais.cpb.com.br/licao-adultos/', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao acessar site: ${response.status} ${response.statusText}`);
-    }
-
-    const html = await response.text();
-    console.log('HTML da página principal obtido, tamanho:', html.length);
-
-    // Procurar pelo JSON das lições no HTML
-    const jsonMatch = html.match(/\[{.*"img":.*"title":.*"verso":.*"periodo":.*"link":.*}\]/);
-    
-    if (jsonMatch) {
-      try {
-        const lessonsData = JSON.parse(jsonMatch[0]);
-        console.log(`Encontradas ${lessonsData.length} lições no JSON`);
-        
-        // Encontrar a lição atual baseada na data
-        const currentDate = new Date();
-        const currentLesson = lessonsData.find((lesson: { periodo?: string; title: string; link: string; verso: string }) => {
-          if (!lesson.periodo) return false;
-          
-          // Extrair datas do período (ex: "16 a 22 de agosto")
-          const periodMatch = lesson.periodo.match(/(\d+)\s+a\s+(\d+)\s+de\s+(\w+)/);
-          if (!periodMatch) return false;
-          
-          const startDay = parseInt(periodMatch[1]);
-          const endDay = parseInt(periodMatch[2]);
-          const month = periodMatch[3];
-          
-          // Mapear mês para número
-          const monthMap: { [key: string]: number } = {
-            'janeiro': 0, 'fevereiro': 1, 'março': 2, 'abril': 3, 'maio': 4, 'junho': 5,
-            'julho': 6, 'agosto': 7, 'setembro': 8, 'outubro': 9, 'novembro': 10, 'dezembro': 11
-          };
-          
-          const monthNumber = monthMap[month.toLowerCase()];
-          if (monthNumber === undefined) return false;
-          
-          const year = currentDate.getFullYear();
-          const startDate = new Date(year, monthNumber, startDay);
-          const endDate = new Date(year, monthNumber, endDay);
-          
-          return currentDate >= startDate && currentDate <= endDate;
-        });
-        
-        if (currentLesson) {
-          console.log('Lição atual detectada:', currentLesson.title);
-          return {
-            title: currentLesson.title,
-            link: currentLesson.link,
-            verse: currentLesson.verso,
-            period: currentLesson.periodo
-          };
-        } else {
-          console.log('Nenhuma lição encontrada para a semana atual, usando a primeira disponível');
-          return {
-            title: lessonsData[0].title,
-            link: lessonsData[0].link,
-            verse: lessonsData[0].verso,
-            period: lessonsData[0].periodo
-          };
-        }
-      } catch (parseError) {
-        console.error('Erro ao fazer parse do JSON:', parseError);
-      }
-    }
-    
-    return null;
-  } catch (error) {
-    console.error('Erro ao detectar lição atual:', error);
-    return null;
-  }
-}
-
-// Função para buscar o conteúdo real da lição
-async function fetchLessonContent(lessonLink: string): Promise<string> {
-  try {
-    console.log('Buscando conteúdo da lição:', lessonLink);
-    
-    const response = await fetch(lessonLink, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao acessar lição: ${response.status} ${response.statusText}`);
-    }
-
-    const html = await response.text();
-    console.log('Conteúdo da lição obtido, tamanho:', html.length);
-
-    // Extrair texto limpo do HTML (remover tags HTML)
-    const cleanText = html
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // Remove scripts
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '') // Remove CSS
-      .replace(/<[^>]+>/g, ' ') // Remove tags HTML
-      .replace(/\s+/g, ' ') // Normaliza espaços
-      .replace(/&nbsp;/g, ' ') // Remove entidades HTML
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .trim();
-
-    // Limitar o tamanho do conteúdo para não exceder limites da API
-    const maxLength = 8000; // Limite conservador para o Gemini
-    const truncatedText = cleanText.length > maxLength 
-      ? cleanText.substring(0, maxLength) + '... [conteúdo truncado]'
-      : cleanText;
-
-    console.log('Conteúdo da lição processado, tamanho final:', truncatedText.length);
-    return truncatedText;
-
-  } catch (error) {
-    console.error('Erro ao buscar conteúdo da lição:', error);
-    return 'Conteúdo da lição não disponível no momento.';
-  }
-}
+import { detectCurrentLesson, fetchLessonContent } from '@/lib/lessons';
+import { isAuthorizedCronRequest } from '@/lib/cron-auth';
 
 // Função para salvar o link e conteúdo da lição no Supabase
 async function saveLessonToSupabase(title: string, lessonLink: string, lessonContent: string): Promise<boolean> {
@@ -217,9 +69,13 @@ async function saveLessonToSupabase(title: string, lessonLink: string, lessonCon
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!isAuthorizedCronRequest(req)) {
+    return NextResponse.json({ success: false, message: 'Não autorizado' }, { status: 401 });
+  }
+
   console.log('Cron Job: Iniciando atualização automática da lição...');
-  
+
   try {
     // REMOVIDO: Verificação de sábado para facilitar testes
     // const now = new Date();
@@ -278,9 +134,13 @@ export async function GET() {
 }
 
 // Função para forçar atualização manual (para testes)
-export async function POST() {
+export async function POST(req: NextRequest) {
+  if (!isAuthorizedCronRequest(req)) {
+    return NextResponse.json({ success: false, message: 'Não autorizado' }, { status: 401 });
+  }
+
   console.log('Cron Job: Forçando atualização manual da lição...');
-  
+
   try {
     // Detectar nova lição
     const currentLesson = await detectCurrentLesson();

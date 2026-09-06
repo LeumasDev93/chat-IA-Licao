@@ -19,30 +19,23 @@ export function urlBase64ToUint8Array(base64String: string) {
 export const subscribeUserToPush = async () => {
     try {
         const sw = await navigator.serviceWorker.ready;
-        console.log("[DEBUG] Service Worker pronto");
 
         const subscription = await sw.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(
-                process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY!
+                process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
             ),
         });
 
-        console.log("[DEBUG] Subscription criada", subscription);
-
-        const response = await fetch("/api/notifications/subscribe", {
+        await fetch("/api/notifications/subscribe", {
             method: "POST",
-            body: JSON.stringify(subscription),
+            body: JSON.stringify(subscription.toJSON()),
             headers: {
                 "Content-Type": "application/json",
             },
         });
-
-        const data = await response.json();
-        console.log("[DEBUG] Resposta da API de inscrição:", data);
-
     } catch (error) {
-        console.error("[ERRO] Erro ao inscrever para notificações:", error);
+        console.error("Erro ao inscrever para notificações:", error);
     }
 };
 
