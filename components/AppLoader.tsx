@@ -11,7 +11,7 @@ export default function AppLoader({ label = "A preparar o seu estudo…" }: { la
         <span className="absolute inset-0 -z-10 animate-ping rounded-3xl bg-brand opacity-20" />
         <span className="absolute -inset-3 -z-10 rounded-[2rem] bg-brand opacity-10 blur-xl" />
         <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-brand shadow-xl shadow-primary/25">
-          <Image src={logo1} alt="" width={80} height={80} className="h-12 w-12 animate-[float_2.4s_ease-in-out_infinite] object-contain" priority />
+          <Image src={logo1} alt="" width={80} height={80} className="h-12 w-12 animate-[float_2.4s_ease-in-out_infinite] object-contain brightness-0 invert" priority />
         </div>
       </div>
 
